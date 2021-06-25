@@ -1,0 +1,7 @@
+build
+dist
+argodata.egg-info
+__pycache__
+.vscode
+.coverage
+.pytest_cache
