@@ -1,7 +1,7 @@
 
 import unittest
 from io import BytesIO
-from medsrtqc.vms import field
+import medsrtqc.vms.field as field
 
 class TestVMSField(unittest.TestCase):
 
