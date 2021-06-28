@@ -68,6 +68,7 @@ class VMSArrayOf(VMSField):
     def from_stream(self, file: BinaryIO, value):
         for i in range(len(value)):
             value[i] = self._field.from_stream(file)
+        return value
 
     def to_stream(self, file: BinaryIO, value):
         if (len(value) > self._max_length):

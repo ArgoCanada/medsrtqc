@@ -33,6 +33,14 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(file.getvalue(), b'abc\x00abcd')
         self.assertEqual(field.from_stream(BytesIO(b'abc\x00abcd')), {'name1': 'abc', 'name2': 'abcd'})
 
+    def test_array(self):
+        field = vms.VMSArrayOf(vms.VMSCharacter(5), max_length=10)
+        self.assertEqual(field.n_bytes([None]), 5)
+        file = BytesIO()
+        field.to_stream(file, ['abcd'])
+        self.assertEqual(file.getvalue(), b'abcd\x00')
+        self.assertEqual(field.from_stream(BytesIO(b'abcd\x00'), [None]), ['abcd'])
+
     def test_python_struct(self):
         field = vms.VMSPythonStructField('>h')
         self.assertEqual(field.n_bytes(), 2)
@@ -69,7 +77,6 @@ class TestVMSField(unittest.TestCase):
 class TestOceanProcessingProfile(unittest.TestCase):
 
     def test_profile(self):
-        prof = vms.VMSOceanProcessingProfileType()
         self.assertEqual(1, 1)
 
 
