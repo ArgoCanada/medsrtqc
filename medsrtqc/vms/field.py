@@ -41,7 +41,7 @@ class VMSPadding(VMSField):
 class VMSCharacter(VMSField):
     """A field to encode strings as fixed-length character fields"""
 
-    def __init__(self, length, encoding='utf-8', pad=b'\x00'):
+    def __init__(self, length, encoding='utf-8', pad=b' '):
         self._length = length
         self._encoding = encoding
         self._pad = pad
@@ -141,20 +141,20 @@ class VMSPythonStructField(VMSField):
 
 
 class VMSInteger2(VMSPythonStructField):
-    """A 16-bit signed big-endian integer field"""
+    """A 16-bit signed little-endian integer field"""
 
     def __init__(self) -> None:
-        super().__init__('>h')
+        super().__init__('<h')
 
     def to_stream(self, file: BinaryIO, value):
         return super().to_stream(file, int(value))
 
 
 class VMSInteger4(VMSPythonStructField):
-    """A 32-bit signed big-endian integer field"""
+    """A 32-bit signed little-endian integer field"""
 
     def __init__(self) -> None:
-        super().__init__('>i')
+        super().__init__('<i')
 
     def to_stream(self, file: BinaryIO, value):
         return super().to_stream(file, int(value))
@@ -178,12 +178,21 @@ class VMSReal4(VMSField):
 
     def to_stream(self, file: BinaryIO, value):
         float_value_big_endian = pack('>f', float(value))
-        for i in [2, 3, 0, 1]:
-            file.write(float_value_big_endian[i:(i + 1)])
+        # we need to force bit 24 to be a 1 before encoding as a mid-endian float
+        float_value_big_endian = pack('>l', unpack('>l', float_value_big_endian)[0] + 2 ** 24)
+
+        float_value_mid_endian = bytearray(4)
+        for i_out, i_in in enumerate([1, 0, 3, 2]):
+            float_value_mid_endian[i_out] = float_value_big_endian[i_in]
+
+        file.write(float_value_mid_endian)
+
 
     def from_stream(self, file: BinaryIO, value=None) -> float:
         float_value_mid_endian = file.read(4)
         float_value_big_endian = bytearray(4)
-        for i_out, i_in in enumerate([2, 3, 0, 1]):
+        for i_out, i_in in enumerate([1, 0, 3, 2]):
             float_value_big_endian[i_out] = float_value_mid_endian[i_in]
+        # we need to zero-out bit 24 before interpreting as a big-endian float
+        float_value_big_endian = pack('>l', unpack('>l', float_value_big_endian)[0] - 2 ** 24)
         return unpack('>f', float_value_big_endian)[0]

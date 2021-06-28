@@ -18,8 +18,8 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.n_bytes(), 5)
         file = BytesIO()
         f.to_stream(file, 'abcd')
-        self.assertEqual(file.getvalue(), b'abcd\x00')
-        self.assertEqual(f.from_stream(BytesIO(b'abcd\x00')), 'abcd')
+        self.assertEqual(file.getvalue(), b'abcd ')
+        self.assertEqual(f.from_stream(BytesIO(b'abcd ')), 'abcd')
 
     def test_struct(self):
         f = field.VMSStructField(
@@ -38,8 +38,8 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.n_bytes([None]), 5)
         file = BytesIO()
         f.to_stream(file, ['abcd'])
-        self.assertEqual(file.getvalue(), b'abcd\x00')
-        self.assertEqual(f.from_stream(BytesIO(b'abcd\x00'), [None]), ['abcd'])
+        self.assertEqual(file.getvalue(), b'abcd ')
+        self.assertEqual(f.from_stream(BytesIO(b'abcd '), [None]), ['abcd'])
 
     def test_python_struct(self):
         f = field.VMSPythonStructField('>h')
@@ -54,16 +54,16 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.n_bytes(), 2)
         file = BytesIO()
         f.to_stream(file, 16)
-        self.assertEqual(file.getvalue(), b'\x00\x10')
-        self.assertEqual(f.from_stream(BytesIO(b'\x00\x10')), 16)
+        self.assertEqual(file.getvalue(), b'\x10\x00')
+        self.assertEqual(f.from_stream(BytesIO(b'\x10\x00')), 16)
 
     def test_integer4(self):
         f = field.VMSInteger4()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
         f.to_stream(file, 16)
-        self.assertEqual(file.getvalue(), b'\x00\x00\x00\x10')
-        self.assertEqual(f.from_stream(BytesIO(b'\x00\x00\x00\x10')), 16)
+        self.assertEqual(file.getvalue(), b'\x10\x00\x00\x00')
+        self.assertEqual(f.from_stream(BytesIO(b'\x10\x00\x00\x00')), 16)
 
     def test_real4_big_endian(self):
         f = field.VMSReal4BigEndian()
@@ -77,9 +77,9 @@ class TestVMSField(unittest.TestCase):
         f = field.VMSReal4()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
-        f.to_stream(file, 1)
-        self.assertEqual(file.getvalue(), b'\x00\x00\x3f\x80')
-        self.assertEqual(f.from_stream(BytesIO(b'\x00\x00\x3f\x80')), 1)
+        f.to_stream(file, 99.9999008178711)
+        self.assertEqual(file.getvalue(), b'\xc7C\xf3\xff')
+        self.assertEqual(f.from_stream(BytesIO(b'\xc7C\xf3\xff')), 99.9999008178711)
 
 
 if __name__ == '__main__':
