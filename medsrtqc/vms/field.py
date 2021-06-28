@@ -1,23 +1,28 @@
 
 from io import BytesIO
-from typing import BinaryIO
+from typing import BinaryIO, Iterable
 from struct import pack, unpack, calcsize
 from collections import OrderedDict
 
 
 class VMSField:
+    """A base class for binary encoding and decoding of VMS fields"""
 
     def n_bytes(self, value=None):
+        """The size of the field in bytes"""
         raise NotImplementedError()
 
-    def from_stream(self, file: BinaryIO):
+    def from_stream(self, file: BinaryIO, value=None):
+        """Read from a file object and return a Python object"""
         raise NotImplementedError()
 
     def to_stream(self, file: BinaryIO, value):
+        """Encode a Python object and send it to a file object"""
         raise NotImplementedError()
 
 
 class VMSPadding(VMSField):
+    """A field to explicitly encode padding bytes in structure definitions"""
 
     def __init__(self, length) -> None:
         self._length = length
@@ -25,7 +30,7 @@ class VMSPadding(VMSField):
     def n_bytes(self, value=None):
         return self._length
 
-    def from_stream(self, file: BinaryIO):
+    def from_stream(self, file: BinaryIO, value=None):
         file.read(self._length)
         return None
 
@@ -34,6 +39,7 @@ class VMSPadding(VMSField):
 
 
 class VMSCharacter(VMSField):
+    """A field to encode strings as fixed-length character fields"""
 
     def __init__(self, length, encoding='utf-8', pad=b'\x00'):
         self._length = length
@@ -43,11 +49,11 @@ class VMSCharacter(VMSField):
     def n_bytes(self, value=None):
         return self._length
 
-    def from_stream(self, file: BytesIO):
+    def from_stream(self, file: BytesIO, value=None) -> str:
         encoded = file.read(self._length).rstrip(self._pad)
         return encoded.decode(self._encoding)
 
-    def to_stream(self, file: BytesIO, value) -> bytes:
+    def to_stream(self, file: BytesIO, value):
         encoded = str(value).encode(self._encoding)
         if len(encoded) <= self._length:
             file.write(encoded.ljust(self._length, self._pad))
@@ -57,6 +63,7 @@ class VMSCharacter(VMSField):
 
 
 class VMSArrayOf(VMSField):
+    """An array field containing zero or more values from another field"""
 
     def __init__(self, field: VMSField, max_length) -> None:
         self._field = field
@@ -65,12 +72,12 @@ class VMSArrayOf(VMSField):
     def n_bytes(self, value):
         return self._field.n_bytes() * len(value)
 
-    def from_stream(self, file: BinaryIO, value):
+    def from_stream(self, file: BinaryIO, value: list) -> list:
         for i in range(len(value)):
             value[i] = self._field.from_stream(file)
         return value
 
-    def to_stream(self, file: BinaryIO, value):
+    def to_stream(self, file: BinaryIO, value: Iterable):
         if (len(value) > self._max_length):
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
@@ -78,6 +85,7 @@ class VMSArrayOf(VMSField):
 
 
 class VMSStructField(VMSField):
+    """A struct field containing named values of other field types"""
 
     def __init__(self, *fields) -> None:
         self._fields = OrderedDict()
@@ -114,6 +122,10 @@ class VMSStructField(VMSField):
 
 
 class VMSPythonStructField(VMSField):
+    """
+    A field that encodes and decodes binary data using a Python struct
+    module format string
+    """
 
     def __init__(self, format) -> None:
         self._format = format
@@ -129,6 +141,7 @@ class VMSPythonStructField(VMSField):
 
 
 class VMSInteger2(VMSPythonStructField):
+    """A 16-bit signed big-endian integer field"""
 
     def __init__(self) -> None:
         super().__init__('>h')
@@ -138,6 +151,7 @@ class VMSInteger2(VMSPythonStructField):
 
 
 class VMSInteger4(VMSPythonStructField):
+    """A 32-bit signed big-endian integer field"""
 
     def __init__(self) -> None:
         super().__init__('>i')
@@ -146,10 +160,30 @@ class VMSInteger4(VMSPythonStructField):
         return super().to_stream(file, int(value))
 
 
-class VMSReal4(VMSPythonStructField):
+class VMSReal4BigEndian(VMSPythonStructField):
+    """A 32-bit big-endian float value"""
 
     def __init__(self) -> None:
         super().__init__('>f')
 
     def to_stream(self, file: BinaryIO, value):
         return super().to_stream(file, float(value))
+
+
+class VMSReal4(VMSField):
+    """A 32-bit middle-endian VAX/VMS-encoded float value"""
+
+    def n_bytes(self, value=None):
+        return 4
+
+    def to_stream(self, file: BinaryIO, value):
+        float_value_big_endian = pack('>f', float(value))
+        for i in [2, 3, 0, 1]:
+            file.write(float_value_big_endian[i:(i + 1)])
+
+    def from_stream(self, file: BinaryIO, value=None) -> float:
+        float_value_mid_endian = file.read(4)
+        float_value_big_endian = bytearray(4)
+        for i_out, i_in in enumerate([2, 3, 0, 1]):
+            float_value_big_endian[i_out] = float_value_mid_endian[i_in]
+        return unpack('>f', float_value_big_endian)[0]

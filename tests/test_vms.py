@@ -65,19 +65,21 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(file.getvalue(), b'\x00\x00\x00\x10')
         self.assertEqual(f.from_stream(BytesIO(b'\x00\x00\x00\x10')), 16)
 
+    def test_real4_big_endian(self):
+        f = field.VMSReal4BigEndian()
+        self.assertEqual(f.n_bytes(), 4)
+        file = BytesIO()
+        f.to_stream(file, 1)
+        self.assertEqual(file.getvalue(), b'\x3f\x80\x00\x00')
+        self.assertEqual(f.from_stream(BytesIO(b'\x3f\x80\x00\x00')), 1)
+
     def test_real4(self):
         f = field.VMSReal4()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
         f.to_stream(file, 1)
-        self.assertEqual(file.getvalue(), b'?\x80\x00\x00')
-        self.assertEqual(f.from_stream(BytesIO(b'?\x80\x00\x00')), 1)
-
-
-class TestOceanProcessingProfile(unittest.TestCase):
-
-    def test_profile(self):
-        self.assertEqual(1, 1)
+        self.assertEqual(file.getvalue(), b'\x00\x00\x3f\x80')
+        self.assertEqual(f.from_stream(BytesIO(b'\x00\x00\x3f\x80')), 1)
 
 
 if __name__ == '__main__':
