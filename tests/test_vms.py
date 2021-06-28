@@ -22,7 +22,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abcd\x00')), 'abcd')
 
     def test_struct(self):
-        f = field.VMSStruct(
+        f = field.VMSStructField(
             ('name1', field.VMSCharacter(3)),
             field.VMSPadding(1),
             ('name2', field.VMSCharacter(4))

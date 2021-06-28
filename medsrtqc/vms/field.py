@@ -77,7 +77,7 @@ class VMSArrayOf(VMSField):
             self._field.to_stream(file, item)
 
 
-class VMSStruct(VMSField):
+class VMSStructField(VMSField):
 
     def __init__(self, *fields) -> None:
         self._fields = OrderedDict()
@@ -129,21 +129,33 @@ class VMSPythonStructField(VMSField):
 
 
 class VMSInteger2(VMSPythonStructField):
+
     def __init__(self) -> None:
         super().__init__('>h')
 
+    def to_stream(self, file: BinaryIO, value):
+        return super().to_stream(file, int(value))
+
 
 class VMSInteger4(VMSPythonStructField):
+
     def __init__(self) -> None:
         super().__init__('>i')
 
+    def to_stream(self, file: BinaryIO, value):
+        return super().to_stream(file, int(value))
+
 
 class VMSReal4(VMSPythonStructField):
+
     def __init__(self) -> None:
         super().__init__('>f')
 
+    def to_stream(self, file: BinaryIO, value):
+        return super().to_stream(file, float(value))
 
-class VMSPrProfileFxd(VMSStruct):
+
+class VMSPrProfileFxd(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('MKEY', VMSCharacter(8)),
@@ -162,7 +174,7 @@ class VMSPrProfileFxd(VMSStruct):
         )
 
 
-class VMSPrProfileProf(VMSStruct):
+class VMSPrProfileProf(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('DEPTH_PRESS', VMSReal4()),
@@ -172,7 +184,7 @@ class VMSPrProfileProf(VMSStruct):
         )
 
 
-class VMSPrStnFxd(VMSStruct):
+class VMSPrStnFxd(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('MKEY', VMSCharacter(8)),
@@ -206,7 +218,7 @@ class VMSPrStnFxd(VMSStruct):
         )
 
 
-class VMSPrStnProf(VMSStruct):
+class VMSPrStnProf(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('NO_SEG', VMSInteger2()),
@@ -219,7 +231,7 @@ class VMSPrStnProf(VMSStruct):
         )
 
 
-class VMSPrStnSurface(VMSStruct):
+class VMSPrStnSurface(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('PCODE', VMSCharacter(4)),
@@ -229,7 +241,7 @@ class VMSPrStnSurface(VMSStruct):
         )
 
 
-class VMSPrStnSurfCodes(VMSStruct):
+class VMSPrStnSurfCodes(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('PCODE', VMSCharacter(4)),
@@ -239,7 +251,7 @@ class VMSPrStnSurfCodes(VMSStruct):
         )
 
 
-class VMSPrStnHistory(VMSStruct):
+class VMSPrStnHistory(VMSStructField):
     def __init__(self) -> None:
         super().__init__(
             ('IDENT_CODE', VMSCharacter(2)),
@@ -253,7 +265,7 @@ class VMSPrStnHistory(VMSStruct):
         )
 
 
-class VMSPrProfile(VMSStruct):
+class VMSPrProfile(VMSStructField):
 
     def __init__(self) -> None:
         super().__init__(
@@ -281,7 +293,7 @@ class VMSPrProfile(VMSStruct):
         return value
 
 
-class VMSPrStn(VMSStruct):
+class VMSPrStn(VMSStructField):
 
     def __init__(self) -> None:
         super().__init__(
