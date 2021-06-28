@@ -3,6 +3,8 @@ from .field import *
 
 
 class VMSPrProfileFxdField(VMSStructField):
+    """The encoding strategy for a PR_PROFILE/FXD structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('MKEY', VMSCharacter(8)),
@@ -22,6 +24,8 @@ class VMSPrProfileFxdField(VMSStructField):
 
 
 class VMSPrProfileProfField(VMSStructField):
+    """The encoding strategy for the PR_PROFILE/PROF structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('DEPTH_PRESS', VMSReal4()),
@@ -31,7 +35,8 @@ class VMSPrProfileProfField(VMSStructField):
         )
 
 
-class VMSPrProfile(VMSStructField):
+class VMSPrProfileField(VMSStructField):
+    """The encoding strategy for the PR_PROFILE structure"""
 
     def __init__(self) -> None:
         super().__init__(

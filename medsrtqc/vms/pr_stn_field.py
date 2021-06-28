@@ -2,7 +2,9 @@
 from .field import *
 
 
-class VMSPrStnFxd(VMSStructField):
+class VMSPrStnFxdField(VMSStructField):
+    """The encoding strategy used for the PR_STN/FXD structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('MKEY', VMSCharacter(8)),
@@ -36,7 +38,9 @@ class VMSPrStnFxd(VMSStructField):
         )
 
 
-class VMSPrStnProf(VMSStructField):
+class VMSPrStnProfField(VMSStructField):
+    """The encoding strategy used for the PR_STN/PROF structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('NO_SEG', VMSInteger2()),
@@ -49,7 +53,9 @@ class VMSPrStnProf(VMSStructField):
         )
 
 
-class VMSPrStnSurface(VMSStructField):
+class VMSPrStnSurfaceField(VMSStructField):
+    """The encoding strategy used for the PR_STN/SURFACE structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('PCODE', VMSCharacter(4)),
@@ -59,7 +65,9 @@ class VMSPrStnSurface(VMSStructField):
         )
 
 
-class VMSPrStnSurfCodes(VMSStructField):
+class VMSPrStnSurfCodesField(VMSStructField):
+    """The encoding strategy used for the PR_STN/SURF_CODES structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('PCODE', VMSCharacter(4)),
@@ -69,7 +77,9 @@ class VMSPrStnSurfCodes(VMSStructField):
         )
 
 
-class VMSPrStnHistory(VMSStructField):
+class VMSPrStnHistoryField(VMSStructField):
+    """The encoding strategy used for the PR_STN/HISTORY structure"""
+
     def __init__(self) -> None:
         super().__init__(
             ('IDENT_CODE', VMSCharacter(2)),
@@ -83,15 +93,16 @@ class VMSPrStnHistory(VMSStructField):
         )
 
 
-class VMSPrStn(VMSStructField):
+class VMSPrStnField(VMSStructField):
+    """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('FXD', VMSPrStnFxd()),
-            ('PROF', VMSArrayOf(VMSPrStnProf(), max_length=20)),
-            ('SURFACE', VMSArrayOf(VMSPrStnSurface(), max_length=20)),
-            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodes(), max_length=20)),
-            ('HISTORY', VMSArrayOf(VMSPrStnHistory(), max_length=100))
+            ('FXD', VMSPrStnFxdField()),
+            ('PROF', VMSArrayOf(VMSPrStnProfField(), max_length=20)),
+            ('SURFACE', VMSArrayOf(VMSPrStnSurfaceField(), max_length=20)),
+            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodesField(), max_length=20)),
+            ('HISTORY', VMSArrayOf(VMSPrStnHistoryField(), max_length=100))
         )
 
     def n_bytes(self, value):
