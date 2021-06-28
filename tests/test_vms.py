@@ -34,13 +34,13 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(field.from_stream(BytesIO(b'abc\x00abcd')), {'name1': 'abc', 'name2': 'abcd'})
 
     def test_python_struct(self):
-        field = vms.VMSPythonStructFieldType('>h')
+        field = vms.VMSPythonStructField('>h')
         self.assertEqual(field.n_bytes(), 2)
         file = BytesIO()
         field.to_stream(file, 16)
         self.assertEqual(file.getvalue(), b'\x00\x10')
         self.assertEqual(field.from_stream(BytesIO(b'\x00\x10')), 16)
-    
+
     def test_integer2(self):
         field = vms.VMSInteger2()
         self.assertEqual(field.n_bytes(), 2)
@@ -48,7 +48,7 @@ class TestVMSField(unittest.TestCase):
         field.to_stream(file, 16)
         self.assertEqual(file.getvalue(), b'\x00\x10')
         self.assertEqual(field.from_stream(BytesIO(b'\x00\x10')), 16)
-    
+
     def test_integer4(self):
         field = vms.VMSInteger4()
         self.assertEqual(field.n_bytes(), 4)
@@ -57,8 +57,8 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(file.getvalue(), b'\x00\x00\x00\x10')
         self.assertEqual(field.from_stream(BytesIO(b'\x00\x00\x00\x10')), 16)
 
-    def test_float4(self):
-        field = vms.VMSFloat4()
+    def test_real4(self):
+        field = vms.VMSReal4()
         self.assertEqual(field.n_bytes(), 4)
         file = BytesIO()
         field.to_stream(file, 1)

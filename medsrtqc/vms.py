@@ -5,23 +5,23 @@ from struct import pack, unpack, calcsize
 from collections import OrderedDict
 
 
-class VMSFieldType:
+class VMSField:
 
     def n_bytes(self):
-        pass
+        raise NotImplementedError()
 
     def from_stream(self, file: BinaryIO):
-        pass
+        raise NotImplementedError()
 
     def to_stream(self, file: BinaryIO, value):
-        pass
+        raise NotImplementedError()
 
 
-class VMSPadding(VMSFieldType):
+class VMSPadding(VMSField):
 
     def __init__(self, length) -> None:
         self._length = length
-    
+
     def n_bytes(self):
         return self._length
 
@@ -33,7 +33,7 @@ class VMSPadding(VMSFieldType):
         file.write(b'\x00' * self._length)
 
 
-class VMSCharacter(VMSFieldType):
+class VMSCharacter(VMSField):
 
     def __init__(self, length, encoding='utf-8', pad=b'\x00'):
         self._length = length
@@ -56,8 +56,8 @@ class VMSCharacter(VMSFieldType):
             raise ValueError(msg)
 
 
-class VMSStruct(VMSFieldType):
-    
+class VMSStruct(VMSField):
+
     def __init__(self, *fields) -> None:
         self._fields = OrderedDict()
         n_pad = 0
@@ -68,9 +68,9 @@ class VMSStruct(VMSFieldType):
                 n_pad += 1
             else:
                 name, field = item
-            
+
             self._fields[name] = field
-    
+
     def n_bytes(self):
         return sum(field.n_bytes() for field in self._fields.values())
 
@@ -91,7 +91,7 @@ class VMSStruct(VMSFieldType):
                 field.to_stream(file)
 
 
-class VMSPythonStructFieldType(VMSFieldType):
+class VMSPythonStructField(VMSField):
 
     def __init__(self, format) -> None:
         self._format = format
@@ -106,17 +106,17 @@ class VMSPythonStructFieldType(VMSFieldType):
         file.write(pack(self._format, value))
 
 
-class VMSInteger2(VMSPythonStructFieldType):
+class VMSInteger2(VMSPythonStructField):
     def __init__(self) -> None:
         super().__init__('>h')
 
 
-class VMSInteger4(VMSPythonStructFieldType):
+class VMSInteger4(VMSPythonStructField):
     def __init__(self) -> None:
         super().__init__('>i')
 
 
-class VMSFloat4(VMSPythonStructFieldType):
+class VMSReal4(VMSPythonStructField):
     def __init__(self) -> None:
         super().__init__('>f')
 
