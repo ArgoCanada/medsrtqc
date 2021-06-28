@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 class VMSField:
 
-    def n_bytes(self):
+    def n_bytes(self, value=None):
         raise NotImplementedError()
 
     def from_stream(self, file: BinaryIO):
@@ -22,7 +22,7 @@ class VMSPadding(VMSField):
     def __init__(self, length) -> None:
         self._length = length
 
-    def n_bytes(self):
+    def n_bytes(self, value=None):
         return self._length
 
     def from_stream(self, file: BinaryIO):
@@ -40,7 +40,7 @@ class VMSCharacter(VMSField):
         self._encoding = encoding
         self._pad = pad
 
-    def n_bytes(self):
+    def n_bytes(self, value=None):
         return self._length
 
     def from_stream(self, file: BytesIO):
@@ -54,6 +54,26 @@ class VMSCharacter(VMSField):
         else:
             msg = f"Can't convert '{value}' to '{self._encoding}' of <= {self._length} bytes"
             raise ValueError(msg)
+
+
+class VMSArrayOf(VMSField):
+
+    def __init__(self, field: VMSField, max_length) -> None:
+        self._field = field
+        self._max_length = max_length
+
+    def n_bytes(self, value):
+        return self._field.n_bytes() * len(value)
+
+    def from_stream(self, file: BinaryIO, value):
+        for i in range(len(value)):
+            value[i] = self._field.from_stream(file)
+
+    def to_stream(self, file: BinaryIO, value):
+        if (len(value) > self._max_length):
+            raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
+        for item in value:
+            self._field.to_stream(file, item)
 
 
 class VMSStruct(VMSField):
@@ -71,17 +91,18 @@ class VMSStruct(VMSField):
 
             self._fields[name] = field
 
-    def n_bytes(self):
+    def n_bytes(self, value=None):
         return sum(field.n_bytes() for field in self._fields.values())
 
-    def from_stream(self, file: BinaryIO):
-        result = OrderedDict()
+    def from_stream(self, file: BinaryIO, value=None):
+        if value is None:
+            value = OrderedDict()
         for name, field in self._fields.items():
             if isinstance(field, VMSPadding):
                 field.from_stream(file)
             else:
-                result[name] = field.from_stream(file)
-        return result
+                value[name] = field.from_stream(file)
+        return value
 
     def to_stream(self, file: BinaryIO, value):
         for name, field in self._fields.items():
@@ -229,3 +250,83 @@ class VMSPrStnHistory(VMSStruct):
             ('AUX_ID', VMSReal4()),
             ('O_VALUE', VMSReal4())
         )
+
+
+class VMSPrProfile(VMSStruct):
+
+    def __init__(self) -> None:
+        super().__init__(
+            ('FXD', VMSPrProfileFxd()),
+            ('PROF', VMSArrayOf(VMSPrProfileProf(), max_length=1500))
+        )
+
+    def n_bytes(self, value):
+        n_prof = value['FXD']['NO_DEPTHS']
+        size_fxd = self._fields['FXD'].n_bytes()
+        size_prof = self._fields['PROF'].n_bytes([None] * n_prof)
+        return size_fxd + size_prof
+
+    def from_stream(self, file: BinaryIO, value=None):
+        if value is None:
+            value = {}
+
+        value['FXD'] = OrderedDict()
+        self._fields['FXD'].from_stream(file, value['FXD'])
+
+        n_prof = value['FXD']['NO_DEPTHS']
+        value['PROF'] = [None] * n_prof
+        self._fields['PROF'].from_stream(file, value['PROF'])
+
+        return value
+
+
+class VMSPrStn(VMSStruct):
+
+    def __init__(self) -> None:
+        super().__init__(
+            ('FXD', VMSPrStnFxd()),
+            ('PROF', VMSArrayOf(VMSPrStnProf(), max_length=20)),
+            ('SURFACE', VMSArrayOf(VMSPrStnSurface(), max_length=20)),
+            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodes(), max_length=20)),
+            ('HISTORY', VMSArrayOf(VMSPrStnHistory(), max_length=100))
+        )
+
+    def n_bytes(self, value):
+        n_prof = value['FXD']['NO_PROF']
+        n_surface = value['FXD']['NPARMS']
+        n_surf_codes = value['FXD']['SPARMS']
+        n_history = value['FXD']['NUM_HIST']
+
+        list1 = [None]
+        size_fxd = self._fields['FXD'].n_bytes()
+        size_prof = self._fields['PROF'].n_bytes(list1 * n_prof)
+        size_surface = self._fields['SURFACE'].n_bytes(list1 * n_surface)
+        size_surf_codes = self._fields['SURF_CODES'].n_bytes(list1 * n_surf_codes)
+        size_history = self._fields['HISTORY'].n_bytes(list1 * n_history)
+
+        return size_fxd + size_prof + size_surface + size_surf_codes + size_history
+
+    def from_stream(self, file: BinaryIO, value=None):
+        if value is None:
+            value = OrderedDict()
+
+        value['FXD'] = OrderedDict()
+        self._fields['FXD'].from_stream(file, value['FXD'])
+
+        n_prof = value['FXD']['NO_PROF']
+        n_surface = value['FXD']['NPARMS']
+        n_surf_codes = value['FXD']['SPARMS']
+        n_history = value['FXD']['NUM_HIST']
+
+        list1 = [None]
+        value['PROF'] = list1 * n_prof
+        value['SURFACE'] = list1 * n_surface
+        value['SURF_CODES'] = list1 * n_surf_codes
+        value['HISTORY'] = list1 * n_history
+
+        self._fields['PROF'].from_stream(value['PROF'])
+        self._fields['SURFACE'].from_stream(value['SURFACE'])
+        self._fields['SURF_CODES'].from_stream(value['SURF_CODES'])
+        self._fields['HISTORY'].from_stream(value['HISTORY'])
+
+        return value
