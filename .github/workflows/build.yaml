@@ -33,7 +33,7 @@ jobs:
       - name: Test dist
         run: |
           cd tests
-          pip install $(ls ../dist/argodata-*.whl)
+          pip install $(ls ../dist/medsrtqc-*.whl)
           pytest
       - name: Test coverage
         if: success() && (matrix.python-version == '3.9')
