@@ -45,8 +45,6 @@ jobs:
           cd pages-clone
           git rm -rf .
           cp -R ../docs/_build/html/* .
-          touch .nojekyll
-          git add .nojekyll
           git add *
-          git commit -m"update documentation"
+          git commit --alow-empty -m"update documentation"
           git push
