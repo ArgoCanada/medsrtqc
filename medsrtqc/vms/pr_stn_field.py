@@ -48,8 +48,7 @@ class VMSPrStnProfField(VMSStructField):
             ('DUP_FLAG', VMSCharacter(1)),
             ('DIGIT_CODE', VMSCharacter(1)),
             ('STANDARD', VMSCharacter(1)),
-            ('DEEP_DEPTH', VMSReal4()),
-            VMSPadding(1)
+            ('DEEP_DEPTH', VMSReal4())
         )
 
 
@@ -60,8 +59,7 @@ class VMSPrStnSurfaceField(VMSStructField):
         super().__init__(
             ('PCODE', VMSCharacter(4)),
             ('PARM', VMSReal4()),
-            ('Q_PARM', VMSCharacter(1)),
-            VMSPadding(1)
+            ('Q_PARM', VMSCharacter(1))
         )
 
 
@@ -72,8 +70,7 @@ class VMSPrStnSurfCodesField(VMSStructField):
         super().__init__(
             ('PCODE', VMSCharacter(4)),
             ('CPARM', VMSCharacter(10)),
-            ('Q_PARM', VMSCharacter(1)),
-            VMSPadding(1)
+            ('Q_PARM', VMSCharacter(1))
         )
 
 
@@ -109,7 +106,7 @@ class VMSPrStnField(VMSStructField):
         n_prof = value['FXD']['NO_PROF']
         n_surface = value['FXD']['NPARMS']
         n_surf_codes = value['FXD']['SPARMS']
-        n_history = value['FXD']['NUM_HIST']
+        n_history = value['FXD']['NUM_HISTS']
 
         list1 = [None]
         size_fxd = self._fields['FXD'].n_bytes()
@@ -130,7 +127,7 @@ class VMSPrStnField(VMSStructField):
         n_prof = value['FXD']['NO_PROF']
         n_surface = value['FXD']['NPARMS']
         n_surf_codes = value['FXD']['SPARMS']
-        n_history = value['FXD']['NUM_HIST']
+        n_history = value['FXD']['NUM_HISTS']
 
         list1 = [None]
         value['PROF'] = list1 * n_prof
@@ -138,9 +135,9 @@ class VMSPrStnField(VMSStructField):
         value['SURF_CODES'] = list1 * n_surf_codes
         value['HISTORY'] = list1 * n_history
 
-        self._fields['PROF'].from_stream(value['PROF'])
-        self._fields['SURFACE'].from_stream(value['SURFACE'])
-        self._fields['SURF_CODES'].from_stream(value['SURF_CODES'])
-        self._fields['HISTORY'].from_stream(value['HISTORY'])
+        self._fields['PROF'].from_stream(file, value['PROF'])
+        self._fields['SURFACE'].from_stream(file, value['SURFACE'])
+        self._fields['SURF_CODES'].from_stream(file, value['SURF_CODES'])
+        self._fields['HISTORY'].from_stream(file, value['HISTORY'])
 
         return value

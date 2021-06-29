@@ -11,6 +11,7 @@ class VMSPrProfileFxdField(VMSStructField):
             ('ONE_DEG_SQ', VMSInteger4()),
             ('CR_NUMBER', VMSCharacter(10)),
             ('OBS_YEAR', VMSCharacter(4)),
+            ('OBS_MONTH', VMSCharacter(2)),
             ('OBS_DAY', VMSCharacter(2)),
             ('OBS_TIME', VMSCharacter(4)),
             ('DATA_TYPE', VMSCharacter(2)),
@@ -18,8 +19,7 @@ class VMSPrProfileFxdField(VMSStructField):
             ('PROF_TYPE', VMSCharacter(4)),
             ('PROFILE_SEG', VMSCharacter(2)),
             ('NO_DEPTHS', VMSInteger2()),
-            ('D_P_CODE', VMSCharacter(1)),
-            VMSPadding(1)
+            ('D_P_CODE', VMSCharacter(1))
         )
 
 
@@ -52,7 +52,7 @@ class VMSPrProfileField(VMSStructField):
 
     def from_stream(self, file: BinaryIO, value=None):
         if value is None:
-            value = {}
+            value = OrderedDict()
 
         value['FXD'] = OrderedDict()
         self._fields['FXD'].from_stream(file, value['FXD'])
