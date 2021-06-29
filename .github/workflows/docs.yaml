@@ -41,7 +41,10 @@ jobs:
         if: success() && (github.ref == 'refs/heads/master')
         run: |
           cd pages-clone
+          touch .nojekyll
           git rm -rf .
           cp -a ../_docs/ ./
+          touch .nojekyll
+          git add .nojekyll
           git add *
           git commit -m"update documentation"
