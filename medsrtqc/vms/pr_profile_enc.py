@@ -44,10 +44,10 @@ class VMSPrProfileField(VMSStructEncoding):
             ('PROF', VMSArrayOf(VMSPrProfileProfField(), max_length=1500))
         )
 
-    def n_bytes(self, value):
+    def sizeof(self, value):
         n_prof = value['FXD']['NO_DEPTHS']
-        size_fxd = self._fields['FXD'].n_bytes()
-        size_prof = self._fields['PROF'].n_bytes([None] * n_prof)
+        size_fxd = self._fields['FXD'].sizeof()
+        size_prof = self._fields['PROF'].sizeof([None] * n_prof)
         return size_fxd + size_prof
 
     def from_stream(self, file: BinaryIO, value=None):

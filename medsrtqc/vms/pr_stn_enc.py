@@ -102,18 +102,18 @@ class VMSPrStnField(VMSStructEncoding):
             ('HISTORY', VMSArrayOf(VMSPrStnHistoryField(), max_length=100))
         )
 
-    def n_bytes(self, value):
+    def sizeof(self, value):
         n_prof = value['FXD']['NO_PROF']
         n_surface = value['FXD']['NPARMS']
         n_surf_codes = value['FXD']['SPARMS']
         n_history = value['FXD']['NUM_HISTS']
 
         list1 = [None]
-        size_fxd = self._fields['FXD'].n_bytes()
-        size_prof = self._fields['PROF'].n_bytes(list1 * n_prof)
-        size_surface = self._fields['SURFACE'].n_bytes(list1 * n_surface)
-        size_surf_codes = self._fields['SURF_CODES'].n_bytes(list1 * n_surf_codes)
-        size_history = self._fields['HISTORY'].n_bytes(list1 * n_history)
+        size_fxd = self._fields['FXD'].sizeof()
+        size_prof = self._fields['PROF'].sizeof(list1 * n_prof)
+        size_surface = self._fields['SURFACE'].sizeof(list1 * n_surface)
+        size_surf_codes = self._fields['SURF_CODES'].sizeof(list1 * n_surf_codes)
+        size_history = self._fields['HISTORY'].sizeof(list1 * n_history)
 
         return size_fxd + size_prof + size_surface + size_surf_codes + size_history
 

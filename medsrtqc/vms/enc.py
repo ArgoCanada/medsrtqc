@@ -6,9 +6,9 @@ from collections import OrderedDict
 
 
 class VMSEncoding:
-    """A base class for binary encoding and decoding of VMS Encodings"""
+    """A base class for binary encoding and decoding of field values"""
 
-    def n_bytes(self, value=None):
+    def sizeof(self, value=None):
         """The size of the Encoding in bytes"""
         raise NotImplementedError()
 
@@ -27,7 +27,7 @@ class VMSPadding(VMSEncoding):
     def __init__(self, length) -> None:
         self._length = length
 
-    def n_bytes(self, value=None):
+    def sizeof(self, value=None):
         return self._length
 
     def from_stream(self, file: BinaryIO, value=None):
@@ -46,7 +46,7 @@ class VMSCharacter(VMSEncoding):
         self._encoding = encoding
         self._pad = pad
 
-    def n_bytes(self, value=None):
+    def sizeof(self, value=None):
         return self._length
 
     def from_stream(self, file: BytesIO, value=None) -> str:
@@ -69,8 +69,8 @@ class VMSArrayOf(VMSEncoding):
         self._Encoding = Encoding
         self._max_length = max_length
 
-    def n_bytes(self, value):
-        return self._Encoding.n_bytes() * len(value)
+    def sizeof(self, value):
+        return self._Encoding.sizeof() * len(value)
 
     def from_stream(self, file: BinaryIO, value: list) -> list:
         for i in range(len(value)):
@@ -100,8 +100,8 @@ class VMSStructEncoding(VMSEncoding):
 
             self._Encodings[name] = Encoding
 
-    def n_bytes(self, value=None):
-        return sum(Encoding.n_bytes() for Encoding in self._Encodings.values())
+    def sizeof(self, value=None):
+        return sum(Encoding.sizeof() for Encoding in self._Encodings.values())
 
     def from_stream(self, file: BinaryIO, value=None):
         if value is None:
@@ -130,11 +130,11 @@ class VMSPythonStructEncoding(VMSEncoding):
     def __init__(self, format) -> None:
         self._format = format
 
-    def n_bytes(self):
+    def sizeof(self):
         return calcsize(self._format)
 
     def from_stream(self, file: BinaryIO):
-        return unpack(self._format, file.read(self.n_bytes()))[0]
+        return unpack(self._format, file.read(self.sizeof()))[0]
 
     def to_stream(self, file: BinaryIO, value):
         file.write(pack(self._format, value))
@@ -173,7 +173,7 @@ class VMSReal4BigEndian(VMSPythonStructEncoding):
 class VMSReal4(VMSEncoding):
     """A 32-bit middle-endian VAX/VMS-encoded float value"""
 
-    def n_bytes(self, value=None):
+    def sizeof(self, value=None):
         return 4
 
     def to_stream(self, file: BinaryIO, value):
