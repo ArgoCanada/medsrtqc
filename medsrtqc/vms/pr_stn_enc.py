@@ -117,12 +117,12 @@ class VMSPrStnField(VMSStructEncoding):
 
         return size_fxd + size_prof + size_surface + size_surf_codes + size_history
 
-    def from_stream(self, file: BinaryIO, value=None):
+    def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
 
         value['FXD'] = OrderedDict()
-        self._fields['FXD'].from_stream(file, value['FXD'])
+        self._fields['FXD'].decode(file, value['FXD'])
 
         n_prof = value['FXD']['NO_PROF']
         n_surface = value['FXD']['NPARMS']
@@ -135,9 +135,9 @@ class VMSPrStnField(VMSStructEncoding):
         value['SURF_CODES'] = list1 * n_surf_codes
         value['HISTORY'] = list1 * n_history
 
-        self._fields['PROF'].from_stream(file, value['PROF'])
-        self._fields['SURFACE'].from_stream(file, value['SURFACE'])
-        self._fields['SURF_CODES'].from_stream(file, value['SURF_CODES'])
-        self._fields['HISTORY'].from_stream(file, value['HISTORY'])
+        self._fields['PROF'].decode(file, value['PROF'])
+        self._fields['SURFACE'].decode(file, value['SURFACE'])
+        self._fields['SURF_CODES'].decode(file, value['SURF_CODES'])
+        self._fields['HISTORY'].decode(file, value['HISTORY'])
 
         return value

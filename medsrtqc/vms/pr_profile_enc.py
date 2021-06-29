@@ -50,15 +50,15 @@ class VMSPrProfileField(VMSStructEncoding):
         size_prof = self._fields['PROF'].sizeof([None] * n_prof)
         return size_fxd + size_prof
 
-    def from_stream(self, file: BinaryIO, value=None):
+    def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
 
         value['FXD'] = OrderedDict()
-        self._fields['FXD'].from_stream(file, value['FXD'])
+        self._fields['FXD'].decode(file, value['FXD'])
 
         n_prof = value['FXD']['NO_DEPTHS']
         value['PROF'] = [None] * n_prof
-        self._fields['PROF'].from_stream(file, value['PROF'])
+        self._fields['PROF'].decode(file, value['PROF'])
 
         return value

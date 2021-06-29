@@ -12,7 +12,7 @@ class VMSEncoding:
         """The size of the Encoding in bytes"""
         raise NotImplementedError()
 
-    def from_stream(self, file: BinaryIO, value=None):
+    def decode(self, file: BinaryIO, value=None):
         """Read from a file object and return a Python object"""
         raise NotImplementedError()
 
@@ -30,7 +30,7 @@ class VMSPadding(VMSEncoding):
     def sizeof(self, value=None):
         return self._length
 
-    def from_stream(self, file: BinaryIO, value=None):
+    def decode(self, file: BinaryIO, value=None):
         file.read(self._length)
         return None
 
@@ -49,7 +49,7 @@ class VMSCharacter(VMSEncoding):
     def sizeof(self, value=None):
         return self._length
 
-    def from_stream(self, file: BytesIO, value=None) -> str:
+    def decode(self, file: BytesIO, value=None) -> str:
         encoded = file.read(self._length).rstrip(self._pad)
         return encoded.decode(self._encoding)
 
@@ -72,9 +72,9 @@ class VMSArrayOf(VMSEncoding):
     def sizeof(self, value):
         return self._Encoding.sizeof() * len(value)
 
-    def from_stream(self, file: BinaryIO, value: list) -> list:
+    def decode(self, file: BinaryIO, value: list) -> list:
         for i in range(len(value)):
-            value[i] = self._Encoding.from_stream(file)
+            value[i] = self._Encoding.decode(file)
         return value
 
     def to_stream(self, file: BinaryIO, value: Iterable):
@@ -103,14 +103,14 @@ class VMSStructEncoding(VMSEncoding):
     def sizeof(self, value=None):
         return sum(Encoding.sizeof() for Encoding in self._Encodings.values())
 
-    def from_stream(self, file: BinaryIO, value=None):
+    def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
         for name, Encoding in self._Encodings.items():
             if isinstance(Encoding, VMSPadding):
-                Encoding.from_stream(file)
+                Encoding.decode(file)
             else:
-                value[name] = Encoding.from_stream(file)
+                value[name] = Encoding.decode(file)
         return value
 
     def to_stream(self, file: BinaryIO, value):
@@ -133,7 +133,7 @@ class VMSPythonStructEncoding(VMSEncoding):
     def sizeof(self):
         return calcsize(self._format)
 
-    def from_stream(self, file: BinaryIO):
+    def decode(self, file: BinaryIO):
         return unpack(self._format, file.read(self.sizeof()))[0]
 
     def to_stream(self, file: BinaryIO, value):
@@ -188,7 +188,7 @@ class VMSReal4(VMSEncoding):
         file.write(float_value_mid_endian)
 
 
-    def from_stream(self, file: BinaryIO, value=None) -> float:
+    def decode(self, file: BinaryIO, value=None) -> float:
         float_value_mid_endian = file.read(4)
         float_value_big_endian = bytearray(4)
         for i_out, i_in in enumerate([1, 0, 3, 2]):
