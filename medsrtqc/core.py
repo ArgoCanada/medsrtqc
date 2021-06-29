@@ -1,6 +1,6 @@
 
-from typing import Iterable, Dict, Any
-from numpy.ma import ma
+from typing import Iterable, Dict, Any, Tuple
+from numpy.ma import MaskedArray
 
 
 class Profile:  # pragma: no cover
@@ -16,11 +16,21 @@ class Profile:  # pragma: no cover
     these values along the N_PROF NetCDF dimension.
     """
 
-    def __getitem__(self, k) -> ma:
+    def keys(self) -> Iterable[str]:
         raise NotImplementedError()
 
-    def meta(self) -> Dict[str, ma]:
+    def __getitem__(self, k) -> MaskedArray:
         raise NotImplementedError()
+
+    def meta(self) -> Dict[str, MaskedArray]:
+        raise NotImplementedError()
+
+    def __in__(self, k) -> bool:
+        return k in self.keys()
+
+    def items(self) -> Iterable[Tuple[str, MaskedArray]]:
+        for k in self.keys():
+            yield self[k]
 
 
 class ProfileList:

@@ -18,5 +18,7 @@ def read_vms_profiles(src):
             _file_encoding.decode(f, data)
     elif hasattr(src, 'read'):
         _file_encoding.decode(src, data)
+    else:
+        raise TypeError("Can't interpret `src` as a file or file-like object")
 
     return VMSProfileList(data)

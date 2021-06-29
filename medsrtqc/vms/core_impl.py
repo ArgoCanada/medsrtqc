@@ -1,6 +1,6 @@
 
 from typing import Dict, Iterable
-from numpy.ma import ma
+from numpy.ma import MaskedArray
 from ..core import Profile, ProfileList
 
 
@@ -13,11 +13,14 @@ class VMSProfile(Profile):
     def __init__(self, data) -> None:
         self._data = data
 
-    def levels(self) -> Dict[str, ma]:
-        return super().levels()
+    def keys(self) -> Iterable[str]:
+        return super().keys()
 
-    def prof(self) -> Dict[str, ma]:
-        return super().prof()
+    def __getitem__(self, k) -> MaskedArray:
+        return super().__getitem__(k)
+
+    def meta(self) -> Dict[str, MaskedArray]:
+        return super().meta()
 
 
 class VMSProfileList(ProfileList):
