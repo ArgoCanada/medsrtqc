@@ -42,7 +42,10 @@ class TestEncoding(unittest.TestCase):
         file = BytesIO()
         f.encode(file, ['abcd'])
         self.assertEqual(file.getvalue(), b'abcd ')
+        # test determinate length and indeterminate length
         self.assertEqual(f.decode(BytesIO(b'abcd '), [None]), ['abcd'])
+        self.assertEqual(f.decode(BytesIO(b'abcd ')), ['abcd'])
+
 
     def test_python_struct(self):
         f = enc.PythonStructEncoding('>h')
