@@ -9,7 +9,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSPadding(3)
         self.assertEqual(f.sizeof(), 3)
         file = BytesIO()
-        f.to_stream(file, None)
+        f.encode(file, None)
         self.assertEqual(file.getvalue(), b'\x00\x00\x00')
         self.assertEqual(f.decode(BytesIO(b'\x00\x00\x00')), None)
 
@@ -17,7 +17,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSCharacter(5)
         self.assertEqual(f.sizeof(), 5)
         file = BytesIO()
-        f.to_stream(file, 'abcd')
+        f.encode(file, 'abcd')
         self.assertEqual(file.getvalue(), b'abcd ')
         self.assertEqual(f.decode(BytesIO(b'abcd ')), 'abcd')
 
@@ -29,7 +29,7 @@ class TestVMSEncoding(unittest.TestCase):
         )
         self.assertEqual(f.sizeof(), 8)
         file = BytesIO()
-        f.to_stream(file, {'name1': 'abc', 'name2': 'abcd'})
+        f.encode(file, {'name1': 'abc', 'name2': 'abcd'})
         self.assertEqual(file.getvalue(), b'abc\x00abcd')
         self.assertEqual(f.decode(BytesIO(b'abc\x00abcd')), {'name1': 'abc', 'name2': 'abcd'})
 
@@ -37,7 +37,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSArrayOf(enc.VMSCharacter(5), max_length=10)
         self.assertEqual(f.sizeof([None]), 5)
         file = BytesIO()
-        f.to_stream(file, ['abcd'])
+        f.encode(file, ['abcd'])
         self.assertEqual(file.getvalue(), b'abcd ')
         self.assertEqual(f.decode(BytesIO(b'abcd '), [None]), ['abcd'])
 
@@ -45,7 +45,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSPythonStructEncoding('>h')
         self.assertEqual(f.sizeof(), 2)
         file = BytesIO()
-        f.to_stream(file, 16)
+        f.encode(file, 16)
         self.assertEqual(file.getvalue(), b'\x00\x10')
         self.assertEqual(f.decode(BytesIO(b'\x00\x10')), 16)
 
@@ -53,7 +53,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSInteger2()
         self.assertEqual(f.sizeof(), 2)
         file = BytesIO()
-        f.to_stream(file, 16)
+        f.encode(file, 16)
         self.assertEqual(file.getvalue(), b'\x10\x00')
         self.assertEqual(f.decode(BytesIO(b'\x10\x00')), 16)
 
@@ -61,7 +61,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSInteger4()
         self.assertEqual(f.sizeof(), 4)
         file = BytesIO()
-        f.to_stream(file, 16)
+        f.encode(file, 16)
         self.assertEqual(file.getvalue(), b'\x10\x00\x00\x00')
         self.assertEqual(f.decode(BytesIO(b'\x10\x00\x00\x00')), 16)
 
@@ -69,7 +69,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSReal4BigEndian()
         self.assertEqual(f.sizeof(), 4)
         file = BytesIO()
-        f.to_stream(file, 1)
+        f.encode(file, 1)
         self.assertEqual(file.getvalue(), b'\x3f\x80\x00\x00')
         self.assertEqual(f.decode(BytesIO(b'\x3f\x80\x00\x00')), 1)
 
@@ -77,7 +77,7 @@ class TestVMSEncoding(unittest.TestCase):
         f = enc.VMSReal4()
         self.assertEqual(f.sizeof(), 4)
         file = BytesIO()
-        f.to_stream(file, 99.9999008178711)
+        f.encode(file, 99.9999008178711)
         self.assertEqual(file.getvalue(), b'\xc7C\xf3\xff')
         self.assertEqual(f.decode(BytesIO(b'\xc7C\xf3\xff')), 99.9999008178711)
 

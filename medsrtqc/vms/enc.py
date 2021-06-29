@@ -16,7 +16,7 @@ class VMSEncoding:
         """Read from a file object and return a Python object"""
         raise NotImplementedError()
 
-    def to_stream(self, file: BinaryIO, value):
+    def encode(self, file: BinaryIO, value):
         """Encode a Python object and send it to a file object"""
         raise NotImplementedError()
 
@@ -34,7 +34,7 @@ class VMSPadding(VMSEncoding):
         file.read(self._length)
         return None
 
-    def to_stream(self, file: BinaryIO, value=None):
+    def encode(self, file: BinaryIO, value=None):
         file.write(b'\x00' * self._length)
 
 
@@ -53,7 +53,7 @@ class VMSCharacter(VMSEncoding):
         encoded = file.read(self._length).rstrip(self._pad)
         return encoded.decode(self._encoding)
 
-    def to_stream(self, file: BytesIO, value):
+    def encode(self, file: BytesIO, value):
         encoded = str(value).encode(self._encoding)
         if len(encoded) <= self._length:
             file.write(encoded.ljust(self._length, self._pad))
@@ -77,11 +77,11 @@ class VMSArrayOf(VMSEncoding):
             value[i] = self._Encoding.decode(file)
         return value
 
-    def to_stream(self, file: BinaryIO, value: Iterable):
+    def encode(self, file: BinaryIO, value: Iterable):
         if (len(value) > self._max_length):
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
-            self._Encoding.to_stream(file, item)
+            self._Encoding.encode(file, item)
 
 
 class VMSStructEncoding(VMSEncoding):
@@ -113,12 +113,12 @@ class VMSStructEncoding(VMSEncoding):
                 value[name] = Encoding.decode(file)
         return value
 
-    def to_stream(self, file: BinaryIO, value):
+    def encode(self, file: BinaryIO, value):
         for name, Encoding in self._Encodings.items():
             if name in value:
-                Encoding.to_stream(file, value[name])
+                Encoding.encode(file, value[name])
             else:
-                Encoding.to_stream(file)
+                Encoding.encode(file)
 
 
 class VMSPythonStructEncoding(VMSEncoding):
@@ -136,7 +136,7 @@ class VMSPythonStructEncoding(VMSEncoding):
     def decode(self, file: BinaryIO):
         return unpack(self._format, file.read(self.sizeof()))[0]
 
-    def to_stream(self, file: BinaryIO, value):
+    def encode(self, file: BinaryIO, value):
         file.write(pack(self._format, value))
 
 
@@ -146,8 +146,8 @@ class VMSInteger2(VMSPythonStructEncoding):
     def __init__(self) -> None:
         super().__init__('<h')
 
-    def to_stream(self, file: BinaryIO, value):
-        return super().to_stream(file, int(value))
+    def encode(self, file: BinaryIO, value):
+        return super().encode(file, int(value))
 
 
 class VMSInteger4(VMSPythonStructEncoding):
@@ -156,8 +156,8 @@ class VMSInteger4(VMSPythonStructEncoding):
     def __init__(self) -> None:
         super().__init__('<i')
 
-    def to_stream(self, file: BinaryIO, value):
-        return super().to_stream(file, int(value))
+    def encode(self, file: BinaryIO, value):
+        return super().encode(file, int(value))
 
 
 class VMSReal4BigEndian(VMSPythonStructEncoding):
@@ -166,8 +166,8 @@ class VMSReal4BigEndian(VMSPythonStructEncoding):
     def __init__(self) -> None:
         super().__init__('>f')
 
-    def to_stream(self, file: BinaryIO, value):
-        return super().to_stream(file, float(value))
+    def encode(self, file: BinaryIO, value):
+        return super().encode(file, float(value))
 
 
 class VMSReal4(VMSEncoding):
@@ -176,7 +176,7 @@ class VMSReal4(VMSEncoding):
     def sizeof(self, value=None):
         return 4
 
-    def to_stream(self, file: BinaryIO, value):
+    def encode(self, file: BinaryIO, value):
         float_value_big_endian = pack('>f', float(value))
         # we need to force bit 24 to be a 1 before encoding as a mid-endian float
         float_value_big_endian = pack('>l', unpack('>l', float_value_big_endian)[0] + 2 ** 24)
