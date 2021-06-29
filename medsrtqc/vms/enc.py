@@ -70,7 +70,10 @@ class ArrayOf(Encoding):
         self._max_length = max_length
 
     def sizeof(self, value):
-        return self._encoding.sizeof() * len(value)
+        size = 0
+        for item in value:
+            size += self._encoding.sizeof(item)
+        return size
 
     def decode(self, file: BinaryIO, value=None) -> list:
         # If we don't know how many to expect, read until
@@ -150,7 +153,7 @@ class PythonStructEncoding(Encoding):
     def __init__(self, format) -> None:
         self._format = format
 
-    def sizeof(self):
+    def sizeof(self, value=None):
         return calcsize(self._format)
 
     def decode(self, file: BinaryIO):

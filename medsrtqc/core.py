@@ -33,7 +33,7 @@ class Profile:  # pragma: no cover
             yield self[k]
 
 
-class ProfileList:
+class ProfileList:  # pragma: no cover
     """
     An abstract base class for a collection of Profile objects
     measured in the same location but not necessarily at the same

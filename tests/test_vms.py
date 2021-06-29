@@ -1,7 +1,10 @@
 
+from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList
 import unittest
+import os
 from io import BytesIO
 import medsrtqc.vms.enc as enc
+import medsrtqc.vms.read as read
 
 class TestEncoding(unittest.TestCase):
 
@@ -78,6 +81,32 @@ class TestEncoding(unittest.TestCase):
         f.encode(file, 99.9999008178711)
         self.assertEqual(file.getvalue(), b'\xc7C\xf3\xff')
         self.assertEqual(f.decode(BytesIO(b'\xc7C\xf3\xff')), 99.9999008178711)
+
+
+class TestVMSRead(unittest.TestCase):
+
+    def test_read(self):
+        this_dir = os.path.dirname(__file__)
+        test_file = os.path.join(this_dir, 'test-data', 'BINARY_VMS.DAT')
+
+        profiles = read.read_vms_profiles(test_file)
+        self.assertEqual(len(profiles), 2)
+        self.assertIsInstance(profiles, VMSProfileList)
+
+        profile_count = 0
+        for profile in profiles:
+            self.assertIsInstance(profile, VMSProfile)
+            profile_count += 1
+
+        self.assertEqual(profile_count, len(profiles))
+        self.assertEqual(profiles.meta(), {})
+
+        with open(test_file, 'rb') as f:
+            self.assertEqual(profiles._data, read.read_vms_profiles(f)._data)
+
+        size_calc = read._file_encoding.sizeof(profiles._data)
+        with open(test_file, 'rb') as f:
+            self.assertEqual(size_calc, len(f.read()))
 
 
 if __name__ == '__main__':

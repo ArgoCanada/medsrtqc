@@ -12,12 +12,12 @@ def read_vms_profiles(src):
     Read a binary VMS file into a ProfileList.
     """
 
-    data = []
+    data = None
     if isinstance(src, str):
         with open(src, 'rb') as f:
-            _file_encoding.decode(f, data)
+            data = _file_encoding.decode(f)
     elif hasattr(src, 'read'):
-        _file_encoding.decode(src, data)
+        data = _file_encoding.decode(src)
     else:
         raise TypeError("Can't interpret `src` as a file or file-like object")
 
