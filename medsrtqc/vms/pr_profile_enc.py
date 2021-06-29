@@ -46,8 +46,8 @@ class VMSPrProfileField(VMSStructEncoding):
 
     def sizeof(self, value):
         n_prof = value['FXD']['NO_DEPTHS']
-        size_fxd = self._fields['FXD'].sizeof()
-        size_prof = self._fields['PROF'].sizeof([None] * n_prof)
+        size_fxd = self._encodings['FXD'].sizeof()
+        size_prof = self._encodings['PROF'].sizeof([None] * n_prof)
         return size_fxd + size_prof
 
     def decode(self, file: BinaryIO, value=None):
@@ -55,10 +55,10 @@ class VMSPrProfileField(VMSStructEncoding):
             value = OrderedDict()
 
         value['FXD'] = OrderedDict()
-        self._fields['FXD'].decode(file, value['FXD'])
+        self._encodings['FXD'].decode(file, value['FXD'])
 
         n_prof = value['FXD']['NO_DEPTHS']
         value['PROF'] = [None] * n_prof
-        self._fields['PROF'].decode(file, value['PROF'])
+        self._encodings['PROF'].decode(file, value['PROF'])
 
         return value

@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 
 class VMSEncoding:
-    """A base class for binary encoding and decoding of field values"""
+    """A base class for binary encoding and decoding values"""
 
     def sizeof(self, value=None):
         """The size of the Encoding in bytes"""
@@ -66,31 +66,31 @@ class VMSArrayOf(VMSEncoding):
     """An array of some other encoding"""
 
     def __init__(self, Encoding: VMSEncoding, max_length) -> None:
-        self._Encoding = Encoding
+        self._encoding = Encoding
         self._max_length = max_length
 
     def sizeof(self, value):
-        return self._Encoding.sizeof() * len(value)
+        return self._encoding.sizeof() * len(value)
 
     def decode(self, file: BinaryIO, value: list) -> list:
         for i in range(len(value)):
-            value[i] = self._Encoding.decode(file)
+            value[i] = self._encoding.decode(file)
         return value
 
     def encode(self, file: BinaryIO, value: Iterable):
         if (len(value) > self._max_length):
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
-            self._Encoding.encode(file, item)
+            self._encoding.encode(file, item)
 
 
 class VMSStructEncoding(VMSEncoding):
     """A struct containing named values of other encodings"""
 
-    def __init__(self, *Encodings) -> None:
-        self._Encodings = OrderedDict()
+    def __init__(self, *encodings) -> None:
+        self._encodings = OrderedDict()
         n_pad = 0
-        for item in Encodings:
+        for item in encodings:
             if isinstance(item, VMSPadding):
                 name = '__vms_padding_' + str(n_pad)
                 Encoding = item
@@ -98,15 +98,15 @@ class VMSStructEncoding(VMSEncoding):
             else:
                 name, Encoding = item
 
-            self._Encodings[name] = Encoding
+            self._encodings[name] = Encoding
 
     def sizeof(self, value=None):
-        return sum(Encoding.sizeof() for Encoding in self._Encodings.values())
+        return sum(Encoding.sizeof() for Encoding in self._encodings.values())
 
     def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
-        for name, Encoding in self._Encodings.items():
+        for name, Encoding in self._encodings.items():
             if isinstance(Encoding, VMSPadding):
                 Encoding.decode(file)
             else:
@@ -114,7 +114,7 @@ class VMSStructEncoding(VMSEncoding):
         return value
 
     def encode(self, file: BinaryIO, value):
-        for name, Encoding in self._Encodings.items():
+        for name, Encoding in self._encodings.items():
             if name in value:
                 Encoding.encode(file, value[name])
             else:

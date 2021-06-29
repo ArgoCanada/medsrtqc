@@ -109,11 +109,11 @@ class VMSPrStnField(VMSStructEncoding):
         n_history = value['FXD']['NUM_HISTS']
 
         list1 = [None]
-        size_fxd = self._fields['FXD'].sizeof()
-        size_prof = self._fields['PROF'].sizeof(list1 * n_prof)
-        size_surface = self._fields['SURFACE'].sizeof(list1 * n_surface)
-        size_surf_codes = self._fields['SURF_CODES'].sizeof(list1 * n_surf_codes)
-        size_history = self._fields['HISTORY'].sizeof(list1 * n_history)
+        size_fxd = self._encodings['FXD'].sizeof()
+        size_prof = self._encodings['PROF'].sizeof(list1 * n_prof)
+        size_surface = self._encodings['SURFACE'].sizeof(list1 * n_surface)
+        size_surf_codes = self._encodings['SURF_CODES'].sizeof(list1 * n_surf_codes)
+        size_history = self._encodings['HISTORY'].sizeof(list1 * n_history)
 
         return size_fxd + size_prof + size_surface + size_surf_codes + size_history
 
@@ -122,7 +122,7 @@ class VMSPrStnField(VMSStructEncoding):
             value = OrderedDict()
 
         value['FXD'] = OrderedDict()
-        self._fields['FXD'].decode(file, value['FXD'])
+        self._encodings['FXD'].decode(file, value['FXD'])
 
         n_prof = value['FXD']['NO_PROF']
         n_surface = value['FXD']['NPARMS']
@@ -135,9 +135,9 @@ class VMSPrStnField(VMSStructEncoding):
         value['SURF_CODES'] = list1 * n_surf_codes
         value['HISTORY'] = list1 * n_history
 
-        self._fields['PROF'].decode(file, value['PROF'])
-        self._fields['SURFACE'].decode(file, value['SURFACE'])
-        self._fields['SURF_CODES'].decode(file, value['SURF_CODES'])
-        self._fields['HISTORY'].decode(file, value['HISTORY'])
+        self._encodings['PROF'].decode(file, value['PROF'])
+        self._encodings['SURFACE'].decode(file, value['SURFACE'])
+        self._encodings['SURF_CODES'].decode(file, value['SURF_CODES'])
+        self._encodings['HISTORY'].decode(file, value['HISTORY'])
 
         return value
