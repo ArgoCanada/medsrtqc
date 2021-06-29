@@ -5,3 +5,5 @@ __pycache__
 .vscode
 .coverage
 .pytest_cache
+_docs
+README.rst
