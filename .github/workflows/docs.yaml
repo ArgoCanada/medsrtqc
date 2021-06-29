@@ -29,3 +29,19 @@ jobs:
         run: |
           python -m jupyter nbconvert README.ipynb --execute --to rst --output README.rst
           sphinx-build docs _docs
+
+      - name: Clone gh-pages branch
+        if: success() && (github.ref == 'refs/heads/master')
+        uses: actions/checkout@master
+        with:
+          ref: gh-pages
+          path: pages-clone
+      
+      - name: Update documentation
+        if: success() && (github.ref == 'refs/heads/master')
+        run: |
+          cd pages-clone
+          git rm -rf .
+          cp -a ../_docs/ ./
+          git add *
+          git commit -m"update documentation"
