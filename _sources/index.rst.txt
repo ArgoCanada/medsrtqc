@@ -1,7 +1,4 @@
 
-Welcome to MEDS Realtime QC's documentation!
-============================================
-
 .. include:: ../README.rst
 
 .. toctree::

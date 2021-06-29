@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Welcome to MEDS Realtime QC’s documentation!" href="index.html" /> 
+    <link rel="prev" title="medsrtqc" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -156,8 +156,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-medsrtqc.vms.field">
-<span id="low-level-vms-io"></span><h1>Low-level VMS IO<a class="headerlink" href="#module-medsrtqc.vms.field" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-medsrtqc.vms.enc">
+<span id="low-level-vms-io"></span><h1>Low-level VMS IO<a class="headerlink" href="#module-medsrtqc.vms.enc" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Encoding</span></span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base class for binary encoding and decoding values</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from a file object and return a Python object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode a Python object and send it to a file object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding.sizeof">
+<span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding.sizeof" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size of the Encoding in bytes</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -166,7 +190,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to MEDS Realtime QC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="medsrtqc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
