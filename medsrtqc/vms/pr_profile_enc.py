@@ -2,7 +2,7 @@
 from .enc import *
 
 
-class VMSPrProfileFxdField(VMSStructEncoding):
+class VMSPrProfileFxdEncoding(VMSStructEncoding):
     """The encoding strategy for a PR_PROFILE/FXD structure"""
 
     def __init__(self) -> None:
@@ -23,7 +23,7 @@ class VMSPrProfileFxdField(VMSStructEncoding):
         )
 
 
-class VMSPrProfileProfField(VMSStructEncoding):
+class VMSPrProfileProfEncoding(VMSStructEncoding):
     """The encoding strategy for the PR_PROFILE/PROF structure"""
 
     def __init__(self) -> None:
@@ -35,13 +35,13 @@ class VMSPrProfileProfField(VMSStructEncoding):
         )
 
 
-class VMSPrProfileField(VMSStructEncoding):
+class VMSPrProfileEncoding(VMSStructEncoding):
     """The encoding strategy for the PR_PROFILE structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('FXD', VMSPrProfileFxdField()),
-            ('PROF', VMSArrayOf(VMSPrProfileProfField(), max_length=1500))
+            ('FXD', VMSPrProfileFxdEncoding()),
+            ('PROF', VMSArrayOf(VMSPrProfileProfEncoding(), max_length=1500))
         )
 
     def sizeof(self, value):

@@ -2,7 +2,7 @@
 from .enc import *
 
 
-class VMSPrStnFxdField(VMSStructEncoding):
+class VMSPrStnFxdEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/FXD structure"""
 
     def __init__(self) -> None:
@@ -38,7 +38,7 @@ class VMSPrStnFxdField(VMSStructEncoding):
         )
 
 
-class VMSPrStnProfField(VMSStructEncoding):
+class VMSPrStnProfEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
 
     def __init__(self) -> None:
@@ -52,7 +52,7 @@ class VMSPrStnProfField(VMSStructEncoding):
         )
 
 
-class VMSPrStnSurfaceField(VMSStructEncoding):
+class VMSPrStnSurfaceEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
     def __init__(self) -> None:
@@ -63,7 +63,7 @@ class VMSPrStnSurfaceField(VMSStructEncoding):
         )
 
 
-class VMSPrStnSurfCodesField(VMSStructEncoding):
+class VMSPrStnSurfCodesEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
     def __init__(self) -> None:
@@ -74,7 +74,7 @@ class VMSPrStnSurfCodesField(VMSStructEncoding):
         )
 
 
-class VMSPrStnHistoryField(VMSStructEncoding):
+class VMSPrStnHistoryEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/HISTORY structure"""
 
     def __init__(self) -> None:
@@ -90,16 +90,16 @@ class VMSPrStnHistoryField(VMSStructEncoding):
         )
 
 
-class VMSPrStnField(VMSStructEncoding):
+class VMSPrStnEncoding(VMSStructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('FXD', VMSPrStnFxdField()),
-            ('PROF', VMSArrayOf(VMSPrStnProfField(), max_length=20)),
-            ('SURFACE', VMSArrayOf(VMSPrStnSurfaceField(), max_length=20)),
-            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodesField(), max_length=20)),
-            ('HISTORY', VMSArrayOf(VMSPrStnHistoryField(), max_length=100))
+            ('FXD', VMSPrStnFxdEncoding()),
+            ('PROF', VMSArrayOf(VMSPrStnProfEncoding(), max_length=20)),
+            ('SURFACE', VMSArrayOf(VMSPrStnSurfaceEncoding(), max_length=20)),
+            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodesEncoding(), max_length=20)),
+            ('HISTORY', VMSArrayOf(VMSPrStnHistoryEncoding(), max_length=100))
         )
 
     def sizeof(self, value):
