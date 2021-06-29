@@ -31,7 +31,10 @@ class TestVMSEncoding(unittest.TestCase):
         file = BytesIO()
         f.encode(file, {'name1': 'abc', 'name2': 'abcd'})
         self.assertEqual(file.getvalue(), b'abc\x00abcd')
-        self.assertEqual(f.decode(BytesIO(b'abc\x00abcd')), {'name1': 'abc', 'name2': 'abcd'})
+        self.assertEqual(
+            f.decode(BytesIO(b'abc\x00abcd')),
+            {'name1': 'abc', 'name2': 'abcd'}
+        )
 
     def test_array(self):
         f = enc.VMSArrayOf(enc.VMSCharacter(5), max_length=10)
