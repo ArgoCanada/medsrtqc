@@ -1,12 +1,12 @@
 
 import unittest
 from io import BytesIO
-import medsrtqc.vms.field as field
+import medsrtqc.vms.enc as enc
 
 class TestVMSField(unittest.TestCase):
 
     def test_padding(self):
-        f = field.VMSPadding(3)
+        f = enc.VMSPadding(3)
         self.assertEqual(f.n_bytes(), 3)
         file = BytesIO()
         f.to_stream(file, None)
@@ -14,7 +14,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'\x00\x00\x00')), None)
 
     def test_character(self):
-        f = field.VMSCharacter(5)
+        f = enc.VMSCharacter(5)
         self.assertEqual(f.n_bytes(), 5)
         file = BytesIO()
         f.to_stream(file, 'abcd')
@@ -22,10 +22,10 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abcd ')), 'abcd')
 
     def test_struct(self):
-        f = field.VMSStructField(
-            ('name1', field.VMSCharacter(3)),
-            field.VMSPadding(1),
-            ('name2', field.VMSCharacter(4))
+        f = enc.VMSStructField(
+            ('name1', enc.VMSCharacter(3)),
+            enc.VMSPadding(1),
+            ('name2', enc.VMSCharacter(4))
         )
         self.assertEqual(f.n_bytes(), 8)
         file = BytesIO()
@@ -34,7 +34,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abc\x00abcd')), {'name1': 'abc', 'name2': 'abcd'})
 
     def test_array(self):
-        f = field.VMSArrayOf(field.VMSCharacter(5), max_length=10)
+        f = enc.VMSArrayOf(enc.VMSCharacter(5), max_length=10)
         self.assertEqual(f.n_bytes([None]), 5)
         file = BytesIO()
         f.to_stream(file, ['abcd'])
@@ -42,7 +42,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abcd '), [None]), ['abcd'])
 
     def test_python_struct(self):
-        f = field.VMSPythonStructField('>h')
+        f = enc.VMSPythonStructField('>h')
         self.assertEqual(f.n_bytes(), 2)
         file = BytesIO()
         f.to_stream(file, 16)
@@ -50,7 +50,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'\x00\x10')), 16)
 
     def test_integer2(self):
-        f = field.VMSInteger2()
+        f = enc.VMSInteger2()
         self.assertEqual(f.n_bytes(), 2)
         file = BytesIO()
         f.to_stream(file, 16)
@@ -58,7 +58,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'\x10\x00')), 16)
 
     def test_integer4(self):
-        f = field.VMSInteger4()
+        f = enc.VMSInteger4()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
         f.to_stream(file, 16)
@@ -66,7 +66,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'\x10\x00\x00\x00')), 16)
 
     def test_real4_big_endian(self):
-        f = field.VMSReal4BigEndian()
+        f = enc.VMSReal4BigEndian()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
         f.to_stream(file, 1)
@@ -74,7 +74,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'\x3f\x80\x00\x00')), 1)
 
     def test_real4(self):
-        f = field.VMSReal4()
+        f = enc.VMSReal4()
         self.assertEqual(f.n_bytes(), 4)
         file = BytesIO()
         f.to_stream(file, 99.9999008178711)

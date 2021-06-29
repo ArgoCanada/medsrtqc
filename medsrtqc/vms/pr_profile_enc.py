@@ -1,5 +1,5 @@
 
-from .field import *
+from .enc import *
 
 
 class VMSPrProfileFxdField(VMSStructField):
