@@ -46,12 +46,6 @@ class PrProfileEncoding(enc.StructEncoding):
             ('PROF', enc.ArrayOf(PrProfileProfEncoding(), max_length=1500))
         )
 
-    def sizeof(self, value):
-        n_prof = value['FXD']['NO_DEPTHS']
-        size_fxd = self._encodings['FXD'].sizeof()
-        size_prof = self._encodings['PROF'].sizeof([None] * n_prof)
-        return size_fxd + size_prof
-
     def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()

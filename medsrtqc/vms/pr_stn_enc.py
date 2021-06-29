@@ -104,21 +104,6 @@ class PrStnEncoding(enc.StructEncoding):
             ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(), max_length=100))
         )
 
-    def sizeof(self, value):
-        n_prof = value['FXD']['NO_PROF']
-        n_surface = value['FXD']['NPARMS']
-        n_surf_codes = value['FXD']['SPARMS']
-        n_history = value['FXD']['NUM_HISTS']
-
-        list1 = [None]
-        size_fxd = self._encodings['FXD'].sizeof()
-        size_prof = self._encodings['PROF'].sizeof(list1 * n_prof)
-        size_surface = self._encodings['SURFACE'].sizeof(list1 * n_surface)
-        size_surf_codes = self._encodings['SURF_CODES'].sizeof(list1 * n_surf_codes)
-        size_history = self._encodings['HISTORY'].sizeof(list1 * n_history)
-
-        return size_fxd + size_prof + size_surface + size_surf_codes + size_history
-
     def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()

@@ -65,20 +65,34 @@ class Character(Encoding):
 class ArrayOf(Encoding):
     """An array of some other encoding"""
 
-    def __init__(self, Encoding: Encoding, max_length) -> None:
+    def __init__(self, Encoding: Encoding, max_length=None) -> None:
         self._encoding = Encoding
         self._max_length = max_length
 
     def sizeof(self, value):
         return self._encoding.sizeof() * len(value)
 
-    def decode(self, file: BinaryIO, value: list) -> list:
-        for i in range(len(value)):
-            value[i] = self._encoding.decode(file)
+    def decode(self, file: BinaryIO, value=None) -> list:
+        # If we don't know how many to expect, read until
+        # the end of the file. This requires that `file`
+        # is seekable which should not be a problem in practice
+        if value is None:
+            value = []
+            peek1 = b'\x00'
+            while len(peek1) > 0:
+                value.append(self._encoding.decode(file))
+                current_loc = file.tell()
+                peek1 = file.read(1)
+                file.seek(current_loc)
+        else:
+            # if we know exactly how may to expect, read that
+            for i in range(len(value)):
+                value[i] = self._encoding.decode(file)
+
         return value
 
     def encode(self, file: BinaryIO, value: Iterable):
-        if (len(value) > self._max_length):
+        if self._max_length is not None and len(value) > self._max_length:
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
             self._encoding.encode(file, item)
@@ -93,24 +107,30 @@ class StructEncoding(Encoding):
         for item in encodings:
             if isinstance(item, Padding):
                 name = '___padding_' + str(n_pad)
-                Encoding = item
+                encoding = item
                 n_pad += 1
             else:
-                name, Encoding = item
+                name, encoding = item
 
-            self._encodings[name] = Encoding
+            self._encodings[name] = encoding
 
     def sizeof(self, value=None):
-        return sum(Encoding.sizeof() for Encoding in self._encodings.values())
+        if value is None:
+            value = {key: None for key in self._encodings.keys()}
+
+        size = 0
+        for key in self._encodings.keys():
+            size += self._encodings[key].sizeof(value[key])
+        return size
 
     def decode(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
-        for name, Encoding in self._encodings.items():
-            if isinstance(Encoding, Padding):
-                Encoding.decode(file)
+        for name, encoding in self._encodings.items():
+            if isinstance(encoding, Padding):
+                encoding.decode(file)
             else:
-                value[name] = Encoding.decode(file)
+                value[name] = encoding.decode(file)
         return value
 
     def encode(self, file: BinaryIO, value):
