@@ -160,16 +160,6 @@ class VMSInteger4(VMSPythonStructEncoding):
         return super().encode(file, int(value))
 
 
-class VMSReal4BigEndian(VMSPythonStructEncoding):
-    """A 32-bit big-endian float value"""
-
-    def __init__(self) -> None:
-        super().__init__('>f')
-
-    def encode(self, file: BinaryIO, value):
-        return super().encode(file, float(value))
-
-
 class VMSReal4(VMSEncoding):
     """A 32-bit middle-endian VAX/VMS-encoded float value"""
 

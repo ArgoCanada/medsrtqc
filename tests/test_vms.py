@@ -65,14 +65,6 @@ class TestVMSEncoding(unittest.TestCase):
         self.assertEqual(file.getvalue(), b'\x10\x00\x00\x00')
         self.assertEqual(f.decode(BytesIO(b'\x10\x00\x00\x00')), 16)
 
-    def test_real4_big_endian(self):
-        f = enc.VMSReal4BigEndian()
-        self.assertEqual(f.sizeof(), 4)
-        file = BytesIO()
-        f.encode(file, 1)
-        self.assertEqual(file.getvalue(), b'\x3f\x80\x00\x00')
-        self.assertEqual(f.decode(BytesIO(b'\x3f\x80\x00\x00')), 1)
-
     def test_real4(self):
         f = enc.VMSReal4()
         self.assertEqual(f.sizeof(), 4)
