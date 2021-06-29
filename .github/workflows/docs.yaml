@@ -1,0 +1,35 @@
+name: Build documentation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  docs:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get install pandoc
+          python -m pip install --upgrade pip
+          pip install gsw numpy Sphinix jupyter myst-parser sphix-rtd-theme
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Build documentation
+        run: |
+          python -m jupyter nbconvert README.ipynb --execute --to rst --output README.rst
+          sphinx-build docs _docs
+s
