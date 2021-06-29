@@ -1,5 +1,5 @@
 
-from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList
+from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList, Trace
 import unittest
 import os
 from io import BytesIO
@@ -97,10 +97,12 @@ class TestVMSRead(unittest.TestCase):
         profile_count = 0
         for profile in profiles:
             self.assertIsInstance(profile, VMSProfile)
+            for name, trace in profile.items():
+                self.assertIsInstance(name, str)
+                self.assertIsInstance(trace, Trace)
             profile_count += 1
 
         self.assertEqual(profile_count, len(profiles))
-        self.assertEqual(profiles.meta(), {})
 
         with open(test_file, 'rb') as f:
             self.assertEqual(profiles._data, read.read_vms_profiles(f)._data)

@@ -1,36 +1,50 @@
 
 from typing import Iterable, Dict, Any, Tuple
 from numpy.ma import MaskedArray
+from numpy.ma.core import make_mask
 
 
-class Profile:  # pragma: no cover
+class Trace:
     """
-    An abstract base class for a Profile. An Argo
-    profile NetCDF file is composed of one or more Profiles,
-    described along the N_PROF dimension.
-    For floats with sensors that sample at differing rates
-    there will be more than one Profile for each cycle. These
-    objects are dict-like where variables are accessed via [].
-    Metadata variables are available via .meta() and are a
-    dictionary of masked arrays of length 1 to facilitate encoding
-    these values along the N_PROF NetCDF dimension.
+    Trace objects are a simple representation of a value measured along
+    a pressure axis. Both `pres` and `value` should be one-dimensional
+    numpy MaskedArray objects.
     """
 
-    def keys(self) -> Iterable[str]:
+    def __init__(self, pres: MaskedArray, value: MaskedArray,
+                 value_qc=None, adjusted=None, adjusted_error=None,
+                 adjusted_qc=None) -> None:
+        self.pres = pres
+        self.value = value
+        self.value_qc = value_qc
+        self.adjusted = adjusted
+        self.adjusted_error = adjusted_error
+        self.adjusted_qc = adjusted_qc
+
+
+class Profile:
+    """
+    An abstract base class for a Profile. A Profile is 
+    dict-like with each element as a Trace, allowing
+    profile objects to accomodate all parameters collected
+    during an ascent regardless of sampling frequency.
+    """
+
+    def keys(self) -> Iterable[str]:  # pragma: no cover
         raise NotImplementedError()
 
-    def __getitem__(self, k) -> MaskedArray:
+    def __getitem__(self, k) -> Trace:  # pragma: no cover
         raise NotImplementedError()
 
-    def meta(self) -> Dict[str, MaskedArray]:
+    def meta(self) -> Dict[str, Trace]:  # pragma: no cover
         raise NotImplementedError()
 
     def __in__(self, k) -> bool:
         return k in self.keys()
 
-    def items(self) -> Iterable[Tuple[str, MaskedArray]]:
+    def items(self) -> Iterable[Tuple[str, Trace]]:
         for k in self.keys():
-            yield self[k]
+            yield k, self[k]
 
 
 class ProfileList:  # pragma: no cover
