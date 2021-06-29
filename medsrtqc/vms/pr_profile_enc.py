@@ -1,47 +1,49 @@
 
-from .enc import *
+from collections import OrderedDict
+from typing import BinaryIO
+from . import enc
 
 
-class PrProfileFxdEncoding(StructEncoding):
+class PrProfileFxdEncoding(enc.StructEncoding):
     """The encoding strategy for a PR_PROFILE/FXD structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('MKEY', Character(8)),
-            ('ONE_DEG_SQ', Integer4()),
-            ('CR_NUMBER', Character(10)),
-            ('OBS_YEAR', Character(4)),
-            ('OBS_MONTH', Character(2)),
-            ('OBS_DAY', Character(2)),
-            ('OBS_TIME', Character(4)),
-            ('DATA_TYPE', Character(2)),
-            ('IUMSGNO', Integer4()),
-            ('PROF_TYPE', Character(4)),
-            ('PROFILE_SEG', Character(2)),
-            ('NO_DEPTHS', Integer2()),
-            ('D_P_CODE', Character(1))
+            ('MKEY', enc.Character(8)),
+            ('ONE_DEG_SQ', enc.Integer4()),
+            ('CR_NUMBER', enc.Character(10)),
+            ('OBS_YEAR', enc.Character(4)),
+            ('OBS_MONTH', enc.Character(2)),
+            ('OBS_DAY', enc.Character(2)),
+            ('OBS_TIME', enc.Character(4)),
+            ('DATA_TYPE', enc.Character(2)),
+            ('IUMSGNO', enc.Integer4()),
+            ('PROF_TYPE', enc.Character(4)),
+            ('PROFILE_SEG', enc.Character(2)),
+            ('NO_DEPTHS', enc.Integer2()),
+            ('D_P_CODE', enc.Character(1))
         )
 
 
-class PrProfileProfEncoding(StructEncoding):
+class PrProfileProfEncoding(enc.StructEncoding):
     """The encoding strategy for the PR_PROFILE/PROF structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('DEPTH_PRESS', Real4()),
-            ('DP_FLAG', Character(1)),
-            ('PARM', Real4()),
-            ('Q_PARM', Character(1))
+            ('DEPTH_PRESS', enc.Real4()),
+            ('DP_FLAG', enc.Character(1)),
+            ('PARM', enc.Real4()),
+            ('Q_PARM', enc.Character(1))
         )
 
 
-class PrProfileEncoding(StructEncoding):
+class PrProfileEncoding(enc.StructEncoding):
     """The encoding strategy for the PR_PROFILE structure"""
 
     def __init__(self) -> None:
         super().__init__(
             ('FXD', PrProfileFxdEncoding()),
-            ('PROF', ArrayOf(PrProfileProfEncoding(), max_length=1500))
+            ('PROF', enc.ArrayOf(PrProfileProfEncoding(), max_length=1500))
         )
 
     def sizeof(self, value):

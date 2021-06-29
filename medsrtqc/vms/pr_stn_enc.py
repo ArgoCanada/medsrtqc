@@ -1,105 +1,107 @@
 
-from .enc import *
+from collections import OrderedDict
+from typing import BinaryIO
+from . import enc
 
 
-class PrStnFxdEncoding(StructEncoding):
+class PrStnFxdEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/FXD structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('MKEY', Character(8)),
-            ('ONE_DEG_SQ', Integer4()),
-            ('CR_NUMBER', Character(10)),
-            ('OBS_YEAR', Character(4)),
-            ('OBS_MONTH', Character(2)),
-            ('OBS_DAY', Character(2)),
-            ('OBS_TIME', Character(4)),
-            ('DATA_TYPE', Character(2)),
-            ('IUMSGNO', Integer4()),
-            ('STREAM_SOURCE', Character(1)),
-            ('U_FLAG', Character(1)),
-            ('STN_NUMBER', Integer2()),
-            ('LATITUDE', Real4()),
-            ('LONGITUDE', Real4()),
-            ('Q_POS', Character(1)),
-            ('Q_DATE_TIME', Character(1)),
-            ('Q_RECORD', Character(1)),
-            ('UP_DATE', Character(8)),
-            ('BUL_TIME', Character(12)),
-            ('BUL_HEADER', Character(6)),
-            ('SOURCE_ID', Character(4)),
-            ('STREAM_IDENT', Character(4)),
-            ('QC_VERSION', Character(4)),
-            ('AVAIL', Character(1)),
-            ('NO_PROF', Integer2()),
-            ('NPARMS', Integer2()),
-            ('SPARMS', Integer2()),
-            ('NUM_HISTS', Integer2())
+            ('MKEY', enc.Character(8)),
+            ('ONE_DEG_SQ', enc.Integer4()),
+            ('CR_NUMBER', enc.Character(10)),
+            ('OBS_YEAR', enc.Character(4)),
+            ('OBS_MONTH', enc.Character(2)),
+            ('OBS_DAY', enc.Character(2)),
+            ('OBS_TIME', enc.Character(4)),
+            ('DATA_TYPE', enc.Character(2)),
+            ('IUMSGNO', enc.Integer4()),
+            ('STREAM_SOURCE', enc.Character(1)),
+            ('U_FLAG', enc.Character(1)),
+            ('STN_NUMBER', enc.Integer2()),
+            ('LATITUDE', enc.Real4()),
+            ('LONGITUDE', enc.Real4()),
+            ('Q_POS', enc.Character(1)),
+            ('Q_DATE_TIME', enc.Character(1)),
+            ('Q_RECORD', enc.Character(1)),
+            ('UP_DATE', enc.Character(8)),
+            ('BUL_TIME', enc.Character(12)),
+            ('BUL_HEADER', enc.Character(6)),
+            ('SOURCE_ID', enc.Character(4)),
+            ('STREAM_IDENT', enc.Character(4)),
+            ('QC_VERSION', enc.Character(4)),
+            ('AVAIL', enc.Character(1)),
+            ('NO_PROF', enc.Integer2()),
+            ('NPARMS', enc.Integer2()),
+            ('SPARMS', enc.Integer2()),
+            ('NUM_HISTS', enc.Integer2())
         )
 
 
-class PrStnProfEncoding(StructEncoding):
+class PrStnProfEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('NO_SEG', Integer2()),
-            ('PROF_TYPE', Character(4)),
-            ('DUP_FLAG', Character(1)),
-            ('DIGIT_CODE', Character(1)),
-            ('STANDARD', Character(1)),
-            ('DEEP_DEPTH', Real4())
+            ('NO_SEG', enc.Integer2()),
+            ('PROF_TYPE', enc.Character(4)),
+            ('DUP_FLAG', enc.Character(1)),
+            ('DIGIT_CODE', enc.Character(1)),
+            ('STANDARD', enc.Character(1)),
+            ('DEEP_DEPTH', enc.Real4())
         )
 
 
-class PrStnSurfaceEncoding(StructEncoding):
+class PrStnSurfaceEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', Character(4)),
-            ('PARM', Real4()),
-            ('Q_PARM', Character(1))
+            ('PCODE', enc.Character(4)),
+            ('PARM', enc.Real4()),
+            ('Q_PARM', enc.Character(1))
         )
 
 
-class PrStnSurfCodesEncoding(StructEncoding):
+class PrStnSurfCodesEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', Character(4)),
-            ('CPARM', Character(10)),
-            ('Q_PARM', Character(1))
+            ('PCODE', enc.Character(4)),
+            ('CPARM', enc.Character(10)),
+            ('Q_PARM', enc.Character(1))
         )
 
 
-class PrStnHistoryEncoding(StructEncoding):
+class PrStnHistoryEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/HISTORY structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('IDENT_CODE', Character(2)),
-            ('PRC_CODE', Character(4)),
-            ('VERSION', Character(4)),
-            ('PRC_DATE', Integer4()),
-            ('ACT_CODE', Character(2)),
-            ('ACT_PARM', Character(4)),
-            ('AUX_ID', Real4()),
-            ('O_VALUE', Real4())
+            ('IDENT_CODE', enc.Character(2)),
+            ('PRC_CODE', enc.Character(4)),
+            ('VERSION', enc.Character(4)),
+            ('PRC_DATE', enc.Integer4()),
+            ('ACT_CODE', enc.Character(2)),
+            ('ACT_PARM', enc.Character(4)),
+            ('AUX_ID', enc.Real4()),
+            ('O_VALUE', enc.Real4())
         )
 
 
-class PrStnEncoding(StructEncoding):
+class PrStnEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self) -> None:
         super().__init__(
             ('FXD', PrStnFxdEncoding()),
-            ('PROF', ArrayOf(PrStnProfEncoding(), max_length=20)),
-            ('SURFACE', ArrayOf(PrStnSurfaceEncoding(), max_length=20)),
-            ('SURF_CODES', ArrayOf(PrStnSurfCodesEncoding(), max_length=20)),
-            ('HISTORY', ArrayOf(PrStnHistoryEncoding(), max_length=100))
+            ('PROF', enc.ArrayOf(PrStnProfEncoding(), max_length=20)),
+            ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(), max_length=20)),
+            ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(), max_length=20)),
+            ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(), max_length=100))
         )
 
     def sizeof(self, value):
