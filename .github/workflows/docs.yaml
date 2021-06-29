@@ -41,7 +41,7 @@ jobs:
         if: success() && (github.ref == 'refs/heads/master')
         run: |
           cd pages-clone
-          touch .nojekyll
+          touch a_file
           git rm -rf .
           cp -a ../_docs/ ./
           touch .nojekyll
