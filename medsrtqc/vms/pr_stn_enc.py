@@ -2,7 +2,7 @@
 from .enc import *
 
 
-class VMSPrStnFxdField(VMSStructField):
+class VMSPrStnFxdField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/FXD structure"""
 
     def __init__(self) -> None:
@@ -38,7 +38,7 @@ class VMSPrStnFxdField(VMSStructField):
         )
 
 
-class VMSPrStnProfField(VMSStructField):
+class VMSPrStnProfField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
 
     def __init__(self) -> None:
@@ -52,7 +52,7 @@ class VMSPrStnProfField(VMSStructField):
         )
 
 
-class VMSPrStnSurfaceField(VMSStructField):
+class VMSPrStnSurfaceField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
     def __init__(self) -> None:
@@ -63,7 +63,7 @@ class VMSPrStnSurfaceField(VMSStructField):
         )
 
 
-class VMSPrStnSurfCodesField(VMSStructField):
+class VMSPrStnSurfCodesField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
     def __init__(self) -> None:
@@ -74,7 +74,7 @@ class VMSPrStnSurfCodesField(VMSStructField):
         )
 
 
-class VMSPrStnHistoryField(VMSStructField):
+class VMSPrStnHistoryField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN/HISTORY structure"""
 
     def __init__(self) -> None:
@@ -90,7 +90,7 @@ class VMSPrStnHistoryField(VMSStructField):
         )
 
 
-class VMSPrStnField(VMSStructField):
+class VMSPrStnField(VMSStructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self) -> None:

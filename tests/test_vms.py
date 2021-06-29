@@ -3,7 +3,7 @@ import unittest
 from io import BytesIO
 import medsrtqc.vms.enc as enc
 
-class TestVMSField(unittest.TestCase):
+class TestVMSEncoding(unittest.TestCase):
 
     def test_padding(self):
         f = enc.VMSPadding(3)
@@ -22,7 +22,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abcd ')), 'abcd')
 
     def test_struct(self):
-        f = enc.VMSStructField(
+        f = enc.VMSStructEncoding(
             ('name1', enc.VMSCharacter(3)),
             enc.VMSPadding(1),
             ('name2', enc.VMSCharacter(4))
@@ -42,7 +42,7 @@ class TestVMSField(unittest.TestCase):
         self.assertEqual(f.from_stream(BytesIO(b'abcd '), [None]), ['abcd'])
 
     def test_python_struct(self):
-        f = enc.VMSPythonStructField('>h')
+        f = enc.VMSPythonStructEncoding('>h')
         self.assertEqual(f.n_bytes(), 2)
         file = BytesIO()
         f.to_stream(file, 16)

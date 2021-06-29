@@ -5,11 +5,11 @@ from struct import pack, unpack, calcsize
 from collections import OrderedDict
 
 
-class VMSField:
-    """A base class for binary encoding and decoding of VMS fields"""
+class VMSEncoding:
+    """A base class for binary encoding and decoding of VMS Encodings"""
 
     def n_bytes(self, value=None):
-        """The size of the field in bytes"""
+        """The size of the Encoding in bytes"""
         raise NotImplementedError()
 
     def from_stream(self, file: BinaryIO, value=None):
@@ -21,8 +21,8 @@ class VMSField:
         raise NotImplementedError()
 
 
-class VMSPadding(VMSField):
-    """A field to explicitly encode padding bytes in structure definitions"""
+class VMSPadding(VMSEncoding):
+    """Explicitly encode padding bytes in structure definitions"""
 
     def __init__(self, length) -> None:
         self._length = length
@@ -38,8 +38,8 @@ class VMSPadding(VMSField):
         file.write(b'\x00' * self._length)
 
 
-class VMSCharacter(VMSField):
-    """A field to encode strings as fixed-length character fields"""
+class VMSCharacter(VMSEncoding):
+    """Fixed-length character encodings"""
 
     def __init__(self, length, encoding='utf-8', pad=b' '):
         self._length = length
@@ -62,68 +62,68 @@ class VMSCharacter(VMSField):
             raise ValueError(msg)
 
 
-class VMSArrayOf(VMSField):
-    """An array field containing zero or more values from another field"""
+class VMSArrayOf(VMSEncoding):
+    """An array of some other encoding"""
 
-    def __init__(self, field: VMSField, max_length) -> None:
-        self._field = field
+    def __init__(self, Encoding: VMSEncoding, max_length) -> None:
+        self._Encoding = Encoding
         self._max_length = max_length
 
     def n_bytes(self, value):
-        return self._field.n_bytes() * len(value)
+        return self._Encoding.n_bytes() * len(value)
 
     def from_stream(self, file: BinaryIO, value: list) -> list:
         for i in range(len(value)):
-            value[i] = self._field.from_stream(file)
+            value[i] = self._Encoding.from_stream(file)
         return value
 
     def to_stream(self, file: BinaryIO, value: Iterable):
         if (len(value) > self._max_length):
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
-            self._field.to_stream(file, item)
+            self._Encoding.to_stream(file, item)
 
 
-class VMSStructField(VMSField):
-    """A struct field containing named values of other field types"""
+class VMSStructEncoding(VMSEncoding):
+    """A struct containing named values of other encodings"""
 
-    def __init__(self, *fields) -> None:
-        self._fields = OrderedDict()
+    def __init__(self, *Encodings) -> None:
+        self._Encodings = OrderedDict()
         n_pad = 0
-        for item in fields:
+        for item in Encodings:
             if isinstance(item, VMSPadding):
                 name = '__vms_padding_' + str(n_pad)
-                field = item
+                Encoding = item
                 n_pad += 1
             else:
-                name, field = item
+                name, Encoding = item
 
-            self._fields[name] = field
+            self._Encodings[name] = Encoding
 
     def n_bytes(self, value=None):
-        return sum(field.n_bytes() for field in self._fields.values())
+        return sum(Encoding.n_bytes() for Encoding in self._Encodings.values())
 
     def from_stream(self, file: BinaryIO, value=None):
         if value is None:
             value = OrderedDict()
-        for name, field in self._fields.items():
-            if isinstance(field, VMSPadding):
-                field.from_stream(file)
+        for name, Encoding in self._Encodings.items():
+            if isinstance(Encoding, VMSPadding):
+                Encoding.from_stream(file)
             else:
-                value[name] = field.from_stream(file)
+                value[name] = Encoding.from_stream(file)
         return value
 
     def to_stream(self, file: BinaryIO, value):
-        for name, field in self._fields.items():
+        for name, Encoding in self._Encodings.items():
             if name in value:
-                field.to_stream(file, value[name])
+                Encoding.to_stream(file, value[name])
             else:
-                field.to_stream(file)
+                Encoding.to_stream(file)
 
 
-class VMSPythonStructField(VMSField):
+class VMSPythonStructEncoding(VMSEncoding):
     """
-    A field that encodes and decodes binary data using a Python struct
+    Encode and decode binary data using a Python struct
     module format string
     """
 
@@ -140,8 +140,8 @@ class VMSPythonStructField(VMSField):
         file.write(pack(self._format, value))
 
 
-class VMSInteger2(VMSPythonStructField):
-    """A 16-bit signed little-endian integer field"""
+class VMSInteger2(VMSPythonStructEncoding):
+    """A 16-bit signed little-endian integer encoding"""
 
     def __init__(self) -> None:
         super().__init__('<h')
@@ -150,8 +150,8 @@ class VMSInteger2(VMSPythonStructField):
         return super().to_stream(file, int(value))
 
 
-class VMSInteger4(VMSPythonStructField):
-    """A 32-bit signed little-endian integer field"""
+class VMSInteger4(VMSPythonStructEncoding):
+    """A 32-bit signed little-endian integer encoding"""
 
     def __init__(self) -> None:
         super().__init__('<i')
@@ -160,7 +160,7 @@ class VMSInteger4(VMSPythonStructField):
         return super().to_stream(file, int(value))
 
 
-class VMSReal4BigEndian(VMSPythonStructField):
+class VMSReal4BigEndian(VMSPythonStructEncoding):
     """A 32-bit big-endian float value"""
 
     def __init__(self) -> None:
@@ -170,7 +170,7 @@ class VMSReal4BigEndian(VMSPythonStructField):
         return super().to_stream(file, float(value))
 
 
-class VMSReal4(VMSField):
+class VMSReal4(VMSEncoding):
     """A 32-bit middle-endian VAX/VMS-encoded float value"""
 
     def n_bytes(self, value=None):
