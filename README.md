@@ -1,6 +1,6 @@
 # medsrtqc
 
-[![Build](https://github.com/ArgoCanada/medsrtqc/actions/workflows/build.yaml/badge.svg)](https://github.com/ArgoCanada/medsrtqc/actions/workflows/build.yaml)
+[![Check](https://github.com/ArgoCanada/medsrtqc/actions/workflows/check.yaml/badge.svg)](https://github.com/ArgoCanada/medsrtqc/actions/workflows/check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/ArgoCanada/medsrtqc/branch/master/graph/badge.svg)](https://codecov.io/gh/ArgoCanada/medsrtqc?branch=master)
 
 A possible container for MEDS real-time quality control code.
