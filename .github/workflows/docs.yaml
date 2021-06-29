@@ -46,5 +46,5 @@ jobs:
           git rm -rf .
           cp -R ../docs/_build/html/* .
           git add *
-          git commit --alow-empty -m"update documentation"
+          git commit --allow-empty -m"update documentation"
           git push
