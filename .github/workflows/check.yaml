@@ -1,4 +1,4 @@
-name: Bulid & Check Python package
+name: Check
 
 on: [push, pull_request]
 
