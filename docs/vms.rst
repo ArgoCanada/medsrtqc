@@ -3,7 +3,7 @@ Low-level VMS IO
 ============================================
 
 
-.. py:module:: medsrtqc.vms.field
+.. py:module:: medsrtqc.vms.enc
 
-.. autoclass:: VMSField
+.. autoclass:: Encoding
     :members:
