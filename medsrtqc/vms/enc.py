@@ -5,7 +5,7 @@ from struct import pack, unpack, calcsize
 from collections import OrderedDict
 
 
-class VMSEncoding:
+class Encoding:
     """A base class for binary encoding and decoding values"""
 
     def sizeof(self, value=None):
@@ -21,7 +21,7 @@ class VMSEncoding:
         raise NotImplementedError()
 
 
-class VMSPadding(VMSEncoding):
+class Padding(Encoding):
     """Explicitly encode padding bytes in structure definitions"""
 
     def __init__(self, length) -> None:
@@ -38,7 +38,7 @@ class VMSPadding(VMSEncoding):
         file.write(b'\x00' * self._length)
 
 
-class VMSCharacter(VMSEncoding):
+class Character(Encoding):
     """Fixed-length character encodings"""
 
     def __init__(self, length, encoding='utf-8', pad=b' '):
@@ -62,10 +62,10 @@ class VMSCharacter(VMSEncoding):
             raise ValueError(msg)
 
 
-class VMSArrayOf(VMSEncoding):
+class ArrayOf(Encoding):
     """An array of some other encoding"""
 
-    def __init__(self, Encoding: VMSEncoding, max_length) -> None:
+    def __init__(self, Encoding: Encoding, max_length) -> None:
         self._encoding = Encoding
         self._max_length = max_length
 
@@ -84,15 +84,15 @@ class VMSArrayOf(VMSEncoding):
             self._encoding.encode(file, item)
 
 
-class VMSStructEncoding(VMSEncoding):
+class StructEncoding(Encoding):
     """A struct containing named values of other encodings"""
 
     def __init__(self, *encodings) -> None:
         self._encodings = OrderedDict()
         n_pad = 0
         for item in encodings:
-            if isinstance(item, VMSPadding):
-                name = '__vms_padding_' + str(n_pad)
+            if isinstance(item, Padding):
+                name = '___padding_' + str(n_pad)
                 Encoding = item
                 n_pad += 1
             else:
@@ -107,7 +107,7 @@ class VMSStructEncoding(VMSEncoding):
         if value is None:
             value = OrderedDict()
         for name, Encoding in self._encodings.items():
-            if isinstance(Encoding, VMSPadding):
+            if isinstance(Encoding, Padding):
                 Encoding.decode(file)
             else:
                 value[name] = Encoding.decode(file)
@@ -121,7 +121,7 @@ class VMSStructEncoding(VMSEncoding):
                 Encoding.encode(file)
 
 
-class VMSPythonStructEncoding(VMSEncoding):
+class PythonStructEncoding(Encoding):
     """
     Encode and decode binary data using a Python struct
     module format string
@@ -140,7 +140,7 @@ class VMSPythonStructEncoding(VMSEncoding):
         file.write(pack(self._format, value))
 
 
-class VMSInteger2(VMSPythonStructEncoding):
+class Integer2(PythonStructEncoding):
     """A 16-bit signed little-endian integer encoding"""
 
     def __init__(self) -> None:
@@ -150,7 +150,7 @@ class VMSInteger2(VMSPythonStructEncoding):
         return super().encode(file, int(value))
 
 
-class VMSInteger4(VMSPythonStructEncoding):
+class Integer4(PythonStructEncoding):
     """A 32-bit signed little-endian integer encoding"""
 
     def __init__(self) -> None:
@@ -160,8 +160,8 @@ class VMSInteger4(VMSPythonStructEncoding):
         return super().encode(file, int(value))
 
 
-class VMSReal4(VMSEncoding):
-    """A 32-bit middle-endian VAX/VMS-encoded float value"""
+class Real4(Encoding):
+    """A 32-bit middle-endian VAX/-encoded float value"""
 
     def sizeof(self, value=None):
         return 4

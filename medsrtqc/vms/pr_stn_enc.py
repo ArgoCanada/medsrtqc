@@ -2,104 +2,104 @@
 from .enc import *
 
 
-class VMSPrStnFxdEncoding(VMSStructEncoding):
+class PrStnFxdEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN/FXD structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('MKEY', VMSCharacter(8)),
-            ('ONE_DEG_SQ', VMSInteger4()),
-            ('CR_NUMBER', VMSCharacter(10)),
-            ('OBS_YEAR', VMSCharacter(4)),
-            ('OBS_MONTH', VMSCharacter(2)),
-            ('OBS_DAY', VMSCharacter(2)),
-            ('OBS_TIME', VMSCharacter(4)),
-            ('DATA_TYPE', VMSCharacter(2)),
-            ('IUMSGNO', VMSInteger4()),
-            ('STREAM_SOURCE', VMSCharacter(1)),
-            ('U_FLAG', VMSCharacter(1)),
-            ('STN_NUMBER', VMSInteger2()),
-            ('LATITUDE', VMSReal4()),
-            ('LONGITUDE', VMSReal4()),
-            ('Q_POS', VMSCharacter(1)),
-            ('Q_DATE_TIME', VMSCharacter(1)),
-            ('Q_RECORD', VMSCharacter(1)),
-            ('UP_DATE', VMSCharacter(8)),
-            ('BUL_TIME', VMSCharacter(12)),
-            ('BUL_HEADER', VMSCharacter(6)),
-            ('SOURCE_ID', VMSCharacter(4)),
-            ('STREAM_IDENT', VMSCharacter(4)),
-            ('QC_VERSION', VMSCharacter(4)),
-            ('AVAIL', VMSCharacter(1)),
-            ('NO_PROF', VMSInteger2()),
-            ('NPARMS', VMSInteger2()),
-            ('SPARMS', VMSInteger2()),
-            ('NUM_HISTS', VMSInteger2())
+            ('MKEY', Character(8)),
+            ('ONE_DEG_SQ', Integer4()),
+            ('CR_NUMBER', Character(10)),
+            ('OBS_YEAR', Character(4)),
+            ('OBS_MONTH', Character(2)),
+            ('OBS_DAY', Character(2)),
+            ('OBS_TIME', Character(4)),
+            ('DATA_TYPE', Character(2)),
+            ('IUMSGNO', Integer4()),
+            ('STREAM_SOURCE', Character(1)),
+            ('U_FLAG', Character(1)),
+            ('STN_NUMBER', Integer2()),
+            ('LATITUDE', Real4()),
+            ('LONGITUDE', Real4()),
+            ('Q_POS', Character(1)),
+            ('Q_DATE_TIME', Character(1)),
+            ('Q_RECORD', Character(1)),
+            ('UP_DATE', Character(8)),
+            ('BUL_TIME', Character(12)),
+            ('BUL_HEADER', Character(6)),
+            ('SOURCE_ID', Character(4)),
+            ('STREAM_IDENT', Character(4)),
+            ('QC_VERSION', Character(4)),
+            ('AVAIL', Character(1)),
+            ('NO_PROF', Integer2()),
+            ('NPARMS', Integer2()),
+            ('SPARMS', Integer2()),
+            ('NUM_HISTS', Integer2())
         )
 
 
-class VMSPrStnProfEncoding(VMSStructEncoding):
+class PrStnProfEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('NO_SEG', VMSInteger2()),
-            ('PROF_TYPE', VMSCharacter(4)),
-            ('DUP_FLAG', VMSCharacter(1)),
-            ('DIGIT_CODE', VMSCharacter(1)),
-            ('STANDARD', VMSCharacter(1)),
-            ('DEEP_DEPTH', VMSReal4())
+            ('NO_SEG', Integer2()),
+            ('PROF_TYPE', Character(4)),
+            ('DUP_FLAG', Character(1)),
+            ('DIGIT_CODE', Character(1)),
+            ('STANDARD', Character(1)),
+            ('DEEP_DEPTH', Real4())
         )
 
 
-class VMSPrStnSurfaceEncoding(VMSStructEncoding):
+class PrStnSurfaceEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', VMSCharacter(4)),
-            ('PARM', VMSReal4()),
-            ('Q_PARM', VMSCharacter(1))
+            ('PCODE', Character(4)),
+            ('PARM', Real4()),
+            ('Q_PARM', Character(1))
         )
 
 
-class VMSPrStnSurfCodesEncoding(VMSStructEncoding):
+class PrStnSurfCodesEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', VMSCharacter(4)),
-            ('CPARM', VMSCharacter(10)),
-            ('Q_PARM', VMSCharacter(1))
+            ('PCODE', Character(4)),
+            ('CPARM', Character(10)),
+            ('Q_PARM', Character(1))
         )
 
 
-class VMSPrStnHistoryEncoding(VMSStructEncoding):
+class PrStnHistoryEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN/HISTORY structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('IDENT_CODE', VMSCharacter(2)),
-            ('PRC_CODE', VMSCharacter(4)),
-            ('VERSION', VMSCharacter(4)),
-            ('PRC_DATE', VMSInteger4()),
-            ('ACT_CODE', VMSCharacter(2)),
-            ('ACT_PARM', VMSCharacter(4)),
-            ('AUX_ID', VMSReal4()),
-            ('O_VALUE', VMSReal4())
+            ('IDENT_CODE', Character(2)),
+            ('PRC_CODE', Character(4)),
+            ('VERSION', Character(4)),
+            ('PRC_DATE', Integer4()),
+            ('ACT_CODE', Character(2)),
+            ('ACT_PARM', Character(4)),
+            ('AUX_ID', Real4()),
+            ('O_VALUE', Real4())
         )
 
 
-class VMSPrStnEncoding(VMSStructEncoding):
+class PrStnEncoding(StructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self) -> None:
         super().__init__(
-            ('FXD', VMSPrStnFxdEncoding()),
-            ('PROF', VMSArrayOf(VMSPrStnProfEncoding(), max_length=20)),
-            ('SURFACE', VMSArrayOf(VMSPrStnSurfaceEncoding(), max_length=20)),
-            ('SURF_CODES', VMSArrayOf(VMSPrStnSurfCodesEncoding(), max_length=20)),
-            ('HISTORY', VMSArrayOf(VMSPrStnHistoryEncoding(), max_length=100))
+            ('FXD', PrStnFxdEncoding()),
+            ('PROF', ArrayOf(PrStnProfEncoding(), max_length=20)),
+            ('SURFACE', ArrayOf(PrStnSurfaceEncoding(), max_length=20)),
+            ('SURF_CODES', ArrayOf(PrStnSurfCodesEncoding(), max_length=20)),
+            ('HISTORY', ArrayOf(PrStnHistoryEncoding(), max_length=100))
         )
 
     def sizeof(self, value):
