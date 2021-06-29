@@ -32,4 +32,3 @@ jobs:
         run: |
           python -m jupyter nbconvert README.ipynb --execute --to rst --output README.rst
           sphinx-build docs _docs
-s

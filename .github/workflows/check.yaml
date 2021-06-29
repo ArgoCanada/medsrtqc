@@ -3,7 +3,7 @@ name: Python package
 on: [push, pull_request]
 
 jobs:
-  build:
+  check:
 
     runs-on: ubuntu-latest
     strategy:
@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest build netCDF4 pandas
+          pip install flake8 pytest build numpy gsw
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with flake8
         run: |
