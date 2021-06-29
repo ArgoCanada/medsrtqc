@@ -5,5 +5,5 @@ __pycache__
 .vscode
 .coverage
 .pytest_cache
-_docs
+docs/_build
 README.rst

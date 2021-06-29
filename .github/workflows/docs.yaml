@@ -44,7 +44,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           cd pages-clone
           git rm -rf .
-          cp -R ../_docs/* .
+          cp -R ../docs/_build/html/* .
           touch .nojekyll
           git add .nojekyll
           git add *
