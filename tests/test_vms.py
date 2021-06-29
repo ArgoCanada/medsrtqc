@@ -6,6 +6,7 @@ from io import BytesIO
 import medsrtqc.vms.enc as enc
 import medsrtqc.vms.read as read
 
+
 class TestEncoding(unittest.TestCase):
 
     def test_padding(self):
