@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get install pandoc
           python -m pip install --upgrade pip
-          pip install gsw numpy Sphinx jupyter myst-parser sphinx-rtd-theme
+          pip install gsw numpy netCDF4 Sphinx jupyter myst-parser sphinx-rtd-theme
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Build documentation
         run: |

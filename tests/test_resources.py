@@ -7,7 +7,7 @@ from medsrtqc.resources import resource_path
 class TestResources(unittest.TestCase):
 
     def test_exists(self):
-        res = ['BINARY_VMS.DAT', 'BINARY_VMS.json']
+        res = ['BINARY_VMS.DAT', 'BINARY_VMS.json', 'BR2902746_001.nc']
         for r in res:
             self.assertTrue(os.path.isfile(resource_path(r)))
 
