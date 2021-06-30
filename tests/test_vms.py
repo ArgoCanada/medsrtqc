@@ -1,10 +1,12 @@
 
-from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList, Trace
 import unittest
 import os
 from io import BytesIO
+
+from medsrtqc.resources import resource_path
 import medsrtqc.vms.enc as enc
 import medsrtqc.vms.read as read
+from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList, Trace
 
 
 class TestEncoding(unittest.TestCase):
@@ -87,8 +89,7 @@ class TestEncoding(unittest.TestCase):
 class TestVMSRead(unittest.TestCase):
 
     def test_read(self):
-        this_dir = os.path.dirname(__file__)
-        test_file = os.path.join(this_dir, 'test-data', 'BINARY_VMS.DAT')
+        test_file = resource_path('BINARY_VMS.DAT')
 
         profiles = read.read_vms_profiles(test_file)
         self.assertEqual(len(profiles), 2)
