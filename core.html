@@ -170,22 +170,24 @@ where <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.
 which are in turn contained by <a class="reference internal" href="#medsrtqc.core.ProfileList" title="medsrtqc.core.ProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileList</span></code></a> objects.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.Profile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><a class="headerlink" href="#medsrtqc.core.Profile" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract base class for the concept of a “Profile”.
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base class for the concept of a “Profile”.
 Unlike a “Profile” in an Argo NetCDF file, these objects should contain
 all parameters measured during an ascent (or some other event
 that can be QCed). The interface is dict-like with elements as
 <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects that can be extracted by name or iterated
-over using <code class="xref py py-meth docutils literal notranslate"><span class="pre">keys()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">items()</span></code>.</p>
+over using <code class="xref py py-meth docutils literal notranslate"><span class="pre">keys()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">items()</span></code>. The base class can wrap
+an immutable <code class="docutils literal notranslate"><span class="pre">dict</span></code> of <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.ProfileList">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">ProfileList</span></span><a class="headerlink" href="#medsrtqc.core.ProfileList" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract base class for a collection of Profile objects
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">ProfileList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.ProfileList" title="Permalink to this definition">¶</a></dt>
+<dd><p>An base class for a collection of Profile objects
 measured in the same location but not necessarily at the same
 pressure levels. These objects are list-like with each member
-as a <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> implementation.</p>
+as a <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> implementation. The base class can wrap
+an immutable <code class="docutils literal notranslate"><span class="pre">list()</span></code> of <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> objects.</p>
 </dd></dl>
 
 <dl class="py class">
