@@ -8,8 +8,10 @@ from ..core import Trace, Profile, ProfileList
 
 class VMSProfile(Profile):
     """
-    An implementation of the Profile type backed by data read from
-    the MEDS internal VMS data structure.
+    An implementation of the :class:`core.Profile` type
+    backed by data read from the MEDS internal VMS data 
+    structure. These objects are always created from a
+    :class:`VMSProfileList`.
     """
 
     def __init__(self, data) -> None:
@@ -71,7 +73,9 @@ class VMSProfile(Profile):
 class VMSProfileList(ProfileList):
     """
     An implementation of the ProfileList type backed by data read from
-    the MEDS internal VMS data structure.
+    the MEDS internal VMS data structure. This is the object
+    created by :func:`read_vms_profiles` and is a container for
+    :class:`VMSProfile` objects.
     """
 
     def __init__(self, data) -> None:

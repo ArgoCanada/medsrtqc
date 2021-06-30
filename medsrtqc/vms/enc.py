@@ -1,11 +1,9 @@
 
 """
-The classes in this module make reading binary input files
-exported from a VAX/VMS system
-more expressive and easier to debug without affecting the clarity
-of real-time processing code. These are normally not used
-by users but may be used interactively to discover the format
-of or debug the reading of files. The built-in types mostly use
+These are the basis on which the high-level structure
+definitions are based and are normally not used interactively;
+however, they may be used to discover the format or debug the
+reading of files. The built-in types mostly use
 the Python ``struct`` module to encode and decode values.
 
 >>> from io import BytesIO

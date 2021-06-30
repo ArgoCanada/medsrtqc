@@ -1,6 +1,17 @@
 
-Low-level VMS IO
+VMS IO
 ============================================
+
+.. automodule:: medsrtqc.vms
+
+.. autofunction:: read_vms_profiles
+
+.. autoclass:: VMSProfile
+
+.. autoclass:: VMSProfileList
+
+Low-level VMS IO
+--------------------------------------------
 
 .. automodule:: medsrtqc.vms.enc
 
