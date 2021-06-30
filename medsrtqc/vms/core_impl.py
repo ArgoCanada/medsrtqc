@@ -64,7 +64,7 @@ class VMSProfile(Profile):
             value[i] = m['PARM']
             qc[i] = m['Q_PARM']
         
-        return Trace(pres, value, value_qc=qc)
+        return Trace(value, value_qc=qc, id=pres)
 
     def meta(self) -> Dict[str, Trace]:
         return super().meta()

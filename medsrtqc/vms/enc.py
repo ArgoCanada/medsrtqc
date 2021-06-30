@@ -1,10 +1,11 @@
 
 """
-These are the basis on which the high-level structure
-definitions are based and are normally not used interactively;
-however, they may be used to discover the format or debug the
-reading of files. The built-in types mostly use
-the Python ``struct`` module to encode and decode values.
+The classes in the ``vms.enc`` module are the basis on 
+which the high-level structure definitions are based and are 
+normally not used interactively; however, they may be used 
+to discover the format or debug the reading of files.
+The built-in types mostly use the Python ``struct`` 
+module to encode and decode values.
 
 >>> from io import BytesIO
 >>> medsrtqc.vms.enc import *
