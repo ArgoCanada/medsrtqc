@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Low-level VMS IO &mdash; MEDS Realtime QC  documentation</title>
+  <title>VMS IO &mdash; MEDS Realtime QC  documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="medsrtqc" href="index.html" /> 
+    <link rel="prev" title="Abstract base classes" href="core.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,7 +88,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Low-level VMS IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Abstract base classes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">VMS IO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-medsrtqc.vms.enc">Low-level VMS IO</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -137,7 +141,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Low-level VMS IO</li>
+      <li>VMS IO</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -156,8 +160,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-medsrtqc.vms.enc">
-<span id="low-level-vms-io"></span><h1>Low-level VMS IO<a class="headerlink" href="#module-medsrtqc.vms.enc" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-medsrtqc.vms">
+<span id="vms-io"></span><h1>VMS IO<a class="headerlink" href="#module-medsrtqc.vms" title="Permalink to this headline">¶</a></h1>
+<p>The classes in the <code class="docutils literal notranslate"><span class="pre">vms</span></code> module make reading binary input files
+exported from a VAX/VMS system more expressive and easier to debug
+without affecting the clarity of real-time processing code. In normal
+usage you should only need <a class="reference internal" href="#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_vms_profiles()</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="medsrtqc.vms.read_vms_profiles">
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">read_vms_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.read_vms_profiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a binary VMS file into a <a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>src</strong> – A filename or file-like object</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.vms</span> <span class="kn">import</span> <span class="n">read_vms_profiles</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span> <span class="o">=</span> <span class="n">read_vms_profiles</span><span class="p">(</span><span class="s1">&#39;tests/test-data/BINARY_VMS.DAT&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;TEMP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> 
+<span class="go">masked_array(data=[3.49900007, 3.45300007, 3.45799994, 3.48900008,</span>
+<span class="go">                3.46799994, 3.49099994, 3.4690001 , 3.50999999,</span>
+<span class="go">                3.45799994, 3.4849999 , 3.49699998, 3.42199993,</span>
+<span class="go">                3.45700002, 3.48900008, 3.48900008, 3.46700001,</span>
+<span class="go">                3.51699996],</span>
+<span class="go">            mask=False,</span>
+<span class="go">    fill_value=1e+20)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.VMSProfile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">VMSProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.VMSProfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>An implementation of the <code class="xref py py-class docutils literal notranslate"><span class="pre">core.Profile</span></code> type
+backed by data read from the MEDS internal VMS data 
+structure. These objects are always created from a
+<a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.VMSProfileList">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">VMSProfileList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.VMSProfileList" title="Permalink to this definition">¶</a></dt>
+<dd><p>An implementation of the ProfileList type backed by data read from
+the MEDS internal VMS data structure. This is the object
+created by <a class="reference internal" href="#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_vms_profiles()</span></code></a> and is a container for
+<a class="reference internal" href="#medsrtqc.vms.VMSProfile" title="medsrtqc.vms.VMSProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfile</span></code></a> objects.</p>
+</dd></dl>
+
+<div class="section" id="module-medsrtqc.vms.enc">
+<span id="low-level-vms-io"></span><h2>Low-level VMS IO<a class="headerlink" href="#module-medsrtqc.vms.enc" title="Permalink to this headline">¶</a></h2>
+<p>The classes in the <code class="docutils literal notranslate"><span class="pre">vms.enc</span></code> module are the basis on 
+which the high-level structure definitions are based and are 
+normally not used interactively; however, they may be used 
+to discover the format or debug the reading of files.
+The built-in types mostly use the Python <code class="docutils literal notranslate"><span class="pre">struct</span></code> 
+module to encode and decode values.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">medsrtqc</span><span class="o">.</span><span class="n">vms</span><span class="o">.</span><span class="n">enc</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoding</span> <span class="o">=</span> <span class="n">StructEncoding</span><span class="p">((</span><span class="s1">&#39;f1&#39;</span><span class="p">,</span> <span class="n">Character</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span> <span class="p">(</span><span class="s1">&#39;f2&#39;</span><span class="p">:</span> <span class="n">Integer2</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoding</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;f1&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;f2&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+<span class="go">b&#39;abc \x00\x00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoding</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+<span class="go">OrderedDict([(&#39;f1&#39;, &#39;abc&#39;), (&#39;f2&#39;, 0)])</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Encoding</span></span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding" title="Permalink to this definition">¶</a></dt>
@@ -177,11 +247,51 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.vms.enc.Encoding.sizeof">
 <span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.Encoding.sizeof" title="Permalink to this definition">¶</a></dt>
-<dd><p>The size of the Encoding in bytes</p>
+<dd><p>The number of bytes that <a class="reference internal" href="#medsrtqc.vms.enc.Encoding.decode" title="medsrtqc.vms.enc.Encoding.decode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decode()</span></code></a> will write to <cite>file</cite>
+when called</p>
 </dd></dl>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Integer2">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Integer2</span></span><a class="headerlink" href="#medsrtqc.vms.enc.Integer2" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 16-bit signed little-endian integer encoding</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Integer4">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Integer4</span></span><a class="headerlink" href="#medsrtqc.vms.enc.Integer4" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 32-bit signed little-endian integer encoding</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Real4">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Real4</span></span><a class="headerlink" href="#medsrtqc.vms.enc.Real4" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 32-bit middle-endian VAX/-encoded float value</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.Character">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">Character</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">b'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.Character" title="Permalink to this definition">¶</a></dt>
+<dd><p>A fixed-length character encoding. A fixed length
+is enforced by adding a padding character to the
+right of the string.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.StructEncoding">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">StructEncoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">encodings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.StructEncoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>A struct containing named values of other encodings</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.vms.enc.ArrayOf">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.enc.</span></span><span class="sig-name descname"><span class="pre">ArrayOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Encoding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#medsrtqc.vms.enc.Encoding" title="medsrtqc.vms.enc.Encoding"><span class="pre">medsrtqc.vms.enc.Encoding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.enc.ArrayOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of some other encoding</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -190,7 +300,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="index.html" class="btn btn-neutral float-left" title="medsrtqc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="core.html" class="btn btn-neutral float-left" title="Abstract base classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

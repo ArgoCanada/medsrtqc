@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Abstract base classes &mdash; MEDS Realtime QC  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="VMS IO" href="vms.html" />
+    <link rel="prev" title="medsrtqc" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MEDS Realtime QC
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Abstract base classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vms.html">VMS IO</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MEDS Realtime QC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Abstract base classes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/core.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-medsrtqc.core">
+<span id="abstract-base-classes"></span><h1>Abstract base classes<a class="headerlink" href="#module-medsrtqc.core" title="Permalink to this headline">¶</a></h1>
+<p>Writing portable QC operations shouldn’t depend on the underlying
+data storage mechanism, which might be a database, NetCDF file,
+or binary export. The classes in the <code class="docutils literal notranslate"><span class="pre">core</span></code> module are designed to
+provide a view of Argo data that can be passed to or returned from
+QC operations. Here Argo data are modeled as a three-level heiarchy
+where <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects are contained by <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> objects
+which are in turn contained by <a class="reference internal" href="#medsrtqc.core.ProfileList" title="medsrtqc.core.ProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileList</span></code></a> objects.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.core.Profile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><a class="headerlink" href="#medsrtqc.core.Profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract base class for the concept of a “Profile”.
+Unlike a “Profile” in an Argo NetCDF file, these objects should contain
+all parameters measured during an ascent (or some other event
+that can be QCed). The interface is dict-like with elements as
+<a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects that can be extracted by name or iterated
+over using <code class="xref py py-meth docutils literal notranslate"><span class="pre">keys()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">items()</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.core.ProfileList">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">ProfileList</span></span><a class="headerlink" href="#medsrtqc.core.ProfileList" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract base class for a collection of Profile objects
+measured in the same location but not necessarily at the same
+pressure levels. These objects are list-like with each member
+as a <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> implementation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.core.Trace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ma.core.MaskedArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trace objects are a simple representation of a value series.
+All attributes of a <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> are <code class="docutils literal notranslate"><span class="pre">numpy</span></code>
+<code class="docutils literal notranslate"><span class="pre">MaskedArray</span></code> objects like those that might be read from an Argo
+NetCDF file. The <code class="docutils literal notranslate"><span class="pre">value</span></code> attribute is guaranteed
+to not be <code class="docutils literal notranslate"><span class="pre">None</span></code>; other attributes are optional and should be
+checked in code that uses these objects. QC operations can be
+written as functions of <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects and the result of
+QC operations is often a modified <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – The parameter value</p></li>
+<li><p><strong>value_qc</strong> – The parameter QC value</p></li>
+<li><p><strong>adjusted</strong> – The adjusted parameter value</p></li>
+<li><p><strong>adjusted_error</strong> – The error estimate for the adjusted value</p></li>
+<li><p><strong>adjusted_qc</strong> – The adjusted parameter QC value</p></li>
+<li><p><strong>id</strong> – An identifier that can be used between <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a>
+objects to match levels. It is helpful if these values are
+monotonic (e.g., datetime) but callers should check this
+assumption (e.g., when using pressure).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="vms.html" class="btn btn-neutral float-right" title="VMS IO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="medsrtqc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Dewey Dunnington.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
