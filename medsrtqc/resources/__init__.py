@@ -14,6 +14,8 @@ include:
 ``'BINARY_VMS.json'``
     The human-readable JSON version of ``'BINARY_VMS.DAT'``.
 
+``'BR6904117_085.nc'``, ``'R6904117_085.nc'``
+    A core and BGC Argo NetCDF file for use testing BGC variables.
 """
 
 import os
