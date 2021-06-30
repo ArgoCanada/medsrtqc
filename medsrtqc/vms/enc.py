@@ -1,4 +1,27 @@
 
+"""
+The classes in this module make reading binary input files
+exported from a VAX/VMS system
+more expressive and easier to debug without affecting the clarity
+of real-time processing code. These are normally not used
+by users but may be used interactively to discover the format
+of or debug the reading of files. The built-in types mostly use
+the Python ``struct`` module to encode and decode values.
+
+>>> from io import BytesIO
+>>> medsrtqc.vms.enc import *
+>>> buf = BytesIO()
+>>> encoding = StructEncoding(('f1', Character(4)), ('f2': Integer2()))
+>>> encoding.encode(buf, {'f1': 'abc', 'f2': 0})
+>>> buf.getvalue()
+b'abc \\x00\\x00'
+>>> buf.seek(0)
+0
+>>> encoding.decode(buf)
+OrderedDict([('f1', 'abc'), ('f2', 0)])
+"""
+
+
 from io import BytesIO
 from typing import BinaryIO, Iterable
 from struct import pack, unpack, calcsize
@@ -9,7 +32,10 @@ class Encoding:
     """A base class for binary encoding and decoding values"""
 
     def sizeof(self, value=None):
-        """The size of the Encoding in bytes"""
+        """
+        The number of bytes that :meth:`decode` will write to `file`
+        when called
+        """
         raise NotImplementedError()
 
     def decode(self, file: BinaryIO, value=None):
@@ -39,7 +65,11 @@ class Padding(Encoding):
 
 
 class Character(Encoding):
-    """Fixed-length character encodings"""
+    """
+    A fixed-length character encoding. A fixed length
+    is enforced by adding a padding character to the
+    right of the string.
+    """
 
     def __init__(self, length, encoding='utf-8', pad=b' '):
         self._length = length
