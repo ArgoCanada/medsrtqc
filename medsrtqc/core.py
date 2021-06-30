@@ -48,19 +48,27 @@ class Trace:
 
 class Profile:
     """
-    An abstract base class for the concept of a "Profile".
+    A base class for the concept of a "Profile".
     Unlike a "Profile" in an Argo NetCDF file, these objects should contain
     all parameters measured during an ascent (or some other event
     that can be QCed). The interface is dict-like with elements as
     :class:`Trace` objects that can be extracted by name or iterated
-    over using :meth:`keys` or :meth:`items`.
+    over using :meth:`keys` or :meth:`items`. The base class can wrap
+    an immutable ``dict`` of :class:`Trace` objects.
     """
 
-    def keys(self) -> Iterable[str]:  # pragma: no cover
-        raise NotImplementedError()
+    def __init__(self, data=None):
+        self.__data = data
 
-    def __getitem__(self, k) -> Trace:  # pragma: no cover
-        raise NotImplementedError()
+    def keys(self) -> Iterable[str]:
+        if self.__data is None:
+            raise NotImplementedError()
+        return self.__data.keys()
+
+    def __getitem__(self, k) -> Trace:
+        if self.__data is None:
+            raise NotImplementedError()
+        return self.__data[k]
     
     def __iter__(self) -> Iterable[str]:
         return iter(self.keys())
@@ -73,19 +81,28 @@ class Profile:
             yield k, self[k]
 
 
-class ProfileList:  # pragma: no cover
+class ProfileList:
     """
-    An abstract base class for a collection of Profile objects
+    An base class for a collection of Profile objects
     measured in the same location but not necessarily at the same
     pressure levels. These objects are list-like with each member
-    as a :class:`Profile` implementation.
+    as a :class:`Profile` implementation. The base class can wrap
+    an immutable ``list()`` of :class:`Profile` objects.
     """
 
+    def __init__(self, data=None):
+        self.__data = data
+
     def __len__(self):
-        raise NotImplementedError()
+        if self.__data is None:
+            raise NotImplementedError()
+        return len(self.__data)
 
     def __getitem__(self, k) -> Profile:
-        raise NotImplementedError()
+        if self.__data is None:
+            raise NotImplementedError()
+        return self.__data[k]
 
     def __iter__(self) -> Iterable[Profile]:
-        raise NotImplementedError()
+        for i in range(len(self)):
+            yield self[i]
