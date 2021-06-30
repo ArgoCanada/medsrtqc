@@ -1,5 +1,15 @@
 
-from typing import Iterable, Dict, Any, Tuple
+"""
+Writing portable QC operations shouldn't depend on the underlying
+data storage mechanism, which might be a database, NetCDF file,
+or binary export. The classes in the ``core`` module are designed to
+provide a view of Argo data that can be passed to or returned from
+QC operations. Here Argo data are modeled as a three-level heiarchy
+where :class:`Trace` objects are contained by :class:`Profile` objects
+which are in turn contained by :class:`ProfileList` objects.
+"""
+
+from typing import Iterable, Tuple
 from numpy.ma import MaskedArray
 
 
@@ -8,13 +18,13 @@ class Trace:
     Trace objects are a simple representation of a value series.
     All attributes of a :class:`Trace` are ``numpy``
     ``MaskedArray`` objects like those that might be read from an Argo
-    NetCDF file. The ``value`` attributes is guaranteed
+    NetCDF file. The ``value`` attribute is guaranteed
     to not be ``None``; other attributes are optional and should be
     checked in code that uses these objects. QC operations can be
     written as functions of :class:`Trace` objects and the result of
     QC operations is often a modified :class:`Trace`.
 
-    :param value: The parameter value reading
+    :param value: The parameter value
     :param value_qc: The parameter QC value
     :param adjusted: The adjusted parameter value
     :param adjusted_error: The error estimate for the adjusted value
