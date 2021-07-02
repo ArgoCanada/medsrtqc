@@ -24,26 +24,28 @@ class Trace:
     written as functions of :class:`Trace` objects and the result of
     QC operations is often a modified :class:`Trace`.
 
-    :param value: The parameter value
-    :param value_qc: The parameter QC value
-    :param adjusted: The adjusted parameter value
-    :param adjusted_error: The error estimate for the adjusted value
+    :param value: The parameter value. This should be the same units
+        as would be written to the Argo NetCDF file.
+    :param value_qc: The parameter QC value.
+    :param adjusted: The adjusted parameter value.
+    :param adjusted_error: The error estimate for the adjusted value.
     :param adjusted_qc: The adjusted parameter QC value
-    :param id: An identifier that can be used between :class:`Trace`
-        objects to match levels. It is helpful if these values are
-        monotonic (e.g., datetime) but callers should check this
-        assumption (e.g., when using pressure).
+    :param pres: The pressure measurement (in dbar) corresponding to
+        the ``value``.
+    :param mtime: The measurement time (in days since 
+        1950-01-01 00:00:00 UTC).
     """
 
     def __init__(self, value: MaskedArray,
                  value_qc=None, adjusted=None, adjusted_error=None,
-                 adjusted_qc=None, id=None) -> None:
+                 adjusted_qc=None, pres=None, mtime=None) -> None:
         self.value = value
         self.value_qc = value_qc
         self.adjusted = adjusted
         self.adjusted_error = adjusted_error
         self.adjusted_qc = adjusted_qc
-        self.id = id
+        self.pres = pres
+        self.mtime = mtime
 
 
 class Profile:
