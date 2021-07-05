@@ -49,7 +49,23 @@ class NetCDFProfile(Profile):
     
     def __getitem__(self, k) -> Trace:
         dataset, i_prof = self._variables[k]
-        return Trace(dataset[k][i_prof])
+
+        var_names = {
+            'value': k,
+            'value_qc': k + '_QC',
+            'adjusted': k + '_ADJUSTED',
+            'adjusted_qc': k + '_ADJUSTED_QC',
+            'adjusted_error': k + '_ADJUSTED_ERROR',
+            'pres': 'PRES',
+            'mtime': 'MTIME'
+        }
+
+        var_values = {}
+        for trace_name, nc_key in var_names.items():
+            if nc_key in dataset.variables:
+                var_values[trace_name] = dataset[nc_key][i_prof]
+
+        return Trace(**var_values)
 
 
 def _load_dataset(src):
