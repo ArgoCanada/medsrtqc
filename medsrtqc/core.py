@@ -11,6 +11,7 @@ which are in turn contained by :class:`ProfileList` objects.
 
 from typing import Iterable, Tuple
 from numpy.ma import MaskedArray
+from numpy import nditer, nan, zeros, float32, dtype
 
 
 class Trace:
@@ -32,20 +33,59 @@ class Trace:
     :param adjusted_qc: The adjusted parameter QC value
     :param pres: The pressure measurement (in dbar) corresponding to
         the ``value``.
-    :param mtime: The measurement time (in days since 
-        1950-01-01 00:00:00 UTC).
+    :param mtime: The measurement time
     """
 
     def __init__(self, value: MaskedArray,
                  value_qc=None, adjusted=None, adjusted_error=None,
                  adjusted_qc=None, pres=None, mtime=None) -> None:
-        self.value = value
-        self.value_qc = value_qc
-        self.adjusted = adjusted
-        self.adjusted_error = adjusted_error
-        self.adjusted_qc = adjusted_qc
-        self.pres = pres
-        self.mtime = mtime
+        self.value = MaskedArray(value)
+        if len(self.value.shape) != 1:
+                raise ValueError('All Trace attributes must be 1d arrays')
+        self._n = self.value.shape[0]
+
+        self.value_qc = self._sanitize(value_qc, dtype('S1'))
+        self.adjusted = self._sanitize(adjusted, float32)
+        self.adjusted_error = self._sanitize(adjusted_error, float32)
+        self.adjusted_qc = self._sanitize(adjusted_qc, dtype('S1'))
+        self.pres = self._sanitize(pres, float32)
+        self.mtime = self._sanitize(mtime, float32)
+    
+    def _sanitize(self, v, dtype_if_none):
+        if v is None:
+            v = zeros((self._n, ), dtype=dtype_if_none)
+            return MaskedArray(v, mask=True)
+        else:
+            v = MaskedArray(v)
+            if len(v.shape) != 1:
+                raise ValueError('All Trace attributes must be 1d arrays')
+            return v
+
+    def __len__(self):
+        return self._n
+    
+    def __repr__(self) -> str:
+        summaries = []
+        for attr in ['value', 'value_qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
+            v = getattr(self, attr)
+            if v.dtype.kind != 'S':
+                v = v.copy()
+                v[v.mask] = nan
+
+            if self._n == 0:
+                summaries.append(f'{attr}=[]')
+            elif self._n <= 6:
+                summary = repr(list(nditer(v)))
+                summaries.append(f'{attr}={summary}')
+            else:
+                head_summary = ', '.join(str(item) for item in nditer(v[:3]))
+                tail_summary = ', '.join(str(item) for item in nditer(v[-3:]))
+                n_miss = self._n - 6
+                summary = f"{attr}=[{head_summary}, [{n_miss} values], {tail_summary}]"
+                summaries.append(summary)
+        
+        all_summaries = ',\n    '.join(summaries)
+        return f"Trace(\n    {all_summaries}\n)"
 
 
 class Profile:

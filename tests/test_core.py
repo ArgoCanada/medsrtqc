@@ -9,6 +9,9 @@ class TestCore(unittest.TestCase):
     def test_trace(self):
         trace = Trace(np.array([1, 2, 3]))
         self.assertTrue(np.all(trace.value == np.array([1, 2, 3])))
+    
+    def test_trace_repr(self):
+        self.assertRegex(repr(Trace(np.array([]))), r'^Trace\(\s*value=\[\]')
 
     def test_profile(self):
         trace = Trace(np.array([1, 2, 3]))
