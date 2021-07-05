@@ -192,7 +192,7 @@ an immutable <code class="docutils literal notranslate"><span class="pre">list()
 
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.Trace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ma.core.MaskedArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Trace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ma.core.MaskedArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_qc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Trace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trace objects are a simple representation of a value series.
 All attributes of a <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> are <code class="docutils literal notranslate"><span class="pre">numpy</span></code>
 <code class="docutils literal notranslate"><span class="pre">MaskedArray</span></code> objects like those that might be read from an Argo
@@ -204,15 +204,15 @@ QC operations is often a modified <a class="reference internal" href="#medsrtqc.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> – The parameter value</p></li>
-<li><p><strong>value_qc</strong> – The parameter QC value</p></li>
-<li><p><strong>adjusted</strong> – The adjusted parameter value</p></li>
-<li><p><strong>adjusted_error</strong> – The error estimate for the adjusted value</p></li>
+<li><p><strong>value</strong> – The parameter value. This should be the same units
+as would be written to the Argo NetCDF file.</p></li>
+<li><p><strong>value_qc</strong> – The parameter QC value.</p></li>
+<li><p><strong>adjusted</strong> – The adjusted parameter value.</p></li>
+<li><p><strong>adjusted_error</strong> – The error estimate for the adjusted value.</p></li>
 <li><p><strong>adjusted_qc</strong> – The adjusted parameter QC value</p></li>
-<li><p><strong>id</strong> – An identifier that can be used between <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a>
-objects to match levels. It is helpful if these values are
-monotonic (e.g., datetime) but callers should check this
-assumption (e.g., when using pressure).</p></li>
+<li><p><strong>pres</strong> – The pressure measurement (in dbar) corresponding to
+the <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></li>
+<li><p><strong>mtime</strong> – The measurement time</p></li>
 </ul>
 </dd>
 </dl>
