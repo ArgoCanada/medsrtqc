@@ -7,6 +7,7 @@ import shutil
 import reprlib
 import numpy as np
 from netCDF4 import Dataset, chartostring
+from numpy.core.fromnumeric import var
 from .core import Profile, Trace
 
 
@@ -64,6 +65,26 @@ class NetCDFProfile(Profile):
         for trace_name, nc_key in var_names.items():
             if nc_key in dataset.variables:
                 var_values[trace_name] = dataset[nc_key][i_prof]
+
+        n_values = var_values['value'].shape[0]
+        
+        # don't include non value variables that are 100% mask
+        for k in list(var_values.keys()):
+            if k != 'value' and np.all(var_values[k].mask):
+                del var_values[k]
+
+        # don't include trailing fill values when all variables have a trailing fill
+        if n_values:
+            last_finite = []
+            for v in var_values.values():
+                if not np.any(v.mask):
+                    last_finite.append(n_values)
+                elif not np.all(v.mask):
+                    last_finite.append(np.where(~v.mask)[0].max())
+            
+            if last_finite:
+                for k in list(var_values.keys()):
+                    var_values[k] = var_values[k][:max(last_finite)]
 
         return Trace(**var_values)
 
