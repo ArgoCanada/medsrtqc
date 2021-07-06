@@ -51,7 +51,6 @@ class TestEncoding(unittest.TestCase):
         self.assertEqual(f.decode(BytesIO(b'abcd '), [None]), ['abcd'])
         self.assertEqual(f.decode(BytesIO(b'abcd ')), ['abcd'])
 
-
     def test_python_struct(self):
         f = enc.PythonStructEncoding('>h')
         self.assertEqual(f.sizeof(), 2)

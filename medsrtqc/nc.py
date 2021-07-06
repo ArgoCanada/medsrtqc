@@ -17,7 +17,7 @@ class NetCDFProfile(Profile):
     The NetCDF file should be a single-profile NetCDF. These objects
     are normally created using :func:`read_nc_profile`.
 
-    :param dataset: An existing ``netCDF4.Dataset``.
+    :param dataset: One or more existing ``netCDF4.Dataset``s.
     """
 
     def __init__(self, *dataset):
@@ -78,7 +78,6 @@ class NetCDFProfile(Profile):
             if nc_key in dataset.variables:
                 var_values[trace_name] = dataset[nc_key][i_prof]
 
-        n_values = var_values['value'].shape[0]
 
         # don't include non value variables that are 100% mask
         for var in list(var_values.keys()):
@@ -86,19 +85,24 @@ class NetCDFProfile(Profile):
                 del var_values[var]
 
         # don't include trailing fill values when all variables have a trailing fill
-        if n_values:
-            last_finite = []
-            for v in var_values.values():
-                if not np.any(v.mask):
-                    last_finite.append(n_values)
-                elif not np.all(v.mask):
-                    last_finite.append(np.where(~v.mask)[0].max())
-
+        if len(var_values['value']):
+            last_finite = self._calc_finite_length(var_values)
             if last_finite:
                 for var in list(var_values.keys()):
                     var_values[var] = var_values[var][:max(last_finite)]
 
         return var_values
+
+    def _calc_finite_length(self, var_values):
+        last_finite = []
+        n_values = len(var_values['value'])
+
+        for v in var_values.values():
+            if not np.any(v.mask):
+                last_finite.append(n_values)
+            elif not np.all(v.mask):
+                last_finite.append(np.where(~v.mask)[0].max())
+        return last_finite
 
 
 def load(src):
