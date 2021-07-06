@@ -44,7 +44,7 @@ class NetCDFProfile(Profile):
     
     def keys(self) -> Iterable[str]:
         if self._variables is not None:
-            return self._variables.keys()
+            return tuple(self._variables.keys())
         else:
             return ()
     
