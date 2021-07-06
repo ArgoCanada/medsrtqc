@@ -78,7 +78,6 @@ class NetCDFProfile(Profile):
             if nc_key in dataset.variables:
                 var_values[trace_name] = dataset[nc_key][i_prof]
 
-
         # don't include non value variables that are 100% mask
         for var in list(var_values.keys()):
             if var != 'value' and np.all(var_values[var].mask):
