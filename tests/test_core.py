@@ -7,7 +7,7 @@ from medsrtqc.core import Trace, Profile, ProfileList
 class TestCore(unittest.TestCase):
 
     def test_trace(self):
-        trace = Trace(np.array([1, 2, 3]))
+        trace = Trace([1, 2, 3])
         self.assertTrue(np.all(trace.value == np.array([1, 2, 3])))
     
     def test_trace_repr(self):

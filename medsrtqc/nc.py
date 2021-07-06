@@ -69,9 +69,9 @@ class NetCDFProfile(Profile):
         n_values = var_values['value'].shape[0]
         
         # don't include non value variables that are 100% mask
-        for k in list(var_values.keys()):
-            if k != 'value' and np.all(var_values[k].mask):
-                del var_values[k]
+        for var in list(var_values.keys()):
+            if var != 'value' and np.all(var_values[var].mask):
+                del var_values[var]
 
         # don't include trailing fill values when all variables have a trailing fill
         if n_values:
@@ -83,10 +83,13 @@ class NetCDFProfile(Profile):
                     last_finite.append(np.where(~v.mask)[0].max())
             
             if last_finite:
-                for k in list(var_values.keys()):
-                    var_values[k] = var_values[k][:max(last_finite)]
+                for var in list(var_values.keys()):
+                    var_values[var] = var_values[var][:max(last_finite)]
 
-        return Trace(**var_values)
+        try:
+            return Trace(**var_values)
+        except Exception as e:
+            raise ValueError(f"Error creating Trace for '{k}'") from e
 
 
 def _load_dataset(src):

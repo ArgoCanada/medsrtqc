@@ -21,6 +21,16 @@ class TestNetCDFProfile(unittest.TestCase):
         self.assertEqual(len(profile['CHLA']), 1273)
         # trim trailing values
         self.assertEqual(len(profile['DOXY']), 516)
+    
+    def test_uv_intensity_nitrate(self):
+        # UV_INTENSITY_NITRATE is special because its value has two
+        # dimensions; however, its QC attribute only has one dimension
+        # for both, the len() is the same, so this is used to validate
+        profile = read_nc_profile(resource_path('BR6904117_085.nc'))
+        nitrate = profile['UV_INTENSITY_NITRATE']
+        self.assertIsInstance(nitrate, Trace)
+        self.assertEqual(nitrate._shape, (117, 90))
+        self.assertEqual(len(nitrate), 117)
 
     def test_dataset_file(self):
         nc_abspath = read_nc_profile(resource_path('BR6904117_085.nc'))

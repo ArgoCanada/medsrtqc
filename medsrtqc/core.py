@@ -39,26 +39,28 @@ class Trace:
     def __init__(self, value: MaskedArray,
                  value_qc=None, adjusted=None, adjusted_error=None,
                  adjusted_qc=None, pres=None, mtime=None) -> None:
-        self.value = MaskedArray(value)
-        if len(self.value.shape) != 1:
-                raise ValueError('All Trace attributes must be 1d arrays')
-        self._n = self.value.shape[0]
-
-        self.value_qc = self._sanitize(value_qc, dtype('S1'))
-        self.adjusted = self._sanitize(adjusted, float32)
-        self.adjusted_error = self._sanitize(adjusted_error, float32)
-        self.adjusted_qc = self._sanitize(adjusted_qc, dtype('S1'))
-        self.pres = self._sanitize(pres, float32)
-        self.mtime = self._sanitize(mtime, float32)
+        value = MaskedArray(value)
+        self._shape = value.shape
+        self._n = len(value)
+        
+        self.value = self._sanitize(value, float32, 'value')
+        self.value_qc = self._sanitize(value_qc, dtype('S1'), 'value_qc')
+        self.adjusted = self._sanitize(adjusted, float32, 'adjusted')
+        self.adjusted_error = self._sanitize(adjusted_error, float32, 'adjusted_error')
+        self.adjusted_qc = self._sanitize(adjusted_qc, dtype('S1'), 'adjusted_qc')
+        self.pres = self._sanitize(pres, float32, 'pres')
+        self.mtime = self._sanitize(mtime, float32, 'mtime')
     
-    def _sanitize(self, v, dtype_if_none):
+    def _sanitize(self, v, dtype_if_none, attr):
         if v is None:
-            v = zeros((self._n, ), dtype=dtype_if_none)
+            v = zeros(self._shape, dtype=dtype_if_none)
             return MaskedArray(v, mask=True)
         else:
-            v = MaskedArray(v)
-            if len(v.shape) != 1:
-                raise ValueError('All Trace attributes must be 1d arrays')
+            v = MaskedArray(v).astype(dtype_if_none)
+            if len(v) != self._n:
+                gen_msg = f'len() of Trace attributes must match len(value) ({self._n}).'
+                spec_msg = f"Attribute '{attr}' has shape {repr(v.shape)}"
+                raise ValueError(gen_msg + '\n' + spec_msg)
             return v
 
     def __len__(self):
@@ -68,18 +70,15 @@ class Trace:
         summaries = []
         for attr in ['value', 'value_qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
             v = getattr(self, attr)
-            if v.dtype.kind != 'S':
-                v = v.copy()
-                v[v.mask] = nan
 
             if self._n == 0:
                 summaries.append(f'{attr}=[]')
             elif self._n <= 6:
-                summary = repr(list(nditer(v)))
-                summaries.append(f'{attr}={summary}')
+                summary = ', '.join(repr(item) for item in v)
+                summaries.append(f'{attr}=[{summary}]')
             else:
-                head_summary = ', '.join(str(item) for item in nditer(v[:3]))
-                tail_summary = ', '.join(str(item) for item in nditer(v[-3:]))
+                head_summary = ', '.join(repr(item) for item in v[:3])
+                tail_summary = ', '.join(repr(item) for item in v[-3:])
                 n_miss = self._n - 6
                 summary = f"{attr}=[{head_summary}, [{n_miss} values], {tail_summary}]"
                 summaries.append(summary)
