@@ -6,5 +6,5 @@ readme : README.ipynb
 
 .PHONY: docs
 docs : 
-	python -m jupyter nbconvert README.ipynb --execute --to rst --output README.rst
+	python -m jupyter nbconvert README.ipynb --execute --to rst --output README.rst --output-dir docs
 	-sphinx-build docs docs/_build/html

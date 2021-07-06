@@ -6,4 +6,5 @@ __pycache__
 .coverage
 .pytest_cache
 docs/_build
-README.rst
+docs/README.rst
+docs/README_files
