@@ -177,8 +177,8 @@ usage you should only need <a class="reference internal" href="#medsrtqc.vms.rea
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.vms</span> <span class="kn">import</span> <span class="n">read_vms_profiles</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span> <span class="o">=</span> <span class="n">read_vms_profiles</span><span class="p">(</span><span class="s1">&#39;tests/test-data/BINARY_VMS.DAT&#39;</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;TEMP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span> <span class="o">=</span> <span class="n">read_vms_profiles</span><span class="p">(</span><span class="s1">&#39;tests/test-data/BINARY_VMS.DAT&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;TEMP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
 <span class="go">masked_array(data=[3.49900007, 3.45300007, 3.45799994, 3.48900008,</span>
 <span class="go">                3.46799994, 3.49099994, 3.4690001 , 3.50999999,</span>
 <span class="go">                3.45799994, 3.4849999 , 3.49699998, 3.42199993,</span>
@@ -194,7 +194,7 @@ usage you should only need <a class="reference internal" href="#medsrtqc.vms.rea
 <dt class="sig sig-object py" id="medsrtqc.vms.VMSProfile">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">VMSProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.VMSProfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>An implementation of the <code class="xref py py-class docutils literal notranslate"><span class="pre">core.Profile</span></code> type
-backed by data read from the MEDS internal VMS data 
+backed by data read from the MEDS internal VMS data
 structure. These objects are always created from a
 <a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
 </dd></dl>
@@ -210,11 +210,11 @@ created by <a class="reference internal" href="#medsrtqc.vms.read_vms_profiles" 
 
 <div class="section" id="module-medsrtqc.vms.enc">
 <span id="low-level-vms-io"></span><h2>Low-level VMS IO<a class="headerlink" href="#module-medsrtqc.vms.enc" title="Permalink to this headline">¶</a></h2>
-<p>The classes in the <code class="docutils literal notranslate"><span class="pre">vms.enc</span></code> module are the basis on 
-which the high-level structure definitions are based and are 
-normally not used interactively; however, they may be used 
+<p>The classes in the <code class="docutils literal notranslate"><span class="pre">vms.enc</span></code> module are the basis on
+which the high-level structure definitions are based and are
+normally not used interactively; however, they may be used
 to discover the format or debug the reading of files.
-The built-in types mostly use the Python <code class="docutils literal notranslate"><span class="pre">struct</span></code> 
+The built-in types mostly use the Python <code class="docutils literal notranslate"><span class="pre">struct</span></code>
 module to encode and decode values.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">medsrtqc</span><span class="o">.</span><span class="n">vms</span><span class="o">.</span><span class="n">enc</span> <span class="kn">import</span> <span class="o">*</span>
