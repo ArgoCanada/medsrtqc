@@ -229,7 +229,6 @@ class Real4(Encoding):
 
         file.write(float_value_mid_endian)
 
-
     def decode(self, file: BinaryIO, value=None) -> float:
         float_value_mid_endian = file.read(4)
         float_value_big_endian = bytearray(4)

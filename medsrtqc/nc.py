@@ -7,7 +7,6 @@ import shutil
 import reprlib
 import numpy as np
 from netCDF4 import Dataset, chartostring
-from numpy.core.fromnumeric import var
 from .core import Profile, Trace
 
 
@@ -61,6 +60,19 @@ class NetCDFProfile(Profile):
             'mtime': 'MTIME'
         }
 
+        var_values = self._calculate_trace_attrs(dataset, i_prof, var_names)
+
+        try:
+            return Trace(**var_values)
+        except Exception as e:
+            raise ValueError(f"Error creating Trace for '{k}'") from e
+
+    def _calculate_trace_attrs(self, dataset, i_prof, var_names):
+        """
+        Trims trailing values that are masked for all attrs and omits
+        those that are all mask.
+        """
+
         var_values = {}
         for trace_name, nc_key in var_names.items():
             if nc_key in dataset.variables:
@@ -86,13 +98,10 @@ class NetCDFProfile(Profile):
                 for var in list(var_values.keys()):
                     var_values[var] = var_values[var][:max(last_finite)]
 
-        try:
-            return Trace(**var_values)
-        except Exception as e:
-            raise ValueError(f"Error creating Trace for '{k}'") from e
+        return var_values
 
 
-def _load_dataset(src):
+def load(src):
     if not isinstance(src, (Dataset, bytes, str)):
         raise TypeError('`src` must be a filename, url, bytes, or netCDF4.Dataset object')
 
@@ -127,4 +136,4 @@ def read_nc_profile(*src):
     >>> profile['TEMP'].value
     """
 
-    return NetCDFProfile(*[_load_dataset(s) for s in src])
+    return NetCDFProfile(*[load(s) for s in src])

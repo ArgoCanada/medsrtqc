@@ -11,7 +11,7 @@ which are in turn contained by :class:`ProfileList` objects.
 
 from typing import Iterable, Tuple
 from numpy.ma import MaskedArray
-from numpy import nditer, nan, zeros, float32, dtype
+from numpy import zeros, float32, dtype
 
 
 class Trace:

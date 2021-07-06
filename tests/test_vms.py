@@ -1,6 +1,5 @@
 
 import unittest
-import os
 from io import BytesIO
 
 from medsrtqc.resources import resource_path

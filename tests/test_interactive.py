@@ -1,10 +1,12 @@
 
 import unittest
 import matplotlib
-matplotlib.use('agg')
 
 from medsrtqc.core import Trace, Profile
 from medsrtqc.interactive import plot
+
+matplotlib.use('agg')
+
 
 class TestPlot(unittest.TestCase):
 
@@ -13,6 +15,7 @@ class TestPlot(unittest.TestCase):
         profile = Profile({'PARAM': trace, 'PARAM2': trace})
         self.assertEqual(type(plot(trace)).__name__, 'AxesSubplot')
         self.assertIsInstance(plot(profile), tuple)
+
 
 if __name__ == '__main__':
     unittest.main()
