@@ -36,7 +36,7 @@ jobs:
         with:
           ref: gh-pages
           path: pages-clone
-      
+
       - name: Update documentation
         if: success() && (github.ref == 'refs/heads/master')
         run: |

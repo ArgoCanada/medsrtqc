@@ -9,7 +9,7 @@ class TestCore(unittest.TestCase):
     def test_trace(self):
         trace = Trace([1, 2, 3])
         self.assertTrue(np.all(trace.value == np.array([1, 2, 3])))
-    
+
     def test_trace_repr(self):
         self.assertRegex(repr(Trace(np.array([]))), r'^Trace\(\s*value=\[\]')
 
@@ -20,14 +20,14 @@ class TestCore(unittest.TestCase):
         self.assertEqual(list(profile.keys()), ['some_param'])
         for key in profile:
             self.assertTrue(np.all(profile[key].value == trace.value))
-    
+
     def test_abstract_profile(self):
         profile = Profile()
         with self.assertRaises(NotImplementedError):
             profile['some key']
         with self.assertRaises(NotImplementedError):
             profile.keys()
-    
+
     def test_profile_list(self):
         profile = Profile()
         profile_list = ProfileList([profile])

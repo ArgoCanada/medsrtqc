@@ -8,7 +8,7 @@ include:
 
 ``'BINARY_VMS.DAT'``
     A VMS export containing two ascents of a float in binary
-    VMS format. This file is used to test 
+    VMS format. This file is used to test
     :func:`medsrtqc.vms.read_vms_profiles`.
 
 ``'BINARY_VMS.json'``
@@ -28,7 +28,7 @@ def resource_path(path):
 
     :param path: The relative path to the data file within the
         ``resources`` module.
-    
+
     >>> from medsrtqc.resources import resource_path
     >>> resource_path('BINARY_VMS.DAT')
     """

@@ -9,7 +9,7 @@ from ..core import Trace, Profile, ProfileList
 class VMSProfile(Profile):
     """
     An implementation of the :class:`core.Profile` type
-    backed by data read from the MEDS internal VMS data 
+    backed by data read from the MEDS internal VMS data
     structure. These objects are always created from a
     :class:`VMSProfileList`.
     """
@@ -20,7 +20,7 @@ class VMSProfile(Profile):
 
         # do some pre-processing to make implementing these methods easier
         self._by_param = self._param_data_from_input(self._data)
-    
+
     def _param_data_from_input(self, data):
         pr_stn_prof = deepcopy(data['PR_STN']['PROF'])
 
@@ -46,7 +46,7 @@ class VMSProfile(Profile):
         by_param = {}
         for param_name, param_data in zip(param_names, pr_stn_prof):
             by_param[param_name] = param_data
-        
+
         return by_param
 
     def keys(self) -> Iterable[str]:
@@ -63,7 +63,7 @@ class VMSProfile(Profile):
             pres[i] = m['DEPTH_PRESS']
             value[i] = m['PARM']
             qc[i] = m['Q_PARM']
-        
+
         return Trace(value, value_qc=qc, pres=pres)
 
     def meta(self) -> Dict[str, Trace]:

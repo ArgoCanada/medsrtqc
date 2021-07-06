@@ -14,14 +14,14 @@ class TestNetCDFProfile(unittest.TestCase):
         self.assertIsInstance(profile._datasets[0], Dataset)
         self.assertIn('PRES', profile.keys())
         self.assertIsInstance(profile['PRES'], Trace)
-    
+
     def test_strip_trail(self):
         profile = read_nc_profile(resource_path('BR6904117_085.nc'))
         # all values are finite
         self.assertEqual(len(profile['CHLA']), 1273)
         # trim trailing values
         self.assertEqual(len(profile['DOXY']), 516)
-    
+
     def test_uv_intensity_nitrate(self):
         # UV_INTENSITY_NITRATE is special because its value has two
         # dimensions; however, its QC attribute only has one dimension

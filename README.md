@@ -66,7 +66,7 @@ print(repr(profile['TEMP']))
         pres=[5.27, 5.79, 6.48, [194 values], 201.5, 202.54, 203.5],
         mtime=[masked, masked, masked, [194 values], masked, masked, masked]
     )
-    
+
 
 You can use the interactive plotter to quickly visualize all or part of a profile:
 
@@ -77,9 +77,9 @@ fig, axs = plot(profile, vars=profile.keys()[:6])
 ```
 
 
-    
+
 ![png](README_files/README_5_0.png)
-    
+
 
 
 You can use the `Trace` and `Profile` classes directly to generate unit test data with known statistical properties:

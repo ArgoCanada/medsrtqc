@@ -42,7 +42,7 @@ class Trace:
         value = MaskedArray(value)
         self._shape = value.shape
         self._n = len(value)
-        
+
         self.value = self._sanitize(value, float32, 'value')
         self.value_qc = self._sanitize(value_qc, dtype('S1'), 'value_qc')
         self.adjusted = self._sanitize(adjusted, float32, 'adjusted')
@@ -50,7 +50,7 @@ class Trace:
         self.adjusted_qc = self._sanitize(adjusted_qc, dtype('S1'), 'adjusted_qc')
         self.pres = self._sanitize(pres, float32, 'pres')
         self.mtime = self._sanitize(mtime, float32, 'mtime')
-    
+
     def _sanitize(self, v, dtype_if_none, attr):
         if v is None:
             v = zeros(self._shape, dtype=dtype_if_none)
@@ -65,7 +65,7 @@ class Trace:
 
     def __len__(self):
         return self._n
-    
+
     def __repr__(self) -> str:
         summaries = []
         for attr in ['value', 'value_qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
@@ -82,7 +82,7 @@ class Trace:
                 n_miss = self._n - 6
                 summary = f"{attr}=[{head_summary}, [{n_miss} values], {tail_summary}]"
                 summaries.append(summary)
-        
+
         all_summaries = ',\n    '.join(summaries)
         return f"Trace(\n    {all_summaries}\n)"
 
@@ -110,7 +110,7 @@ class Profile:
         if self.__data is None:
             raise NotImplementedError()
         return self.__data[k]
-    
+
     def __iter__(self) -> Iterable[str]:
         return iter(self.keys())
 

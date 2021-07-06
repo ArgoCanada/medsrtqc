@@ -26,7 +26,7 @@ class NetCDFProfile(Profile):
         self._variables = None
         for dataset in self._datasets:
             self._variables = self._locate_variables(dataset, self._variables)
-        
+
     def _locate_variables(self, dataset, all_params=None):
         param_array = chartostring(dataset['PARAMETER'][:])
         n_prof = len(dataset.dimensions['N_PROF'])
@@ -39,15 +39,15 @@ class NetCDFProfile(Profile):
                 item_trim = str(item).strip()
                 if item_trim and item_trim not in all_params:
                     all_params[item_trim] = (dataset, i_prof)
-        
+
         return all_params
-    
+
     def keys(self) -> Iterable[str]:
         if self._variables is not None:
             return tuple(self._variables.keys())
         else:
             return ()
-    
+
     def __getitem__(self, k) -> Trace:
         dataset, i_prof = self._variables[k]
 
@@ -67,7 +67,7 @@ class NetCDFProfile(Profile):
                 var_values[trace_name] = dataset[nc_key][i_prof]
 
         n_values = var_values['value'].shape[0]
-        
+
         # don't include non value variables that are 100% mask
         for var in list(var_values.keys()):
             if var != 'value' and np.all(var_values[var].mask):
@@ -81,7 +81,7 @@ class NetCDFProfile(Profile):
                     last_finite.append(n_values)
                 elif not np.all(v.mask):
                     last_finite.append(np.where(~v.mask)[0].max())
-            
+
             if last_finite:
                 for var in list(var_values.keys()):
                     var_values[var] = var_values[var][:max(last_finite)]
@@ -120,7 +120,7 @@ def read_nc_profile(*src):
         If more than one is passed, the first
         data set will mask variables available in subsequent data sets.
         This is useful for combining BGC and core files.
-        
+
     >>> from medsrtqc.nc import read_nc_profile
     >>> from medsrtqc.resources import resource_path
     >>> profile = read_nc_profile(resource_path('BR2902746_001.nc'))
