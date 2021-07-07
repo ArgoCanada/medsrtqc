@@ -1,5 +1,5 @@
 
-from typing import Dict, Iterable
+from typing import Iterable
 from copy import deepcopy
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros

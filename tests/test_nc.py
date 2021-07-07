@@ -1,5 +1,4 @@
 
-from typing import Type
 import unittest
 import os
 from netCDF4 import Dataset

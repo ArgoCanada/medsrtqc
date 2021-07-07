@@ -1,5 +1,4 @@
 
-from typing import Type
 from .core_impl import VMSProfileList
 from .profiles_enc import PrStnAndPrProfilesEncoding
 from .enc import ArrayOf

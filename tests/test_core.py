@@ -54,7 +54,7 @@ class TestCore(unittest.TestCase):
         self.assertIsNot(profile_list[0], profile)
         self.assertIsNone(profile_list[0]._Profile__data)
         for p in profile_list:
-           self.assertIsNone(p._Profile__data)
+            self.assertIsNone(p._Profile__data)
 
         profile_list[0] = Profile({'param': Trace([])})
         self.assertIsNotNone(profile_list[0]._Profile__data)
