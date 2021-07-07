@@ -43,7 +43,7 @@ def write_vms_profiles(profiles, dest):
     """
     Write a binary VMS file from a :class:`VMSProfileList`.
 
-    :param profiles A :class:`VMSProfileList()`
+    :param profiles: A :class:`VMSProfileList()`
     :param dest: A filename or file-like object
 
     >>> from medsrtqc.vms import write_vms_profiles, read_vms_profiles
