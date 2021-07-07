@@ -6,13 +6,15 @@ implement some QC functions. Resource files are accessed using
 :func:`resource_path`. Resource files that can be accessed
 include:
 
-``'BINARY_VMS.DAT'``
+``'BINARY_VMS.DAT'``, ``'BINARY_VMS.json'```
     A VMS export containing two ascents of a float in binary
     VMS format. This file is used to test
-    :func:`medsrtqc.vms.read_vms_profiles`.
+    :func:`medsrtqc.vms.read_vms_profiles`. The ``.json``
+    version is a human-readable dump of the ``.DAT`` file.
 
-``'BINARY_VMS.json'``
-    The human-readable JSON version of ``'BINARY_VMS.DAT'``.
+``'OUTPUT_RT.DAT'``, ``'OUTPUT_RT.json'``
+    A QC-applied version of ``'BINARY_VMS.DAT'``. The ``.json``
+    version is a human-readable dump of the ``.DAT`` file.
 
 ``'BR6904117_085.nc'``, ``'R6904117_085.nc'``
     A core and BGC Argo NetCDF file for use testing BGC variables.
