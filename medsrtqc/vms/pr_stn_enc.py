@@ -105,7 +105,7 @@ class PrStnEncoding(enc.StructEncoding):
         )
 
     def decode(self, file: BinaryIO, value=None):
-        if value is None:
+        if value is None:  # pragma: no cover
             value = OrderedDict()
 
         value['FXD'] = OrderedDict()

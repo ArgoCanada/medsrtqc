@@ -1,4 +1,5 @@
 
+from typing import Type
 import unittest
 import os
 from netCDF4 import Dataset
@@ -14,6 +15,10 @@ class TestNetCDFProfile(unittest.TestCase):
         self.assertIsInstance(profile._datasets[0], Dataset)
         self.assertIn('PRES', profile.keys())
         self.assertIsInstance(profile['PRES'], Trace)
+
+    def test_empty(self):
+        profile = read_nc_profile()
+        self.assertEqual(profile.keys(), ())
 
     def test_strip_trail(self):
         profile = read_nc_profile(resource_path('BR6904117_085.nc'))
@@ -57,6 +62,10 @@ class TestNetCDFProfile(unittest.TestCase):
     def test_dataset_unknown(self):
         with self.assertRaises(ValueError):
             read_nc_profile('this is not anything')
+
+    def test_dataset_bad_type(self):
+        with self.assertRaises(TypeError):
+            read_nc_profile(None)
 
 
 if __name__ == '__main__':

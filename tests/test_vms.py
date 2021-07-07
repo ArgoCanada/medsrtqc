@@ -1,6 +1,9 @@
 
+from typing import Type
 import unittest
 from io import BytesIO
+import os
+import tempfile
 
 from medsrtqc.resources import resource_path
 import medsrtqc.vms.enc as enc
@@ -25,6 +28,8 @@ class TestEncoding(unittest.TestCase):
         f.encode(file, 'abcd')
         self.assertEqual(file.getvalue(), b'abcd ')
         self.assertEqual(f.decode(BytesIO(b'abcd ')), 'abcd')
+        with self.assertRaises(ValueError):
+            f.encode(file, '123456')
 
     def test_struct(self):
         f = enc.StructEncoding(
@@ -50,6 +55,9 @@ class TestEncoding(unittest.TestCase):
         # test determinate length and indeterminate length
         self.assertEqual(f.decode(BytesIO(b'abcd '), [None]), ['abcd'])
         self.assertEqual(f.decode(BytesIO(b'abcd ')), ['abcd'])
+
+        with self.assertRaises(ValueError):
+            f.encode(file, ['abcd'] * 11)
 
     def test_python_struct(self):
         f = enc.PythonStructEncoding('>h')
@@ -87,11 +95,20 @@ class TestEncoding(unittest.TestCase):
 class TestVMSRead(unittest.TestCase):
 
     def test_read_write(self):
+        with self.assertRaises(TypeError):
+            read.read_vms_profiles(None)
+
+        with self.assertRaises(TypeError):
+            read.write_vms_profiles(None, None)
+
         test_file = resource_path('BINARY_VMS.DAT')
 
         profiles = read.read_vms_profiles(test_file)
         self.assertEqual(len(profiles), 2)
         self.assertIsInstance(profiles, VMSProfileList)
+
+        for p in profiles:
+            self.assertIsInstance(p, VMSProfile)
 
         profile_count = 0
         for profile in profiles:
@@ -103,6 +120,9 @@ class TestVMSRead(unittest.TestCase):
 
         self.assertEqual(profile_count, len(profiles))
 
+        with self.assertRaises(TypeError):
+            read.write_vms_profiles(profiles, None)
+
         with open(test_file, 'rb') as f:
             self.assertEqual(profiles._data, read.read_vms_profiles(f)._data)
 
@@ -113,6 +133,16 @@ class TestVMSRead(unittest.TestCase):
             written_content = BytesIO()
             read.write_vms_profiles(profiles, written_content)
             self.assertEqual(written_content.getvalue(), content)
+
+            fd, tmp = tempfile.mkstemp()
+            try:
+                with open(tmp, 'wb') as fw:
+                    read.write_vms_profiles(profiles, tmp)
+                with open(tmp, 'rb') as fw:
+                    self.assertEqual(fw.read(), content)
+            finally:
+                os.close(fd)
+                os.unlink(tmp)
 
 
 if __name__ == '__main__':

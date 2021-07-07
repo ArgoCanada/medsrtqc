@@ -76,7 +76,7 @@ class NetCDFProfile(Profile):
 
         try:
             return Trace(**var_values)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ValueError(f"Error creating Trace for '{k}'") from e
 
     def _calculate_trace_attrs(self, dataset, i_prof, var_names):

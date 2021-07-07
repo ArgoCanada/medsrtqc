@@ -66,9 +66,6 @@ class VMSProfile(Profile):
 
         return Trace(value, value_qc=qc, pres=pres)
 
-    def meta(self) -> Dict[str, Trace]:
-        return super().meta()
-
 
 class VMSProfileList(ProfileList):
     """

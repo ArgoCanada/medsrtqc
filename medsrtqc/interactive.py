@@ -69,8 +69,6 @@ def plot_profile(x, fig=None, ax=None, vars=None, trace_attrs=None):
 
     if vars is None:
         vars = list(x.keys())
-    else:
-        vars = list(vars)
 
     if not vars:
         return plt.subplots(1, 1)

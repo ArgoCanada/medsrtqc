@@ -27,7 +27,7 @@ from struct import pack, unpack, calcsize
 from collections import OrderedDict
 
 
-class Encoding:
+class Encoding:  # pragma: no cover
     """A base class for binary encoding and decoding values"""
 
     def sizeof(self, value=None):

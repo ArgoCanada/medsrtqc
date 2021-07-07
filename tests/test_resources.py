@@ -17,6 +17,9 @@ class TestResources(unittest.TestCase):
         for r in res:
             self.assertTrue(os.path.isfile(resource_path(r)))
 
+        with self.assertRaises(FileNotFoundError):
+            resource_path('definitely not a resource')
+
 
 if __name__ == '__main__':
     unittest.main()
