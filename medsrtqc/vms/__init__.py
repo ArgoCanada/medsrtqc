@@ -6,7 +6,7 @@ without affecting the clarity of real-time processing code. In normal
 usage you should only need :func:`read_vms_profiles`.
 """
 
-from .read import read_vms_profiles
+from .read import read_vms_profiles, write_vms_profiles
 from .core_impl import VMSProfile, VMSProfileList
 
 __all__ = ['read_vms_profiles', 'VMSProfile', 'VMSProfileList']

@@ -86,7 +86,7 @@ class TestEncoding(unittest.TestCase):
 
 class TestVMSRead(unittest.TestCase):
 
-    def test_read(self):
+    def test_read_write(self):
         test_file = resource_path('BINARY_VMS.DAT')
 
         profiles = read.read_vms_profiles(test_file)
@@ -108,7 +108,11 @@ class TestVMSRead(unittest.TestCase):
 
         size_calc = read._file_encoding.sizeof(profiles._data)
         with open(test_file, 'rb') as f:
-            self.assertEqual(size_calc, len(f.read()))
+            content = f.read()
+            self.assertEqual(size_calc, len(content))
+            written_content = BytesIO()
+            read.write_vms_profiles(profiles, written_content)
+            self.assertEqual(written_content.getvalue(), content)
 
 
 if __name__ == '__main__':
