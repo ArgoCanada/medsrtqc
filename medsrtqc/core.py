@@ -10,6 +10,7 @@ which are in turn contained by :class:`ProfileList` objects.
 """
 
 from typing import Iterable, Tuple
+from copy import deepcopy
 from numpy.ma import MaskedArray
 from numpy import zeros, float32, dtype
 
@@ -95,21 +96,26 @@ class Profile:
     that can be QCed). The interface is dict-like with elements as
     :class:`Trace` objects that can be extracted by name or iterated
     over using :meth:`keys` or :meth:`items`. The base class can wrap
-    an immutable ``dict`` of :class:`Trace` objects.
+    a ``dict`` of :class:`Trace` objects.
     """
 
     def __init__(self, data=None):
-        self.__data = data
+        self.__data = dict(data) if data is not None else None
 
     def keys(self) -> Iterable[str]:
         if self.__data is None:
             raise NotImplementedError()
-        return self.__data.keys()
+        return tuple(self.__data.keys())
 
     def __getitem__(self, k) -> Trace:
         if self.__data is None:
             raise NotImplementedError()
-        return self.__data[k]
+        return deepcopy(self.__data[k])
+
+    def __setitem__(self, k, v):
+        if self.__data is None:
+            raise NotImplementedError()
+        self.__data[k] = v
 
     def __iter__(self) -> Iterable[str]:
         return iter(self.keys())
@@ -124,15 +130,14 @@ class Profile:
 
 class ProfileList:
     """
-    An base class for a collection of Profile objects
-    measured in the same location but not necessarily at the same
-    pressure levels. These objects are list-like with each member
-    as a :class:`Profile` implementation. The base class can wrap
-    an immutable ``list()`` of :class:`Profile` objects.
+    An base class for a collection of Profile objects.
+    These objects are list-like with each member
+    as a :class:`Profile` implementation. The base class wraps
+    a ``list()`` of :class:`Profile` objects.
     """
 
     def __init__(self, data=None):
-        self.__data = data
+        self.__data = list(data) if data is not None else data
 
     def __len__(self):
         if self.__data is None:
@@ -142,7 +147,12 @@ class ProfileList:
     def __getitem__(self, k) -> Profile:
         if self.__data is None:
             raise NotImplementedError()
-        return self.__data[k]
+        return deepcopy(self.__data[k])
+
+    def __setitem__(self, k, v):
+        if self.__data is None:
+            raise NotImplementedError()
+        self.__data[k] = v
 
     def __iter__(self) -> Iterable[Profile]:
         for i in range(len(self)):

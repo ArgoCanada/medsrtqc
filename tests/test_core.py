@@ -32,9 +32,10 @@ class TestCore(unittest.TestCase):
         profile = Profile()
         profile_list = ProfileList([profile])
         self.assertEqual(len(profile_list), 1)
-        self.assertIs(profile_list[0], profile)
+        self.assertIsNot(profile_list[0], profile)
+        self.assertIsNone(profile_list[0]._Profile__data)
         for p in profile_list:
-            self.assertIs(p, profile)
+           self.assertIsNone(p._Profile__data)
 
 
 if __name__ == '__main__':
