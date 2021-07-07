@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Resource files &mdash; MEDS Realtime QC  documentation</title>
+  <title>NetCDF IO &mdash; MEDS Realtime QC  documentation</title>
   
 
   
@@ -41,7 +41,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Interactive helpers" href="interactive.html" /> 
+    <link rel="next" title="VMS IO" href="vms.html" />
+    <link rel="prev" title="Abstract base classes" href="core.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,10 +90,10 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Abstract base classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nc.html">NetCDF IO</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NetCDF IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vms.html">VMS IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interactive.html">Interactive helpers</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Resource files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resource files</a></li>
 </ul>
 
             
@@ -141,13 +142,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Resource files</li>
+      <li>NetCDF IO</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/resources.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/nc.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -160,38 +161,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-medsrtqc.resources">
-<span id="resource-files"></span><h1>Resource files<a class="headerlink" href="#module-medsrtqc.resources" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">resources</span></code> module facilitates inclusion of data files
-that serve as examples or simplify the code required to
-implement some QC functions. Resource files are accessed using
-<a class="reference internal" href="#medsrtqc.resources.resource_path" title="medsrtqc.resources.resource_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">resource_path()</span></code></a>. Resource files that can be accessed
-include:</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code></dt><dd><p>A VMS export containing two ascents of a float in binary
-VMS format. This file is used to test
-<a class="reference internal" href="vms.html#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">medsrtqc.vms.read_vms_profiles()</span></code></a>.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.json'</span></code></dt><dd><p>The human-readable JSON version of <code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code>.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">'BR6904117_085.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'R6904117_085.nc'</span></code></dt><dd><p>A core and BGC Argo NetCDF file for use testing BGC variables.</p>
-</dd>
-</dl>
+  <div class="section" id="module-medsrtqc.nc">
+<span id="netcdf-io"></span><h1>NetCDF IO<a class="headerlink" href="#module-medsrtqc.nc" title="Permalink to this headline">¶</a></h1>
+<p>The NetCDF implementation of the <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.core.Profile</span></code></a> gives developers
+and users access to more than 2 million profiles available on the Argo
+GDAC for testing purposes. You can also run production QC tests on NetCDF
+files if generating them in advance simplifies the workflow. Most users
+will only ever use <code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code>.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="medsrtqc.resources.resource_path">
-<span class="sig-prename descclassname"><span class="pre">medsrtqc.resources.</span></span><span class="sig-name descname"><span class="pre">resource_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.resources.resource_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the absolute path to a resource file or raise
-<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if the file does not exist.</p>
+<dt class="sig sig-object py" id="medsrtqc.nc.load">
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset`</span> <span class="pre">from</span> <span class="pre">a</span> <span class="pre">filename,</span> <span class="pre">url,</span> <span class="pre">bytes,</span> <span class="pre">or</span> <span class="pre">existing</span>
+<span class="pre">``netCDF4.Dataset</span></code>. This is applied to anywhere a NetCDF file must
+be specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> – The relative path to the data file within the
-<code class="docutils literal notranslate"><span class="pre">resources</span></code> module.</p>
+<dd class="field-odd"><p><strong>src</strong> – A URL, filename, bytes, or existing <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code></p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.resources</span> <span class="kn">import</span> <span class="n">resource_path</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">resource_path</span><span class="p">(</span><span class="s1">&#39;BINARY_VMS.DAT&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.nc.NetCDFProfile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">NetCDFProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.NetCDFProfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.core.Profile</span></code></a> implementation backed by a
+<code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> representation of an Argo profile NetCDF file.
+The NetCDF files should be single-cycle NetCDFs; however, you can
+pass more than one to include variables from multiple files (e.g.,
+a core and a BGC file). When this is the case, the variables
+from the first file mask those of subsequent files. These objects
+are normally created from <code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code>.</p>
 </dd></dl>
 
 </div>
@@ -202,7 +201,8 @@ VMS format. This file is used to test
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="interactive.html" class="btn btn-neutral float-left" title="Interactive helpers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vms.html" class="btn btn-neutral float-right" title="VMS IO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="core.html" class="btn btn-neutral float-left" title="Abstract base classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
