@@ -118,7 +118,7 @@ class NetCDFProfile(Profile):
 
 def load(src):
     """
-    Load a ``netCDF4.Dataset` from a filename, url, bytes, or existing
+    Load a ``netCDF4.Dataset`` from a filename, url, bytes, or existing
     ``netCDF4.Dataset``. This is applied to anywhere a NetCDF file must
     be specified.
 
