@@ -167,12 +167,33 @@
 and users access to more than 2 million profiles available on the Argo
 GDAC for testing purposes. You can also run production QC tests on NetCDF
 files if generating them in advance simplifies the workflow. Most users
-will only ever use <code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code>.</p>
+will only ever use <a class="reference internal" href="#medsrtqc.nc.read_nc_profile" title="medsrtqc.nc.read_nc_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="medsrtqc.nc.read_nc_profile">
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">read_nc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.read_nc_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a <code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.Profile</span></code> backed by a NetCDF file. For details
+on the underlying data structure, see <a class="reference internal" href="#medsrtqc.nc.NetCDFProfile" title="medsrtqc.nc.NetCDFProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFProfile</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>src</strong> – One or more URLs, filename, bytes, or existing <a href="#id1"><span class="problematic" id="id2">``</span></a>netCDF4.Dataset``s.
+If more than one is passed, the first
+data set will mask variables available in subsequent data sets.
+This is useful for combining BGC and core files.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.nc</span> <span class="kn">import</span> <span class="n">read_nc_profile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.resources</span> <span class="kn">import</span> <span class="n">resource_path</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">read_nc_profile</span><span class="p">(</span><span class="n">resource_path</span><span class="p">(</span><span class="s1">&#39;BR2902746_001.nc&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;TEMP&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.nc.load">
 <span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset`</span> <span class="pre">from</span> <span class="pre">a</span> <span class="pre">filename,</span> <span class="pre">url,</span> <span class="pre">bytes,</span> <span class="pre">or</span> <span class="pre">existing</span>
-<span class="pre">``netCDF4.Dataset</span></code>. This is applied to anywhere a NetCDF file must
+<dd><p>Load a <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> from a filename, url, bytes, or existing
+<code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>. This is applied to anywhere a NetCDF file must
 be specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -190,7 +211,7 @@ The NetCDF files should be single-cycle NetCDFs; however, you can
 pass more than one to include variables from multiple files (e.g.,
 a core and a BGC file). When this is the case, the variables
 from the first file mask those of subsequent files. These objects
-are normally created from <code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code>.</p>
+are normally created from <a class="reference internal" href="#medsrtqc.nc.read_nc_profile" title="medsrtqc.nc.read_nc_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code></a>.</p>
 </dd></dl>
 
 </div>
