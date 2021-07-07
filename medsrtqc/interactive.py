@@ -1,10 +1,30 @@
 
+"""
+When developing QC code interactively it is often useful to generate
+plots. This module is a thin wrapper around the ``matplotlib.pyplot``
+module that generates the plot that you probably want as a glimpse
+of a :class:`medsrtqc.core.Profile` or :class:`medsrtqc.core.Trace`.
+These functions are most usefully invoked in a Jupyter Notebook
+or similar environment. These functions require
+`matplotlib <https://matplotlib.org/>` to be installed.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from .core import Trace, Profile
 
 
 def plot_trace(x, ax=None, trace_attrs=None):
+    """
+    Plot a :class:`medsrtqc.core.Trace` object.
+
+    :param x: A :class:`medsrtqc.core.Trace` object
+    :param ax: An existing set of matplotlib ``Axes``
+    :param trace_attrs: A subset tuple of ``'value'``, ``'adjusted'``
+        and/or ``'ajusted_error'``. Plotting QC flags is not
+        implemented yet.
+    """
+
     ax_none = ax is None
     if ax_none:
         ax = plt.axes()
@@ -34,6 +54,19 @@ def plot_trace(x, ax=None, trace_attrs=None):
 
 
 def plot_profile(x, fig=None, ax=None, vars=None, trace_attrs=None):
+    """
+    Plot a :class:`medsrtqc.core.Profile` object.
+
+    :param x: A :class:`medsrtqc.core.Profile` object
+    :param fig: An existing matplotlib ``Figure`` such as that returned
+        by ``matplotlib.pyplot.subplots()``.
+    :param ax: An existing set of matplotlib ``Axes`` or array of these
+        as returned by ``matplotlib.pyplot.subplots()``.
+    :param vars: An iterable of variables to plot or ``None`` to plot
+        them all.
+    :param trace_attrs: Passed to :func:`plot_trace`.
+    """
+
     if vars is None:
         vars = list(x.keys())
     else:
@@ -65,6 +98,16 @@ def plot_profile(x, fig=None, ax=None, vars=None, trace_attrs=None):
 
 
 def plot(x, fig=None, ax=None, vars=None, trace_attrs=None):
+    """
+    A convenience method that either calls :func:`plot_profile` or
+    :func:`plot_trace` depending on the class of ``x``.
+
+    >>> from medsrtqc.core import Trace, Profile
+    >>> from medsrtqc.interactive import plot
+    >>> trace = Trace([1, 2, 4], adjusted=[2, 3, 5], pres=[0, 1, 2])
+    >>> plot(trace)
+    >>> plot(Profile({'param1': trace}))
+    """
 
     if isinstance(x, Trace):
         return plot_trace(x, ax=ax, trace_attrs=trace_attrs)
