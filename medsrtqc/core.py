@@ -120,7 +120,7 @@ class Profile:
     def __iter__(self) -> Iterable[str]:
         return iter(self.keys())
 
-    def __in__(self, k) -> bool:
+    def __contains__(self, k) -> bool:
         return k in self.keys()
 
     def items(self) -> Iterable[Tuple[str, Trace]]:
