@@ -168,11 +168,13 @@ implement some QC functions. Resource files are accessed using
 <a class="reference internal" href="#medsrtqc.resources.resource_path" title="medsrtqc.resources.resource_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">resource_path()</span></code></a>. Resource files that can be accessed
 include:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code></dt><dd><p>A VMS export containing two ascents of a float in binary
+<dt><code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.json'`</span></code></dt><dd><p>A VMS export containing two ascents of a float in binary
 VMS format. This file is used to test
-<a class="reference internal" href="vms.html#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">medsrtqc.vms.read_vms_profiles()</span></code></a>.</p>
+<a class="reference internal" href="vms.html#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">medsrtqc.vms.read_vms_profiles()</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">.json</span></code>
+version is a human-readable dump of the <code class="docutils literal notranslate"><span class="pre">.DAT</span></code> file.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.json'</span></code></dt><dd><p>The human-readable JSON version of <code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">'OUTPUT_RT.DAT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'OUTPUT_RT.json'</span></code></dt><dd><p>A QC-applied version of <code class="docutils literal notranslate"><span class="pre">'BINARY_VMS.DAT'</span></code>. The <code class="docutils literal notranslate"><span class="pre">.json</span></code>
+version is a human-readable dump of the <code class="docutils literal notranslate"><span class="pre">.DAT</span></code> file.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">'BR6904117_085.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'R6904117_085.nc'</span></code></dt><dd><p>A core and BGC Argo NetCDF file for use testing BGC variables.</p>
 </dd>
