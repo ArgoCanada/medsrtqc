@@ -7,6 +7,7 @@
 
    resources
    core
+   nc
    vms
 
 

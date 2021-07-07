@@ -1,4 +1,12 @@
 
+"""
+The NetCDF implementation of the :class:`medsrtqc.core.Profile` gives developers
+and users access to more than 2 million profiles available on the Argo
+GDAC for testing purposes. You can also run production QC tests on NetCDF
+files if generating them in advance simplifies the workflow. Most users
+will only ever use :func:`read_nc_profile`.
+"""
+
 from typing import Iterable
 import urllib.request
 import io
@@ -14,13 +22,17 @@ class NetCDFProfile(Profile):
     """
     A :class:`medsrtqc.core.Profile` implementation backed by a
     ``netCDF4.Dataset`` representation of an Argo profile NetCDF file.
-    The NetCDF file should be a single-profile NetCDF. These objects
-    are normally created using :func:`read_nc_profile`.
-
-    :param dataset: One or more existing ``netCDF4.Dataset``s.
+    The NetCDF files should be single-cycle NetCDFs; however, you can
+    pass more than one to include variables from multiple files (e.g.,
+    a core and a BGC file). When this is the case, the variables
+    from the first file mask those of subsequent files. These objects
+    are normally created from :func:`read_nc_profile`.
     """
 
     def __init__(self, *dataset):
+        """
+        :param dataset: One or more existing ``netCDF4.Dataset``s.
+        """
         self._datasets = list(dataset)
         self._variables = None
         for dataset in self._datasets:
@@ -105,6 +117,14 @@ class NetCDFProfile(Profile):
 
 
 def load(src):
+    """
+    Load a ``netCDF4.Dataset` from a filename, url, bytes, or existing
+    ``netCDF4.Dataset``. This is applied to anywhere a NetCDF file must
+    be specified.
+
+    :param src: A URL, filename, bytes, or existing ``netCDF4.Dataset``
+    """
+
     if not isinstance(src, (Dataset, bytes, str)):
         raise TypeError('`src` must be a filename, url, bytes, or netCDF4.Dataset object')
 
@@ -125,10 +145,10 @@ def load(src):
 
 def read_nc_profile(*src):
     """
-    Load a ``netCDF4.Dataset` from a filename, url, bytes, or existing
-    ``netCDF4.Dataset``.
+    Load a :class:`medsrtqc.Profile` backed by a NetCDF file. For details
+    on the underlying data structure, see :class:`NetCDFProfile`.
 
-    :param src: A URL, filename, bytes, or existing ``netCDF4.Dataset``.
+    :param src: One or more URLs, filename, bytes, or existing ``netCDF4.Dataset``s.
         If more than one is passed, the first
         data set will mask variables available in subsequent data sets.
         This is useful for combining BGC and core files.
@@ -136,7 +156,7 @@ def read_nc_profile(*src):
     >>> from medsrtqc.nc import read_nc_profile
     >>> from medsrtqc.resources import resource_path
     >>> profile = read_nc_profile(resource_path('BR2902746_001.nc'))
-    >>> profile['TEMP'].value
+    >>> profile['TEMP']
     """
 
     return NetCDFProfile(*[load(s) for s in src])
