@@ -6,6 +6,8 @@ VMS IO
 
 .. autofunction:: read_vms_profiles
 
+.. autofunction:: write_vms_profiles
+
 .. autoclass:: VMSProfile
 
 .. autoclass:: VMSProfileList
