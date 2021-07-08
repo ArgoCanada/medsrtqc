@@ -11,6 +11,7 @@ which are in turn contained by :class:`ProfileList` objects.
 
 from typing import Iterable, Tuple
 from copy import deepcopy
+import sys
 from numpy.ma import MaskedArray
 from numpy import zeros, float32, dtype
 
@@ -157,3 +158,121 @@ class ProfileList:
     def __iter__(self) -> Iterable[Profile]:
         for i in range(len(self)):
             yield self[i]
+
+
+class QCOperationError(Exception):
+    """
+    An ``Exception`` subclass with attributes ``profile``, ``trace``,
+    and ``trace_key``. These errors give an opportunity for inspection
+    on debugging and potentially more informative printing because
+    they contain some context.
+    """
+
+    def __init__(self, *args, profile=None, trace_key=None, trace=None, **kwargs):
+        """
+        :param profile: The :class:`Profile` associated with this error
+        :param trace_key: The key associated with this error
+        :param trace: The :class:`Trace` associated with this error
+        :param args: Passed to ``super()``
+        :param kwargs: Passed to ``super()``
+        """
+        super().__init__(*args, **kwargs)
+        self.profile = profile
+        self.trace = trace
+        self.trace_key = trace
+
+
+class QCOperationApplier:
+    """
+    QC operations may be run in many different contexts. The obvious context
+    is to apply the result of the operation to the underlying
+    :class:`Profile` (the default), but this class is used to give
+    flexibility should users wish to do something else (e.g., print what
+    actions would be taken without actually applying them) or require
+    specialized actions to perform data updates that are impossible or
+    inconvenient to implement in the :class:`Profile` subclass.
+    """
+
+    def update_trace(self, profile, k, trace):
+        """
+        Updates a given :class:`Trace` for a :class:`Profile`.
+        The default method runs ``profile[k] = trace``.
+        """
+        profile[k] = trace
+
+    def log(self, profile, message):
+        """
+        Print a log message for a given :class:`Profile`.
+        The default method prints the message to ``sys.stderr``.
+        """
+        print(f"[{repr(profile)}] {message}", file=sys.stderr)
+
+    def pyplot(self, profile):
+        """
+        Get a version of matplotlib.pyplot used for use in a ``with:``
+        statement. The default method returns a context manager that
+        wraps a dummy version of the module that does nothing.
+        """
+
+        class DummyPyPlot:
+
+            def plot(self, *args, **kwargs):
+                pass
+
+            def scatter(self, *args, **kwargs):
+                pass
+
+            def errorbar(self, *args, **kwargs):
+                pass
+
+            def subplots(self, *args, **kwargs):
+                return None, None
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, value, traceback):
+                return isinstance(value, AttributeError)
+
+        return DummyPyPlot()
+
+
+class QCOperation:
+    """
+    A QC operation here is instantiated with a target
+    :class:`Profile` and the previous :class:`Profile` as these
+    are needed to implement many of the tests. QC operations
+    should implement the ``run()`` method and use the built-in
+    methods to do any data updates.
+    """
+
+    def __init__(self, profile, previous_profile=None, applier=None):
+        """
+        :param profile: The target :class:`Profile`.
+        :param profile: The previous :class:`Profile` from this float
+        :param applier: The :class:`QCOperationApplier` instance used
+            to perform update operations on ``profile``.
+        """
+        if applier is None:
+            self.applier = QCOperationApplier()
+        else:
+            self.applier = applier
+
+        self.profile = profile
+        self.previous_profile = previous_profile
+
+    def update_trace(self, k, trace):
+        """Convenience wrapper for :func:`QCOperationApplier.update_trace`"""
+        self.applier.update_trace(self.profile, k, trace)
+
+    def log(self, message):
+        """Convenience wrapper for :func:`QCOperationApplier.log`"""
+        self.applier.log(message)
+
+    def pyplot(self):
+        """Convenience wrapper for :func:`QCOperationApplier.pyplot`"""
+        return self.applier.pyplot(self.profile)
+
+    def run(self):
+        """Run the test. This method must be implemented by test subclasses."""
+        raise NotImplementedError()
