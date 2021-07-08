@@ -212,21 +212,30 @@ class QCOperationApplier:
         Get a version of matplotlib.pyplot used for use in a ``with:``
         statement. The default method returns a context manager that
         wraps a dummy version of the module that does nothing.
+
+        >>> from medsrtqc.core import Profile, Trace, QCOperationApplier
+        >>> applier = QCOperationApplier()
+        >>> profile = Profile({'param': Trace([1, 2])})
+        >>> with applier.pyplot(profile) as plt:
+        ...     plt.plot(profile['param'].value)
         """
 
         class DummyPyPlot:
 
             def plot(self, *args, **kwargs):
-                pass
+                return self
 
             def scatter(self, *args, **kwargs):
-                pass
+                return self
 
             def errorbar(self, *args, **kwargs):
-                pass
+                return self
 
             def subplots(self, *args, **kwargs):
-                return None, None
+                return self, tuple(self)
+
+            def subplot(self, *args, **kwargs):
+                return self
 
             def __enter__(self):
                 return self
