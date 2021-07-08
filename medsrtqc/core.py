@@ -251,7 +251,7 @@ class QCOperation:
     A QC operation here is instantiated with a target
     :class:`Profile` and the previous :class:`Profile` as these
     are needed to implement many of the tests. QC operations
-    should implement the ``run()`` method and use the built-in
+    should implement the :func:`run()` method and use the built-in
     methods to do any data updates.
     """
 
