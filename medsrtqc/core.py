@@ -7,6 +7,13 @@ provide a view of Argo data that can be passed to or returned from
 QC operations. Here Argo data are modeled as a three-level heiarchy
 where :class:`Trace` objects are contained by :class:`Profile` objects
 which are in turn contained by :class:`ProfileList` objects.
+
+:class:`QCOperation`s build on the :class:`Profile` and :class:`Trace`,
+updating the :class:`Profile` and/or performing operations with side
+effects like creating a plot or logging information to stderr. The
+:class:`QCOperationApplier` class provides methods for common actions
+to minimize the number of custom :class:`QCOperation` classes needed
+to implement a production QC workflow.
 """
 
 from typing import Iterable, Tuple
