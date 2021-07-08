@@ -179,7 +179,7 @@ class QCOperationError(Exception):
         super().__init__(*args, **kwargs)
         self.profile = profile
         self.trace = trace
-        self.trace_key = trace
+        self.trace_key = trace_key
 
 
 class QCOperationApplier:
@@ -232,7 +232,7 @@ class QCOperationApplier:
                 return self
 
             def subplots(self, *args, **kwargs):
-                return self, tuple(self)
+                return self, (self, )
 
             def subplot(self, *args, **kwargs):
                 return self
@@ -240,8 +240,8 @@ class QCOperationApplier:
             def __enter__(self):
                 return self
 
-            def __exit__(self, value, traceback):
-                return isinstance(value, AttributeError)
+            def __exit__(self, value, *execinfo):
+                return value is AttributeError
 
         return DummyPyPlot()
 
@@ -276,7 +276,7 @@ class QCOperation:
 
     def log(self, message):
         """Convenience wrapper for :func:`QCOperationApplier.log`"""
-        self.applier.log(message)
+        self.applier.log(self.profile, message)
 
     def pyplot(self):
         """Convenience wrapper for :func:`QCOperationApplier.pyplot`"""

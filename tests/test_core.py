@@ -1,7 +1,9 @@
 
 import unittest
 import numpy as np
-from medsrtqc.core import Trace, Profile, ProfileList
+import contextlib
+from io import StringIO
+from medsrtqc.core import QCOperation, QCOperationApplier, QCOperationError, Trace, Profile, ProfileList
 
 
 class TestCore(unittest.TestCase):
@@ -58,6 +60,59 @@ class TestCore(unittest.TestCase):
 
         profile_list[0] = Profile({'param': Trace([])})
         self.assertIsNotNone(profile_list[0]._Profile__data)
+
+
+class TestCoreQC(unittest.TestCase):
+
+    def test_error(self):
+        with self.assertRaises(QCOperationError):
+            raise QCOperationError()
+
+    def test_default_applier(self):
+        applier = QCOperationApplier()
+        profile = Profile({'key': Trace([1])})
+
+        applier.update_trace(profile, 'key', Trace([2]))
+        self.assertEqual(profile['key'].value[0], 2)
+
+        output = StringIO()
+        with contextlib.redirect_stderr(output):
+            applier.log(profile, 'the message')
+        self.assertRegex(output.getvalue(), 'the message$')
+
+        # test dummy matplotlib methods
+        with applier.pyplot(profile) as plt:
+            self.assertIs(plt.plot(), plt)
+            self.assertIs(plt.scatter(), plt)
+            self.assertIs(plt.errorbar(), plt)
+            self.assertIs(plt.subplots()[0], plt)
+            self.assertIs(plt.subplot(), plt)
+
+        # test error handling
+        with applier.pyplot(profile):
+            raise AttributeError('this should be silently squashed')
+
+        with self.assertRaises(ValueError):
+            with applier.pyplot(profile):
+                raise ValueError('this error should be caught')
+
+    def test_abstract_operation(self):
+        profile = Profile({'key': Trace([1])})
+        op = QCOperation(profile)
+
+        op.update_trace('key', Trace([2]))
+        self.assertEqual(profile['key'].value[0], 2)
+
+        output = StringIO()
+        with contextlib.redirect_stderr(output):
+            op.log('the message')
+        self.assertRegex(output.getvalue(), 'the message$')
+
+        with op.pyplot() as plt:
+            self.assertIs(plt.plot(), plt)
+
+        with self.assertRaises(NotImplementedError):
+            op.run()
 
 
 if __name__ == '__main__':
