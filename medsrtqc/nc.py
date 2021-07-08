@@ -35,10 +35,11 @@ class NetCDFProfile(Profile):
         """
         self._datasets = list(dataset)
         self._variables = None
-        for dataset in self._datasets:
-            self._variables = self._locate_variables(dataset, self._variables)
+        for dataset_id in range(len(self._datasets)):
+            self._variables = self._locate_variables(dataset_id, self._variables)
 
-    def _locate_variables(self, dataset, all_params=None):
+    def _locate_variables(self, dataset_id, all_params=None):
+        dataset = self._datasets[dataset_id]
         param_array = chartostring(dataset['PARAMETER'][:])
         n_prof = len(dataset.dimensions['N_PROF'])
 
@@ -49,7 +50,7 @@ class NetCDFProfile(Profile):
             for item in np.nditer(param_array[i_prof]):
                 item_trim = str(item).strip()
                 if item_trim and item_trim not in all_params:
-                    all_params[item_trim] = (dataset, i_prof)
+                    all_params[item_trim] = (dataset_id, i_prof)
 
         return all_params
 
@@ -60,7 +61,7 @@ class NetCDFProfile(Profile):
             return ()
 
     def __getitem__(self, k) -> Trace:
-        dataset, i_prof = self._variables[k]
+        dataset_id, i_prof = self._variables[k]
 
         var_names = {
             'value': k,
@@ -72,7 +73,7 @@ class NetCDFProfile(Profile):
             'mtime': 'MTIME'
         }
 
-        var_values = self._calculate_trace_attrs(dataset, i_prof, var_names)
+        var_values = self._calculate_trace_attrs(self._datasets[dataset_id], i_prof, var_names)
 
         try:
             return Trace(**var_values)
