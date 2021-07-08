@@ -175,7 +175,7 @@ class QCOperationError(Exception):
     they contain some context.
     """
 
-    def __init__(self, *args, profile=None, trace_key=None, trace=None, **kwargs):
+    def __init__(self, *args, profile=None, **kwargs):
         """
         :param profile: The :class:`Profile` associated with this error
         :param trace_key: The key associated with this error
@@ -185,8 +185,6 @@ class QCOperationError(Exception):
         """
         super().__init__(*args, **kwargs)
         self.profile = profile
-        self.trace = trace
-        self.trace_key = trace_key
 
 
 class QCOperationApplier:
@@ -213,6 +211,12 @@ class QCOperationApplier:
         The default method prints the message to ``sys.stderr``.
         """
         print(f"[{repr(profile)}] {message}", file=sys.stderr)
+
+    def log(self, profile, message):
+        """
+        Shortcut for `raise QCOperationError()`
+        """
+        raise QCOperationError(message, profile=profile)
 
     def pyplot(self, profile):
         """
@@ -284,6 +288,10 @@ class QCOperation:
     def log(self, message):
         """Convenience wrapper for :func:`QCOperationApplier.log`"""
         self.applier.log(self.profile, message)
+
+    def error(self, message):
+        """Convenience wrapper for :func:`QCOperationApplier.error`"""
+        self.applier.error(self.profile, message)
 
     def pyplot(self):
         """Convenience wrapper for :func:`QCOperationApplier.pyplot`"""
