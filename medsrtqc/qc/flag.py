@@ -36,7 +36,7 @@ class Flag:
         where = slice(None) if where is None else where
         flags = qc[where]
         for overridable_flag in Flag._precedence[to]:
-            flags[flags == overridable_flag.value] = to
+            flags[flags == overridable_flag] = to
         qc[where] = flags
 
     NO_QC = b'0'
