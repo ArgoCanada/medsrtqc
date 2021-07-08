@@ -212,7 +212,7 @@ class QCOperationApplier:
         """
         print(f"[{repr(profile)}] {message}", file=sys.stderr)
 
-    def log(self, profile, message):
+    def error(self, profile, message):
         """
         Shortcut for `raise QCOperationError()`
         """

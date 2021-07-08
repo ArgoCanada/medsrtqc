@@ -80,6 +80,9 @@ class TestCoreQC(unittest.TestCase):
             applier.log(profile, 'the message')
         self.assertRegex(output.getvalue(), 'the message$')
 
+        with self.assertRaises(QCOperationError):
+            applier.error(profile, 'stop!')
+
         # test dummy matplotlib methods
         with applier.pyplot(profile) as plt:
             self.assertIs(plt.plot(), plt)
@@ -107,6 +110,9 @@ class TestCoreQC(unittest.TestCase):
         with contextlib.redirect_stderr(output):
             op.log('the message')
         self.assertRegex(output.getvalue(), 'the message$')
+
+        with self.assertRaises(QCOperationError):
+            op.error('stop!')
 
         with op.pyplot() as plt:
             self.assertIs(plt.plot(), plt)
