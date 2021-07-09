@@ -33,6 +33,7 @@ class NetCDFProfile(Profile):
         """
         :param dataset: One or more existing ``netCDF4.Dataset``s.
         """
+        super().__init__()
         self._datasets = list(dataset)
         self._variables = None
         for dataset_id in range(len(self._datasets)):
