@@ -50,19 +50,31 @@ class VMSProfile(Profile):
         return by_param
 
     def keys(self) -> Iterable[str]:
-        return self._by_param.keys()
+        keys = tuple(self._by_param.keys())
+        return ('PRES', ) + keys if 'TEMP' in keys else keys
 
     def __getitem__(self, k) -> Trace:
-        meas = self._by_param[k]['_pr_profile_prof']
+        # Special case 'PRES' since these qc values are copied with
+        # for each parameter. Use the 'TEMP' trace for this.
+        if k == 'PRES':
+            meas = self._by_param['TEMP']['_pr_profile_prof']
+        else:
+            meas = self._by_param[k]['_pr_profile_prof']
 
         pres = MaskedArray(zeros(len(meas)))
         value = MaskedArray(zeros(len(meas)))
         qc = MaskedArray(zeros(len(meas)))
 
-        for i, m in enumerate(meas):
-            pres[i] = m['DEPTH_PRESS']
-            value[i] = m['PARM']
-            qc[i] = m['Q_PARM']
+        if k == 'PRES':
+            for i, m in enumerate(meas):
+                pres[i] = m['DEPTH_PRESS']
+                value[i] = m['DEPTH_PRESS']
+                qc[i] = m['DP_FLAG']
+        else:
+            for i, m in enumerate(meas):
+                pres[i] = m['DEPTH_PRESS']
+                value[i] = m['PARM']
+                qc[i] = m['Q_PARM']
 
         return Trace(value, qc=qc, pres=pres)
 

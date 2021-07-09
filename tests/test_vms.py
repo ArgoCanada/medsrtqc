@@ -4,6 +4,8 @@ from io import BytesIO
 import os
 import tempfile
 
+import numpy as np
+
 from medsrtqc.resources import resource_path
 import medsrtqc.vms.enc as enc
 import medsrtqc.vms.read as read
@@ -121,6 +123,11 @@ class TestVMSRead(unittest.TestCase):
             profile_count += 1
 
         self.assertEqual(profile_count, len(profiles))
+
+        # make sure the 'PRES' export works (because it isn't stored
+        # separately but is copied with each parameter)
+        self.assertTrue('PRES' in profiles[0])
+        self.assertTrue(np.all(profiles[0]['TEMP'].pres == profiles[0]['PRES'].value))
 
         with self.assertRaises(TypeError):
             read.write_vms_profiles(profiles, None)
