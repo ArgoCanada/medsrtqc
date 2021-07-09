@@ -22,7 +22,7 @@ from .flag import Flag
 
 class QCTest(QCOperation):
     """
-    Whereas :class:`~medsrtqc.core.QCOperation`s are generic and
+    Whereas a :class:`~medsrtqc.core.QCOperation` is generic and
     can do anything, a ``QCTest`` is a specific operation defined
     within the Argo data management framework. ``QCTest``s have
     names, binary IDs, and specific descriptions.
