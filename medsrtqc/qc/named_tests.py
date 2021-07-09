@@ -55,7 +55,7 @@ class PressureIncreasingTest(QCTest):
     ...     'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5, pres=pres.value),
     ...     'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
     ... })
-    >>> PressureIncreasingTest(prof).run()
+    >>> PressureIncreasingTest().run(prof)
     >>> prof['PRES']
     """
 
