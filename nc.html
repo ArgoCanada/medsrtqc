@@ -171,7 +171,7 @@ files if generating them in advance simplifies the workflow. Most users
 will only ever use <a class="reference internal" href="#medsrtqc.nc.read_nc_profile" title="medsrtqc.nc.read_nc_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code></a>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.nc.read_nc_profile">
-<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">read_nc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.read_nc_profile" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">read_nc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.read_nc_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a <code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.Profile</span></code> backed by a NetCDF file. For details
 on the underlying data structure, see <a class="reference internal" href="#medsrtqc.nc.NetCDFProfile" title="medsrtqc.nc.NetCDFProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFProfile</span></code></a>.</p>
 <dl class="field-list simple">
@@ -192,13 +192,16 @@ This is useful for combining BGC and core files.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.nc.load">
-<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> from a filename, url, bytes, or existing
 <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>. This is applied to anywhere a NetCDF file must
 be specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>src</strong> – A URL, filename, bytes, or existing <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code></p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> – A URL, filename, bytes, or existing <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code></p></li>
+<li><p><strong>mode</strong> – Use <code class="docutils literal notranslate"><span class="pre">'r+'</span></code> to allow updates.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
