@@ -109,6 +109,9 @@ class TestVMSRead(unittest.TestCase):
         for p in profiles:
             self.assertIsInstance(p, VMSProfile)
 
+        self.assertIsInstance(profiles[0], VMSProfile)
+        self.assertIsInstance(profiles[1], VMSProfile)
+
         profile_count = 0
         for profile in profiles:
             self.assertIsInstance(profile, VMSProfile)

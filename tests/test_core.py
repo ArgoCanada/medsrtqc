@@ -2,6 +2,7 @@
 import unittest
 import numpy as np
 import contextlib
+import sys
 from io import StringIO
 from medsrtqc.core import QCOperation, QCOperationApplier, QCOperationError, Trace, Profile, ProfileList
 
@@ -48,6 +49,8 @@ class TestCore(unittest.TestCase):
             profile_list[0]
         with self.assertRaises(NotImplementedError):
             profile_list[0] = 'some value'
+        with self.assertRaises(NotImplementedError):
+            len(profile_list)
 
     def test_profile_list(self):
         profile = Profile()
@@ -119,6 +122,23 @@ class TestCoreQC(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError):
             op.run()
+
+    def test_custom_applier(self):
+        class CustomApplier(QCOperationApplier):
+            def log(self, profile, message):
+                print('a completely unrelated message', file=sys.stderr)
+
+        applier = CustomApplier()
+        output = StringIO()
+        with contextlib.redirect_stderr(output):
+            applier.log(Profile(), 'something')
+        self.assertEqual(output.getvalue().strip(), 'a completely unrelated message')
+
+        op = QCOperation(Profile(), applier=applier)
+        output = StringIO()
+        with contextlib.redirect_stderr(output):
+            op.log('something')
+        self.assertEqual(output.getvalue().strip(), 'a completely unrelated message')
 
 
 if __name__ == '__main__':
