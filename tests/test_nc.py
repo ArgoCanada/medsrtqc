@@ -1,6 +1,8 @@
 
 import unittest
 import os
+import tempfile
+import numpy as np
 from netCDF4 import Dataset
 from medsrtqc.resources import resource_path
 from medsrtqc.nc import read_nc_profile
@@ -35,6 +37,32 @@ class TestNetCDFProfile(unittest.TestCase):
         self.assertIsInstance(nitrate, Trace)
         self.assertEqual(nitrate._shape, (117, 90))
         self.assertEqual(len(nitrate), 117)
+
+    def test_set_value(self):
+        try:
+            # make writable copy
+            fd, tmp = tempfile.mkstemp()
+            nc = resource_path('BR6904117_085.nc')
+            with open(tmp, 'wb') as dst, open(nc, 'rb') as src:
+                dst.write(src.read())
+            prof = read_nc_profile(tmp, mode='r+')
+
+            # change something
+            chla = prof['CHLA']
+            chla.value[:] = 1
+            prof['CHLA'] = chla
+
+            # see if it sticks
+            self.assertTrue(np.all(prof['CHLA'].value == 1))
+
+            # write to disk
+            prof.close()
+
+            # see if it stuck for good
+            prof = read_nc_profile(tmp)
+            self.assertTrue(np.all(prof['CHLA'].value == 1))
+        finally:
+            os.close(fd)
 
     def test_dataset_file(self):
         nc_abspath = read_nc_profile(resource_path('BR6904117_085.nc'))

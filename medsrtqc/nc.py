@@ -39,6 +39,14 @@ class NetCDFProfile(Profile):
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
+    def close(self):
+        """
+        Write changes to underlying data (if any) to disk. Requires
+        that ``Dataset`` objects were opened with ``mode='r+'``.
+        """
+        for dataset in self._datasets:
+            dataset.close()
+
     def _locate_variables(self, dataset_id, all_params=None):
         dataset = self._datasets[dataset_id]
         param_array = chartostring(dataset['PARAMETER'][:])
@@ -81,8 +89,8 @@ class NetCDFProfile(Profile):
                 raise ValueError("Shape mismatch between new and current")
 
         dataset_id, i_prof = self._variables[k]
-
-        raise NotImplementedError()
+        for attr, var in var_names.items():
+            self._datasets[dataset_id][var][i_prof, range(len(v))] = getattr(v, attr)
 
     def _calculate_trace_attrs(self, dataset, i_prof, var_names):
         """
