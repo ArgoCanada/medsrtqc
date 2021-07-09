@@ -32,7 +32,7 @@ class QCTest(QCOperation):
     argo_name = None
     nvs_uri = None
 
-    def run(self) -> bool:
+    def run(self) -> bool:  # pragma: no cover
         """Run the test and return ``True`` if it passed or ``False`` otherwise"""
         return super().run()
 
