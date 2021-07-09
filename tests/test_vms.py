@@ -95,13 +95,7 @@ class TestEncoding(unittest.TestCase):
 
 class TestVMSRead(unittest.TestCase):
 
-    def test_read_write(self):
-        with self.assertRaises(TypeError):
-            read.read_vms_profiles(None)
-
-        with self.assertRaises(TypeError):
-            read.write_vms_profiles(None, None)
-
+    def test_vms_profile(self):
         test_file = resource_path('BINARY_VMS.DAT')
 
         profiles = read.read_vms_profiles(test_file)
@@ -128,6 +122,55 @@ class TestVMSRead(unittest.TestCase):
         # separately but is copied with each parameter)
         self.assertTrue('PRES' in profiles[0])
         self.assertTrue(np.all(profiles[0]['TEMP'].pres == profiles[0]['PRES'].value))
+
+    def test_vms_profile_update(self):
+        test_file = resource_path('BINARY_VMS.DAT')
+        profiles = read.read_vms_profiles(test_file)
+        prof = profiles[0]
+
+        # valid update of not PRES QC
+        temp = prof['TEMP']
+        temp.qc[:] = b'4'
+        prof['TEMP'] = temp
+        self.assertTrue(np.all(prof['TEMP'].qc == b'4'))
+
+        # valid update of PRES QC
+        pres = prof['PRES']
+        pres.qc[:] = b'4'
+        prof['PRES'] = pres
+        self.assertTrue(np.all(prof['PRES'].qc == b'4'))
+
+        # attempt to update non-qc attrs
+        with self.assertRaises(ValueError):
+            temp = prof['TEMP']
+            temp.value[:] = 0
+            prof['TEMP'] = temp
+        with self.assertRaises(ValueError):
+            temp = prof['TEMP']
+            temp.adjusted[:] = 0
+            prof['TEMP'] = temp
+        with self.assertRaises(ValueError):
+            temp = prof['TEMP']
+            temp.adjusted_qc[:] = b'4'
+            prof['TEMP'] = temp
+        with self.assertRaises(ValueError):
+            temp = prof['TEMP']
+            temp.pres[:] = 0
+            prof['TEMP'] = temp
+        with self.assertRaises(ValueError):
+            temp = prof['TEMP']
+            temp.mtime[:] = 0
+            prof['TEMP'] = temp
+
+    def test_read_write(self):
+        with self.assertRaises(TypeError):
+            read.read_vms_profiles(None)
+
+        with self.assertRaises(TypeError):
+            read.write_vms_profiles(None, None)
+
+        test_file = resource_path('BINARY_VMS.DAT')
+        profiles = read.read_vms_profiles(test_file)
 
         with self.assertRaises(TypeError):
             read.write_vms_profiles(profiles, None)

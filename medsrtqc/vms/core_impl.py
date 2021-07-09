@@ -1,8 +1,11 @@
 
 from typing import Iterable
 from copy import deepcopy
+
+import numpy as np
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros
+
 from ..core import Trace, Profile, ProfileList
 
 
@@ -79,6 +82,64 @@ class VMSProfile(Profile):
                 qc[i] = m['Q_PARM']
 
         return Trace(value, qc=qc, pres=pres)
+
+    def __setitem__(self, k, v):
+        # check dimensions against current
+        current_value = self[k]
+        if len(v) != len(current_value):
+            msg = f"Expected trace for '{k}' with size {len(current_value)} but got {len(v)}"
+            raise ValueError(msg)
+
+        # for now we can only update the 'qc' attribute
+        # make sure this is the case or else some updates are going
+        # to get lost
+        if not np.all(v.value == current_value.value):
+            raise ValueError("Can't update Trace.value in a VMSProfile")
+        if not np.all(v.pres == current_value.pres):
+            raise ValueError("Can't update Trace.pres in a VMSProfile")
+        if not np.all(v.adjusted.mask):
+            raise ValueError("Can't update Trace.adjusted in a VMSProfile")
+        if not np.all(v.adjusted_qc.mask):
+            raise ValueError("Can't update Trace.adjusted_qc in a VMSProfile")
+        if not np.all(v.mtime.mask):
+            raise ValueError("Can't update Trace.mtime in a VMSProfile")
+
+        # Strategy for update is to copy all the data while updating it
+        # to avoid a partial update if something goes wrong in the process.
+        # I don't think speed will ever be an issue here but if so it is possible
+        # to reduce the amount of copying.
+        data_copy = deepcopy(self._data)
+
+        # PRES is special because it isn't stored explicitly
+        # strategy is to check exact values and update the flag
+        # for that
+        if k == 'PRES':
+            for pr_profile in data_copy['PR_PROFILE']:
+                for m in pr_profile['PROF']:
+                    pres_match = v.value == m['DEPTH_PRESS']
+                    if not np.any(pres_match):
+                        continue
+                    m['DP_FLAG'] = bytes(v.qc[pres_match][0])
+
+        else:
+            # the data might be split into segments so we have to keep track of
+            # the index within the trace separately
+            trace_i = 0
+            for pr_profile in data_copy['PR_PROFILE']:
+                if pr_profile['FXD']['PROF_TYPE'] == k:
+                    for m in pr_profile['PROF']:
+                        m['Q_PARM'] = bytes(v.qc[trace_i])
+                        trace_i += 1
+
+            # bookkeeping in case the check above didn't catch this
+            if trace_i != len(v):  # pragma: no cover
+                msg = f"Wrong number of values in trace ({trace_i}/{len(v)}) whilst updating '{k}'"
+                raise ValueError(msg)
+
+        # everything worked, so update the underlying data
+        self._data = data_copy
+        # ...and recalculate the _by_param attribute
+        self._update_by_param_from_data()
 
 
 class VMSProfileList(ProfileList):
