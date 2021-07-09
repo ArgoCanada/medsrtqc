@@ -200,11 +200,11 @@ a <code class="docutils literal notranslate"><span class="pre">list()</span></co
 
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperation">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A QC operation here is instantiated with a target
 <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> and the previous <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> as these
 are needed to implement many of the tests. QC operations
-should implement the <a class="reference internal" href="#medsrtqc.core.QCOperation.run" title="medsrtqc.core.QCOperation.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a> method and use the built-in
+should implement the <a class="reference internal" href="#medsrtqc.core.QCOperation.run_impl" title="medsrtqc.core.QCOperation.run_impl"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_impl()</span></code></a> method and use the built-in
 methods to do any data updates.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperation.error">
@@ -226,8 +226,16 @@ methods to do any data updates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperation.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the test. This method must be implemented by test subclasses.</p>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the test. This is the method used by callers to actually
+run the test. The default method temporarily sets <code class="docutils literal notranslate"><span class="pre">self.profile</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self.previous_profile</span></code> and calls <a class="reference internal" href="#medsrtqc.core.QCOperation.run_impl" title="medsrtqc.core.QCOperation.run_impl"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_impl()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.run_impl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test implementation. This method must be implemented by test subclasses.</p>
 </dd></dl>
 
 <dl class="py method">

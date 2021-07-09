@@ -213,7 +213,7 @@ check. Most tests also modify the input
 <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> (e.g., to set flags).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.qc.named_tests.PressureIncreasingTest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">PressureIncreasingTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.PressureIncreasingTest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">PressureIncreasingTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.PressureIncreasingTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>The pressure increasing test checks for monotonically increasing
 pressure. The test modifies the QC flags for PRES, TEMP, and PSAL
 and fails if any of these flags were set to <code class="docutils literal notranslate"><span class="pre">Flag.BAD</span></code>.</p>
@@ -229,13 +229,13 @@ and fails if any of these flags were set to <code class="docutils literal notran
 <span class="gp">... </span>    <span class="s1">&#39;TEMP&#39;</span><span class="p">:</span> <span class="n">Trace</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">qc</span><span class="o">=</span><span class="n">qc5</span><span class="p">,</span> <span class="n">pres</span><span class="o">=</span><span class="n">pres</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="s1">&#39;PSAL&#39;</span><span class="p">:</span> <span class="n">Trace</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="n">qc</span><span class="o">=</span><span class="n">qc5</span><span class="p">,</span> <span class="n">pres</span><span class="o">=</span><span class="n">pres</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">PressureIncreasingTest</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PressureIncreasingTest</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">prof</span><span class="p">[</span><span class="s1">&#39;PRES&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.PressureIncreasingTest.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.PressureIncreasingTest.run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.PressureIncreasingTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.PressureIncreasingTest.run_impl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
 </dd></dl>
 
@@ -243,14 +243,14 @@ and fails if any of these flags were set to <code class="docutils literal notran
 
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.qc.named_tests.QCTest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">QCTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.QCTest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">QCTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.QCTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whereas a <a class="reference internal" href="core.html#medsrtqc.core.QCOperation" title="medsrtqc.core.QCOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation</span></code></a> is generic and
 can do anything, a <code class="docutils literal notranslate"><span class="pre">QCTest</span></code> is a specific operation defined
 within the Argo data management framework. <a href="#id1"><span class="problematic" id="id2">``</span></a>QCTest``s have
 names, binary IDs, and specific descriptions.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.QCTest.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#medsrtqc.qc.named_tests.QCTest.run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.QCTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#medsrtqc.qc.named_tests.QCTest.run_impl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
 </dd></dl>
 
