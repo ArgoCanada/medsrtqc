@@ -64,7 +64,7 @@ class VMSProfile(Profile):
             value[i] = m['PARM']
             qc[i] = m['Q_PARM']
 
-        return Trace(value, value_qc=qc, pres=pres)
+        return Trace(value, qc=qc, pres=pres)
 
 
 class VMSProfileList(ProfileList):

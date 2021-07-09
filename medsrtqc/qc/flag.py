@@ -7,7 +7,7 @@
 class Flag:
     """
     Flags for check output. These values are valid values of the
-    ``value_qc`` and ``adjusted_qc`` attributes of a
+    ``qc`` and ``adjusted_qc`` attributes of a
     :class:`~medsrtqc.core.Trace` object. Utility functions are
     provided as static methods to get the name or value of a flag
     or to update flag values ensuring that values that are already

@@ -36,7 +36,7 @@ class Trace:
 
     :param value: The parameter value. This should be the same units
         as would be written to the Argo NetCDF file.
-    :param value_qc: The parameter QC value.
+    :param qc: The parameter QC value.
     :param adjusted: The adjusted parameter value.
     :param adjusted_error: The error estimate for the adjusted value.
     :param adjusted_qc: The adjusted parameter QC value
@@ -46,14 +46,14 @@ class Trace:
     """
 
     def __init__(self, value: MaskedArray,
-                 value_qc=None, adjusted=None, adjusted_error=None,
+                 qc=None, adjusted=None, adjusted_error=None,
                  adjusted_qc=None, pres=None, mtime=None) -> None:
         value = MaskedArray(value)
         self._shape = value.shape
         self._n = len(value)
 
         self.value = self._sanitize(value, float32, 'value')
-        self.value_qc = self._sanitize(value_qc, dtype('S1'), 'value_qc')
+        self.qc = self._sanitize(qc, dtype('S1'), 'qc')
         self.adjusted = self._sanitize(adjusted, float32, 'adjusted')
         self.adjusted_error = self._sanitize(adjusted_error, float32, 'adjusted_error')
         self.adjusted_qc = self._sanitize(adjusted_qc, dtype('S1'), 'adjusted_qc')
@@ -77,7 +77,7 @@ class Trace:
 
     def __repr__(self) -> str:
         summaries = []
-        for attr in ['value', 'value_qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
+        for attr in ['value', 'qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
             v = getattr(self, attr)
 
             if self._n == 0:

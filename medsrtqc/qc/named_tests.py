@@ -48,7 +48,7 @@ class PressureIncreasingTest(QCTest):
         # do the third pass finding any sections where it has been non-montonic and
         # is still below the last good value this is a running maximum,
         # constant parts mean bad values
-        running_maximum = np.maximum.accumulate(pres, axis=-1)
+        running_maximum = np.maximum.accumulate(pres.value, axis=-1)
         running_maximum_constant = np.diff(running_maximum, prepend=-np.inf) == 0.0
         Flag.update(pres.qc, Flag.BAD, where=running_maximum_constant)
         Flag.update(temp.qc, Flag.BAD, where=running_maximum_constant)
@@ -57,4 +57,7 @@ class PressureIncreasingTest(QCTest):
         # apply updates
         self.update_trace('PRES', pres)
         self.update_trace('TEMP', temp)
-        self.update_Trace('PSAL', psal)
+        self.update_trace('PSAL', psal)
+
+        # fail for any flags set as BAD
+        return not np.any(non_monotonic_elements | constant | running_maximum_constant)

@@ -30,7 +30,7 @@ profile['TEMP']
 
     Trace(
         value=[13.3847, 12.9791, 12.3505, [194 values], 7.2176, 7.2166, 7.2168],
-        value_qc=[b'1', b'1', b'1', [194 values], b'1', b'1', b'1'],
+        qc=[b'1', b'1', b'1', [194 values], b'1', b'1', b'1'],
         adjusted=[masked, masked, masked, [194 values], masked, masked, masked],
         adjusted_error=[masked, masked, masked, [194 values], masked, masked, masked],
         pres=[5.27, 5.79, 6.48, [194 values], 201.5, 202.54, 203.5],
@@ -52,7 +52,7 @@ print(repr(profile['TEMP']))
 
     Trace(
         value=[1.5622, 1.533, 1.533, [1267 values], 0.3577, 0.365, 0.3504],
-        value_qc=[b'2', b'2', b'2', [1267 values], b'2', b'2', b'2'],
+        qc=[b'2', b'2', b'2', [1267 values], b'2', b'2', b'2'],
         adjusted=[0.7811, 0.7665, 0.7665, [1267 values], 0.17885, 0.1825, 0.1752],
         adjusted_error=[masked, masked, masked, [1267 values], masked, masked, masked],
         pres=[0.3, 0.3, 0.3, [1267 values], 204.1, 204.0, 204.0],
@@ -60,7 +60,7 @@ print(repr(profile['TEMP']))
     )
     Trace(
         value=[13.3847, 12.9791, 12.3505, [194 values], 7.2176, 7.2166, 7.2168],
-        value_qc=[b'1', b'1', b'1', [194 values], b'1', b'1', b'1'],
+        qc=[b'1', b'1', b'1', [194 values], b'1', b'1', b'1'],
         adjusted=[masked, masked, masked, [194 values], masked, masked, masked],
         adjusted_error=[masked, masked, masked, [194 values], masked, masked, masked],
         pres=[5.27, 5.79, 6.48, [194 values], 201.5, 202.54, 203.5],
@@ -95,7 +95,7 @@ Trace([1, 2, 4], adjusted=[2, 3, 5], pres=[0, 1, 2])
 
     Trace(
         value=[1.0, 2.0, 4.0],
-        value_qc=[masked, masked, masked],
+        qc=[masked, masked, masked],
         adjusted=[2.0, 3.0, 5.0],
         adjusted_error=[masked, masked, masked],
         pres=[0.0, 1.0, 2.0],

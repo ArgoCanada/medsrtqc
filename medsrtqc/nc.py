@@ -65,7 +65,7 @@ class NetCDFProfile(Profile):
 
         var_names = {
             'value': k,
-            'value_qc': k + '_QC',
+            'qc': k + '_QC',
             'adjusted': k + '_ADJUSTED',
             'adjusted_qc': k + '_ADJUSTED_QC',
             'adjusted_error': k + '_ADJUSTED_ERROR',

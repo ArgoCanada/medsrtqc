@@ -1,4 +1,5 @@
 
+from medsrtqc.core import Profile, Trace
 import unittest
 import numpy as np
 from medsrtqc.qc.flag import Flag
@@ -27,8 +28,21 @@ class TestFlag(unittest.TestCase):
 
 class TestPressureIncreasingTest(unittest.TestCase):
 
-    def test_simple(self):
-        pass
+    def test_definitely_increasing(self):
+        qc5 = np.repeat([Flag.NO_QC], 5)
+        pres =  Trace([200, 150, 100, 50, 0], qc=qc5)
+        pres.pres = pres.value
+        prof = Profile({
+            'PRES': pres,
+            'TEMP': Trace([7, 7, 7, 5, 10], qc=qc5, pres=pres.value),
+            'PSAL': Trace([12, 11, 10, 9, 8], qc=qc5, pres=pres.value)
+        })
+
+        test = tests.PressureIncreasingTest(prof)
+        self.assertTrue(test.run())
+        self.assertTrue(np.all(prof['PRES'].qc == qc5))
+        self.assertTrue(np.all(prof['TEMP'].qc == qc5))
+        self.assertTrue(np.all(prof['PSAL'].qc == qc5))
 
 
 if __name__ == '__main__':
