@@ -18,11 +18,11 @@ class TestFlag(unittest.TestCase):
 
     def test_update(self):
         qc = np.array([Flag.GOOD, Flag.PROBABLY_BAD, Flag.MISSING])
-        Flag.update(qc, to=Flag.BAD)
+        Flag.update_safely(qc, to=Flag.BAD)
         self.assertTrue(np.all(qc == np.array([Flag.BAD, Flag.BAD, Flag.MISSING])))
 
         qc = np.array([Flag.GOOD, Flag.PROBABLY_BAD, Flag.MISSING])
-        Flag.update(qc, to=Flag.BAD, where=np.array([False, True, False]))
+        Flag.update_safely(qc, to=Flag.BAD, where=np.array([False, True, False]))
         self.assertTrue(np.all(qc == np.array([Flag.GOOD, Flag.BAD, Flag.MISSING])))
 
 

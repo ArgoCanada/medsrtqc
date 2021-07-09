@@ -37,24 +37,24 @@ class PressureIncreasingTest(QCTest):
         # do the first pass checking that every value is increasing
         diff = np.diff(pres.value, prepend=-np.inf)  # first measurement always passes
         non_monotonic_elements = diff < 0.0
-        Flag.update(pres.qc, Flag.BAD, where=non_monotonic_elements)
-        Flag.update(temp.qc, Flag.BAD, where=non_monotonic_elements)
-        Flag.update(psal.qc, Flag.BAD, where=non_monotonic_elements)
+        Flag.update_safely(pres.qc, Flag.BAD, where=non_monotonic_elements)
+        Flag.update_safely(temp.qc, Flag.BAD, where=non_monotonic_elements)
+        Flag.update_safely(psal.qc, Flag.BAD, where=non_monotonic_elements)
 
         # do the second pass finding consecutive constant values
         constant = diff == 0.0
-        Flag.update(pres.qc, Flag.BAD, where=constant)
-        Flag.update(temp.qc, Flag.BAD, where=constant)
-        Flag.update(psal.qc, Flag.BAD, where=constant)
+        Flag.update_safely(pres.qc, Flag.BAD, where=constant)
+        Flag.update_safely(temp.qc, Flag.BAD, where=constant)
+        Flag.update_safely(psal.qc, Flag.BAD, where=constant)
 
         # do the third pass finding any sections where it has been non-montonic and
         # is still below the last good value this is a running maximum,
         # constant parts mean bad values
         running_maximum = np.maximum.accumulate(pres.value, axis=-1)
         running_maximum_constant = np.diff(running_maximum, prepend=-np.inf) == 0.0
-        Flag.update(pres.qc, Flag.BAD, where=running_maximum_constant)
-        Flag.update(temp.qc, Flag.BAD, where=running_maximum_constant)
-        Flag.update(psal.qc, Flag.BAD, where=running_maximum_constant)
+        Flag.update_safely(pres.qc, Flag.BAD, where=running_maximum_constant)
+        Flag.update_safely(temp.qc, Flag.BAD, where=running_maximum_constant)
+        Flag.update_safely(psal.qc, Flag.BAD, where=running_maximum_constant)
 
         # apply updates
         self.update_trace('PRES', pres)

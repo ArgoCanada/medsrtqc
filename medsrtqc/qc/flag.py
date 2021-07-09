@@ -28,7 +28,7 @@ class Flag:
         raise KeyError(f"'{label}' is not the name of a QC flag")
 
     @staticmethod
-    def update(qc, to, where=None):
+    def update_safely(qc, to, where=None):
         """
         Safely update ``qc`` to the value ``to``. Values that are
         already marked at a "worse" QC level are not modified.
