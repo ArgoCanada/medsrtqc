@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Abstract base classes &mdash; MEDS Realtime QC  documentation</title>
+  <title>Core framework &mdash; MEDS Realtime QC  documentation</title>
   
 
   
@@ -89,7 +89,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Abstract base classes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nc.html">NetCDF IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vms.html">VMS IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interactive.html">Interactive helpers</a></li>
@@ -142,7 +142,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Abstract base classes</li>
+      <li>Core framework</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,7 +162,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-medsrtqc.core">
-<span id="abstract-base-classes"></span><h1>Abstract base classes<a class="headerlink" href="#module-medsrtqc.core" title="Permalink to this headline">¶</a></h1>
+<span id="core-framework"></span><h1>Core framework<a class="headerlink" href="#module-medsrtqc.core" title="Permalink to this headline">¶</a></h1>
 <p>Writing portable QC operations shouldn’t depend on the underlying
 data storage mechanism, which might be a database, NetCDF file,
 or binary export. The classes in the <code class="docutils literal notranslate"><span class="pre">core</span></code> module are designed to
@@ -170,6 +170,12 @@ provide a view of Argo data that can be passed to or returned from
 QC operations. Here Argo data are modeled as a three-level heiarchy
 where <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects are contained by <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> objects
 which are in turn contained by <a class="reference internal" href="#medsrtqc.core.ProfileList" title="medsrtqc.core.ProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileList</span></code></a> objects.</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation`s</span> <span class="pre">build</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">:class:`Profile</span></code> and <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a>,
+updating the <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> and/or performing operations with side
+effects like creating a plot or logging information to stderr. The
+<a class="reference internal" href="#medsrtqc.core.QCOperationApplier" title="medsrtqc.core.QCOperationApplier"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperationApplier</span></code></a> class provides methods for common actions
+to minimize the number of custom <a class="reference internal" href="#medsrtqc.core.QCOperation" title="medsrtqc.core.QCOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation</span></code></a> classes needed
+to implement a production QC workflow.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.Profile">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Profile" title="Permalink to this definition">¶</a></dt>
@@ -199,6 +205,12 @@ a <code class="docutils literal notranslate"><span class="pre">list()</span></co
 are needed to implement many of the tests. QC operations
 should implement the <a class="reference internal" href="#medsrtqc.core.QCOperation.run" title="medsrtqc.core.QCOperation.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a> method and use the built-in
 methods to do any data updates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience wrapper for <a class="reference internal" href="#medsrtqc.core.QCOperationApplier.error" title="medsrtqc.core.QCOperationApplier.error"><code class="xref py py-func docutils literal notranslate"><span class="pre">QCOperationApplier.error()</span></code></a></p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperation.log">
 <span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.log" title="Permalink to this definition">¶</a></dt>
@@ -236,6 +248,12 @@ actions would be taken without actually applying them) or require
 specialized actions to perform data updates that are impossible or
 inconvenient to implement in the <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> subclass.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut for <cite>raise QCOperationError()</cite></p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.log">
 <span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a log message for a given <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a>.
@@ -268,7 +286,7 @@ The default method runs <code class="docutils literal notranslate"><span class="
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="medsrtqc.core.QCOperationError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationError" title="Permalink to this definition">¶</a></dt>
 <dd><p>An <code class="docutils literal notranslate"><span class="pre">Exception</span></code> subclass with attributes <code class="docutils literal notranslate"><span class="pre">profile</span></code>, <code class="docutils literal notranslate"><span class="pre">trace</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">trace_key</span></code>. These errors give an opportunity for inspection
 on debugging and potentially more informative printing because

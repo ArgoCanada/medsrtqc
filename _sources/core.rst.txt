@@ -1,5 +1,5 @@
 
-Abstract base classes
+Core framework
 ============================================
 
 .. automodule:: medsrtqc.core
