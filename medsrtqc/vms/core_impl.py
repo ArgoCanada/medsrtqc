@@ -15,14 +15,16 @@ class VMSProfile(Profile):
     """
 
     def __init__(self, data) -> None:
+        super().__init__()
         # copy data to avoid side effects to or from the caller
         self._data = deepcopy(data)
 
-        # do some pre-processing to make implementing these methods easier
-        self._by_param = self._param_data_from_input(self._data)
+        # do some pre-processing to make fetching data easier
+        self._by_param = None
+        self._update_by_param_from_data()
 
-    def _param_data_from_input(self, data):
-        pr_stn_prof = deepcopy(data['PR_STN']['PROF'])
+    def _update_by_param_from_data(self):
+        pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
 
         # the PR_PROFILE structs can be broken into
         # segments so we need to be able to map those back to
@@ -36,7 +38,7 @@ class VMSProfile(Profile):
             for j in range(prof['NO_SEG']):
                 pr_stn_prof_indices.append(i)
 
-        pr_profiles = deepcopy(data['PR_PROFILE'])
+        pr_profiles = deepcopy(self._data['PR_PROFILE'])
         for pr_stn_i, pr_profile in zip(pr_stn_prof_indices, pr_profiles):
             pr_stn_prof[pr_stn_i]['_pr_profile_fxd'].append(pr_profile['FXD'])
             for pr_profile_prof in pr_profile['PROF']:
@@ -47,7 +49,7 @@ class VMSProfile(Profile):
         for param_name, param_data in zip(param_names, pr_stn_prof):
             by_param[param_name] = param_data
 
-        return by_param
+        self._by_param = by_param
 
     def keys(self) -> Iterable[str]:
         keys = tuple(self._by_param.keys())
