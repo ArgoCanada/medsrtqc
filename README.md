@@ -66,7 +66,7 @@ print(repr(profile['TEMP']))
         pres=[5.27, 5.79, 6.48, [194 values], 201.5, 202.54, 203.5],
         mtime=[masked, masked, masked, [194 values], masked, masked, masked]
     )
-
+    
 
 You can use the interactive plotter to quickly visualize all or part of a profile:
 
@@ -77,9 +77,9 @@ fig, axs = plot(profile, vars=profile.keys()[:6])
 ```
 
 
-
+    
 ![png](README_files/README_5_0.png)
-
+    
 
 
 You can use the `Trace` and `Profile` classes directly to generate unit test data with known statistical properties:
@@ -101,5 +101,62 @@ Trace([1, 2, 4], adjusted=[2, 3, 5], pres=[0, 1, 2])
         pres=[0.0, 1.0, 2.0],
         mtime=[masked, masked, masked]
     )
+
+
+
+## QC A VMS .DAT file
+
+This doesn't quote work (it looks like the pressure QC flags aren't updating) but it's close!
+
+
+```python
+from medsrtqc.vms import read_vms_profiles, write_vms_profiles
+from medsrtqc.resources import resource_path
+from medsrtqc.qc.flag import Flag
+from medsrtqc.qc.named_tests import PressureIncreasingTest
+import matplotlib.pyplot as plt
+
+# load file
+profs = read_vms_profiles(resource_path('BINARY_VMS.DAT'))
+
+# run test on a prof that will fail
+test = PressureIncreasingTest()
+prof = profs[0]
+test.run(prof)  # False
+
+# check result (should have one point marked as bad)
+fig, axs = plot(prof, vars=('PRES', 'TEMP', 'PSAL'))
+for i, var in enumerate(('PRES', 'TEMP', 'PSAL')):
+    t = prof[var]
+    bad = t.qc == Flag.BAD
+    plt.subplot(2, 2, i + 1).scatter(t.value[bad], t.pres[bad])
+
+# if you want to write changes to disk
+# profs[0] = prof
+# write_vms_profiles(profs, 'output_file.DAT')
+```
+
+
+    
+![png](README_files/README_9_0.png)
+    
+
+
+## QC a NetCDF file
+
+This should work but I haven't tested properly yet.
+
+
+```python
+prof = read_nc_profile(resource_path('R6904117_085.nc'), mode='r+')
+test = PressureIncreasingTest()
+test.run(prof)
+# prof.close() if you want to write changes to disk
+```
+
+
+
+
+    True
 
 

@@ -88,9 +88,14 @@ class NetCDFProfile(Profile):
             if getattr(v, attr).shape != getattr(current_value, attr).shape:
                 raise ValueError("Shape mismatch between new and current")
 
+        # (should also check values against current)
+
         dataset_id, i_prof = self._variables[k]
+        dataset = self._datasets[dataset_id]
         for attr, var in var_names.items():
-            self._datasets[dataset_id][var][i_prof, range(len(v))] = getattr(v, attr)
+            if var not in dataset.variables:
+                continue
+            dataset[var][i_prof, range(len(v))] = getattr(v, attr)
 
     def _calculate_trace_attrs(self, dataset, i_prof, var_names):
         """
