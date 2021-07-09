@@ -16,6 +16,7 @@ to minimize the number of custom :class:`QCOperation` classes needed
 to implement a production QC workflow.
 """
 
+import contextlib
 from typing import Iterable, Tuple
 from copy import deepcopy
 import sys
@@ -257,6 +258,24 @@ class QCOperationApplier:
         return DummyPyPlot()
 
 
+class QCOperationProfileContext:
+
+    def __init__(self, op, profile, previous_profile=None) -> None:
+        self._op = op
+        self._profile = profile
+        self._previous_profile = previous_profile
+
+    def __enter__(self):
+        self._old_profile = self._op.profile
+        self._old_previous_profile = self._op.previous_profile
+        self._op.profile = self._profile
+        self._op.previous_profile = self._previous_profile
+
+    def __exit__(self, *execinfo):
+        self._op.profile = self._previous_profile
+        self._op.previous_profile = self._previous_profile
+
+
 class QCOperation:
     """
     A QC operation here is instantiated with a target
@@ -266,7 +285,7 @@ class QCOperation:
     methods to do any data updates.
     """
 
-    def __init__(self, profile, previous_profile=None, applier=None):
+    def __init__(self, applier=None):
         """
         :param profile: The target :class:`Profile`.
         :param profile: The previous :class:`Profile` from this float
@@ -278,8 +297,8 @@ class QCOperation:
         else:
             self.applier = applier
 
-        self.profile = profile
-        self.previous_profile = previous_profile
+        self.profile = None
+        self.previous_profile = None
 
     def update_trace(self, k, trace):
         """Convenience wrapper for :func:`QCOperationApplier.update_trace`"""
@@ -297,6 +316,15 @@ class QCOperation:
         """Convenience wrapper for :func:`QCOperationApplier.pyplot`"""
         return self.applier.pyplot(self.profile)
 
-    def run(self):
-        """Run the test. This method must be implemented by test subclasses."""
+    def run(self, profile, previous_profile=None):
+        """
+        Run the test. This is the method used by callers to actually
+        run the test. The default method temporarily sets ``self.profile`` and
+        ``self.previous_profile`` and calls :func:`run_impl`.
+        """
+        with QCOperationProfileContext(self, profile, previous_profile):
+            return self.run_impl()
+
+    def run_impl(self):
+        """Test implementation. This method must be implemented by test subclasses."""
         raise NotImplementedError()

@@ -5,14 +5,14 @@ from .flag import Flag
 
 class ResetQCOperation(QCOperation):
 
-    def __init__(self, profile, previous_profile=None, applier=None):
-        super().__init__(profile, previous_profile, applier=applier)
+    def __init__(self, applier=None):
+        super().__init__(applier)
         self._vars = None
         self._flag = Flag.NO_QC
         self._qc = True
         self._adjusted_qc = False
 
-    def run(self):
+    def run_impl(self):
         if self._vars is None:
             reset_vars = set(self.profile.keys())
         else:

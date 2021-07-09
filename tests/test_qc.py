@@ -36,7 +36,7 @@ class TestUtil(unittest.TestCase):
             adjusted_qc=[Flag.GOOD] * 5
         )
         prof = Profile({'PRES': pres})
-        util.ResetQCOperation(prof).run()
+        util.ResetQCOperation().run(prof)
         self.assertTrue(np.all(prof['PRES'].qc == Flag.NO_QC))
         self.assertTrue(np.all(prof['PRES'].adjusted_qc == Flag.GOOD))
 
@@ -53,7 +53,7 @@ class TestPressureIncreasingTest(unittest.TestCase):
             'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
         })
         with self.assertRaises(QCOperationError):
-            tests.PressureIncreasingTest(prof).run()
+            tests.PressureIncreasingTest().run(prof)
 
     def test_definitely_increasing(self):
         qc5 = np.repeat([Flag.NO_QC], 5)
@@ -65,9 +65,9 @@ class TestPressureIncreasingTest(unittest.TestCase):
             'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
         })
 
-        test = tests.PressureIncreasingTest(prof)
+        test = tests.PressureIncreasingTest()
         qc_expected = qc5
-        self.assertTrue(test.run())
+        self.assertTrue(test.run(prof))
         self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
         self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
         self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
@@ -82,9 +82,9 @@ class TestPressureIncreasingTest(unittest.TestCase):
             'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
         })
 
-        test = tests.PressureIncreasingTest(prof)
+        test = tests.PressureIncreasingTest()
         qc_expected = [Flag.NO_QC, Flag.BAD, Flag.NO_QC, Flag.NO_QC, Flag.NO_QC]
-        self.assertFalse(test.run())
+        self.assertFalse(test.run(prof))
         self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
         self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
         self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
@@ -99,9 +99,9 @@ class TestPressureIncreasingTest(unittest.TestCase):
             'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
         })
 
-        test = tests.PressureIncreasingTest(prof)
+        test = tests.PressureIncreasingTest()
         qc_expected = [Flag.NO_QC, Flag.NO_QC, Flag.BAD, Flag.BAD, Flag.NO_QC]
-        self.assertFalse(test.run())
+        self.assertFalse(test.run(prof))
         self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
         self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
         self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))

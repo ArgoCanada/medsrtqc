@@ -32,9 +32,9 @@ class QCTest(QCOperation):
     argo_name = None
     nvs_uri = None
 
-    def run(self) -> bool:  # pragma: no cover
+    def run_impl(self) -> bool:  # pragma: no cover
         """Run the test and return ``True`` if it passed or ``False`` otherwise"""
-        return super().run()
+        return super().run_impl()
 
 
 class PressureIncreasingTest(QCTest):
@@ -64,7 +64,7 @@ class PressureIncreasingTest(QCTest):
     argo_name = "Pressure increasing test"
     nvs_uri = "http://vocab.nerc.ac.uk/collection/R11/current/8/"
 
-    def run(self):
+    def run_impl(self):
         pres = self.profile['PRES']
         temp = self.profile['TEMP']
         psal = self.profile['PSAL']

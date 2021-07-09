@@ -104,7 +104,8 @@ class TestCoreQC(unittest.TestCase):
 
     def test_abstract_operation(self):
         profile = Profile({'key': Trace([1])})
-        op = QCOperation(profile)
+        op = QCOperation()
+        op.profile = profile
 
         op.update_trace('key', Trace([2]))
         self.assertEqual(profile['key'].value[0], 2)
@@ -121,7 +122,7 @@ class TestCoreQC(unittest.TestCase):
             self.assertIs(plt.plot(), plt)
 
         with self.assertRaises(NotImplementedError):
-            op.run()
+            op.run(profile)
 
     def test_custom_applier(self):
         class CustomApplier(QCOperationApplier):
@@ -134,7 +135,7 @@ class TestCoreQC(unittest.TestCase):
             applier.log(Profile(), 'something')
         self.assertEqual(output.getvalue().strip(), 'a completely unrelated message')
 
-        op = QCOperation(Profile(), applier=applier)
+        op = QCOperation(applier=applier)
         output = StringIO()
         with contextlib.redirect_stderr(output):
             op.log('something')
