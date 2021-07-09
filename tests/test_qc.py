@@ -1,5 +1,5 @@
 
-from medsrtqc.core import Profile, Trace
+from medsrtqc.core import Profile, QCOperationError, Trace
 import unittest
 import numpy as np
 from medsrtqc.qc.flag import Flag
@@ -28,21 +28,68 @@ class TestFlag(unittest.TestCase):
 
 class TestPressureIncreasingTest(unittest.TestCase):
 
-    def test_definitely_increasing(self):
+    def test_inappropriate_traces(self):
         qc5 = np.repeat([Flag.NO_QC], 5)
-        pres =  Trace([200, 150, 100, 50, 0], qc=qc5)
+        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
         pres.pres = pres.value
         prof = Profile({
             'PRES': pres,
-            'TEMP': Trace([7, 7, 7, 5, 10], qc=qc5, pres=pres.value),
-            'PSAL': Trace([12, 11, 10, 9, 8], qc=qc5, pres=pres.value)
+            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5),
+            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
+        })
+        with self.assertRaises(QCOperationError):
+            tests.PressureIncreasingTest(prof).run()
+
+    def test_definitely_increasing(self):
+        qc5 = np.repeat([Flag.NO_QC], 5)
+        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
+        pres.pres = pres.value
+        prof = Profile({
+            'PRES': pres,
+            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5, pres=pres.value),
+            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
         })
 
         test = tests.PressureIncreasingTest(prof)
+        qc_expected = qc5
         self.assertTrue(test.run())
-        self.assertTrue(np.all(prof['PRES'].qc == qc5))
-        self.assertTrue(np.all(prof['TEMP'].qc == qc5))
-        self.assertTrue(np.all(prof['PSAL'].qc == qc5))
+        self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
+        self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
+        self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
+
+    def test_non_monotonic(self):
+        qc5 = np.repeat([Flag.NO_QC], 5)
+        pres =  Trace([50, 50, 100, 150, 200], qc=qc5)
+        pres.pres = pres.value
+        prof = Profile({
+            'PRES': pres,
+            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5, pres=pres.value),
+            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
+        })
+
+        test = tests.PressureIncreasingTest(prof)
+        qc_expected = [Flag.NO_QC, Flag.BAD, Flag.NO_QC, Flag.NO_QC, Flag.NO_QC]
+        self.assertFalse(test.run())
+        self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
+        self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
+        self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
+
+    def test_running_maximum(self):
+        qc5 = np.repeat([Flag.NO_QC], 5)
+        pres =  Trace([0, 50, 0, 50, 100], qc=qc5)
+        pres.pres = pres.value
+        prof = Profile({
+            'PRES': pres,
+            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5, pres=pres.value),
+            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
+        })
+
+        test = tests.PressureIncreasingTest(prof)
+        qc_expected = [Flag.NO_QC, Flag.NO_QC, Flag.BAD, Flag.BAD, Flag.NO_QC]
+        self.assertFalse(test.run())
+        self.assertTrue(np.all(prof['PRES'].qc == qc_expected))
+        self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
+        self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
 
 
 if __name__ == '__main__':

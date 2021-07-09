@@ -29,7 +29,9 @@ class PressureIncreasingTest(QCTest):
         psal = self.profile['PSAL']
 
         # ensure pressure values are identical for the three params
-        if np.any(pres.value != temp.pres) or np.any(pres.value != psal.pres):
+        temp_pres_eq = temp.pres == pres.value
+        psal_pres_eq = psal.pres == pres.value
+        if not np.all(temp_pres_eq) or not np.all(psal_pres_eq):
             self.error("Pressure values not identical for 'PRES', 'TEMP', and/or 'PSAL'")
 
         # do the first pass checking that every value is increasing
