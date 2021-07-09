@@ -63,23 +63,26 @@ class NetCDFProfile(Profile):
 
     def __getitem__(self, k) -> Trace:
         dataset_id, i_prof = self._variables[k]
-
-        var_names = {
-            'value': k,
-            'qc': k + '_QC',
-            'adjusted': k + '_ADJUSTED',
-            'adjusted_qc': k + '_ADJUSTED_QC',
-            'adjusted_error': k + '_ADJUSTED_ERROR',
-            'pres': 'PRES',
-            'mtime': 'MTIME'
-        }
-
+        var_names = self._var_names(k)
         var_values = self._calculate_trace_attrs(self._datasets[dataset_id], i_prof, var_names)
 
         try:
             return Trace(**var_values)
         except Exception as e:  # pragma: no cover
             raise ValueError(f"Error creating Trace for '{k}'") from e
+
+    def __setitem__(self, k, v):
+        var_names = self._var_names(k)
+
+        # check shapes against current
+        current_value = self[k]
+        for attr in var_names.keys():
+            if getattr(v, attr).shape != getattr(current_value, attr).shape:
+                raise ValueError("Shape mismatch between new and current")
+
+        dataset_id, i_prof = self._variables[k]
+
+        raise NotImplementedError()
 
     def _calculate_trace_attrs(self, dataset, i_prof, var_names):
         """
@@ -117,14 +120,27 @@ class NetCDFProfile(Profile):
                 last_finite.append(np.where(~v.mask)[0].max())
         return last_finite
 
+    def _var_names(self, k):
+        return {
+            'value': k,
+            'qc': k + '_QC',
+            'adjusted': k + '_ADJUSTED',
+            'adjusted_qc': k + '_ADJUSTED_QC',
+            'adjusted_error': k + '_ADJUSTED_ERROR',
+            'pres': 'PRES',
+            'mtime': 'MTIME'
+        }
 
-def load(src):
+
+
+def load(src, mode='r'):
     """
     Load a ``netCDF4.Dataset`` from a filename, url, bytes, or existing
     ``netCDF4.Dataset``. This is applied to anywhere a NetCDF file must
     be specified.
 
     :param src: A URL, filename, bytes, or existing ``netCDF4.Dataset``
+    :param mode: Use ``'r+'`` to allow updates.
     """
 
     if not isinstance(src, (Dataset, bytes, str)):
@@ -133,19 +149,19 @@ def load(src):
     if isinstance(src, Dataset):
         return src
     elif isinstance(src, str) and os.path.exists(src):
-        return Dataset(src)
+        return Dataset(src, mode=mode)
     elif isinstance(src, bytes):
-        return Dataset('in-mem-file', mode='r', memory=src)
+        return Dataset('in-mem-file', mode=mode, memory=src)
     elif src.startswith('http://') or src.startswith('https://') or src.startswith('ftp://'):
         buf = io.BytesIO()
         with urllib.request.urlopen(src) as f:
             shutil.copyfileobj(f, buf)
-        return Dataset('in-mem-file', mode='r', memory=buf.getvalue())
+        return Dataset('in-mem-file', mode=mode, memory=buf.getvalue())
     else:
         raise ValueError(f"Don't know how to open '{reprlib.repr(src)}'\n.Is it a valid file or URL?")
 
 
-def read_nc_profile(*src):
+def read_nc_profile(*src, mode='r'):
     """
     Load a :class:`medsrtqc.Profile` backed by a NetCDF file. For details
     on the underlying data structure, see :class:`NetCDFProfile`.
@@ -161,4 +177,4 @@ def read_nc_profile(*src):
     >>> profile['TEMP']
     """
 
-    return NetCDFProfile(*[load(s) for s in src])
+    return NetCDFProfile(*[load(s, mode=mode) for s in src])
