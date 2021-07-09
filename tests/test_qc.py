@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 from medsrtqc.qc.flag import Flag
 import medsrtqc.qc.named_tests as tests
+import medsrtqc.qc.util as util
 
 
 class TestFlag(unittest.TestCase):
@@ -24,6 +25,20 @@ class TestFlag(unittest.TestCase):
         qc = np.array([Flag.GOOD, Flag.PROBABLY_BAD, Flag.MISSING])
         Flag.update_safely(qc, to=Flag.BAD, where=np.array([False, True, False]))
         self.assertTrue(np.all(qc == np.array([Flag.GOOD, Flag.BAD, Flag.MISSING])))
+
+
+class TestUtil(unittest.TestCase):
+
+    def test_reset_qc(self):
+        pres = Trace(
+            [0, 50, 100, 150, 200],
+            qc=[Flag.GOOD] * 5,
+            adjusted_qc=[Flag.GOOD] * 5
+        )
+        prof = Profile({'PRES': pres})
+        util.ResetQCOperation(prof).run()
+        self.assertTrue(np.all(prof['PRES'].qc == Flag.NO_QC))
+        self.assertTrue(np.all(prof['PRES'].adjusted_qc == Flag.GOOD))
 
 
 class TestPressureIncreasingTest(unittest.TestCase):
