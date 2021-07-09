@@ -88,6 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qc.html">Quality Control Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nc.html">NetCDF IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vms.html">VMS IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interactive.html">Interactive helpers</a></li>
@@ -165,6 +166,7 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -221,6 +223,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="qc.html#medsrtqc.qc.flag.Flag">Flag (class in medsrtqc.qc.flag)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -236,6 +246,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="qc.html#medsrtqc.qc.flag.Flag.label">label() (medsrtqc.qc.flag.Flag static method)</a>
+</li>
       <li><a href="nc.html#medsrtqc.nc.load">load() (in module medsrtqc.nc)</a>
 </li>
   </ul></td>
@@ -274,12 +286,28 @@
 </li>
       </ul></li>
       <li>
+    medsrtqc.qc.flag
+
+      <ul>
+        <li><a href="qc.html#module-medsrtqc.qc.flag">module</a>
+</li>
+      </ul></li>
+      <li>
+    medsrtqc.qc.named_tests
+
+      <ul>
+        <li><a href="qc.html#module-medsrtqc.qc.named_tests">module</a>
+</li>
+      </ul></li>
+      <li>
     medsrtqc.resources
 
       <ul>
         <li><a href="resources.html#module-medsrtqc.resources">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     medsrtqc.vms
 
@@ -287,8 +315,6 @@
         <li><a href="vms.html#module-medsrtqc.vms">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     medsrtqc.vms.enc
 
@@ -305,6 +331,10 @@
         <li><a href="interactive.html#module-medsrtqc.interactive">medsrtqc.interactive</a>
 </li>
         <li><a href="nc.html#module-medsrtqc.nc">medsrtqc.nc</a>
+</li>
+        <li><a href="qc.html#module-medsrtqc.qc.flag">medsrtqc.qc.flag</a>
+</li>
+        <li><a href="qc.html#module-medsrtqc.qc.named_tests">medsrtqc.qc.named_tests</a>
 </li>
         <li><a href="resources.html#module-medsrtqc.resources">medsrtqc.resources</a>
 </li>
@@ -333,6 +363,8 @@
 </li>
       <li><a href="interactive.html#medsrtqc.interactive.plot_trace">plot_trace() (in module medsrtqc.interactive)</a>
 </li>
+      <li><a href="qc.html#medsrtqc.qc.named_tests.PressureIncreasingTest">PressureIncreasingTest (class in medsrtqc.qc.named_tests)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#medsrtqc.core.Profile">Profile (class in medsrtqc.core)</a>
@@ -353,11 +385,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#medsrtqc.core.QCOperation">QCOperation (class in medsrtqc.core)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#medsrtqc.core.QCOperationApplier">QCOperationApplier (class in medsrtqc.core)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#medsrtqc.core.QCOperationError">QCOperationError</a>
+</li>
+      <li><a href="qc.html#medsrtqc.qc.named_tests.QCTest">QCTest (class in medsrtqc.qc.named_tests)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -369,14 +403,20 @@
 </li>
       <li><a href="vms.html#medsrtqc.vms.read_vms_profiles">read_vms_profiles() (in module medsrtqc.vms)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="vms.html#medsrtqc.vms.enc.Real4">Real4 (class in medsrtqc.vms.enc)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="resources.html#medsrtqc.resources.resource_path">resource_path() (in module medsrtqc.resources)</a>
 </li>
       <li><a href="core.html#medsrtqc.core.QCOperation.run">run() (medsrtqc.core.QCOperation method)</a>
+
+      <ul>
+        <li><a href="qc.html#medsrtqc.qc.named_tests.PressureIncreasingTest.run">(medsrtqc.qc.named_tests.PressureIncreasingTest method)</a>
 </li>
+        <li><a href="qc.html#medsrtqc.qc.named_tests.QCTest.run">(medsrtqc.qc.named_tests.QCTest method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -403,6 +443,10 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="qc.html#medsrtqc.qc.flag.Flag.update_safely">update_safely() (medsrtqc.qc.flag.Flag static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#medsrtqc.core.QCOperation.update_trace">update_trace() (medsrtqc.core.QCOperation method)</a>
 
       <ul>
@@ -415,10 +459,12 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="vms.html#medsrtqc.vms.VMSProfile">VMSProfile (class in medsrtqc.vms)</a>
+      <li><a href="qc.html#medsrtqc.qc.flag.Flag.value">value() (medsrtqc.qc.flag.Flag static method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="vms.html#medsrtqc.vms.VMSProfile">VMSProfile (class in medsrtqc.vms)</a>
+</li>
       <li><a href="vms.html#medsrtqc.vms.VMSProfileList">VMSProfileList (class in medsrtqc.vms)</a>
 </li>
   </ul></td>
