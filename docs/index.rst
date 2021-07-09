@@ -6,6 +6,7 @@
    :caption: Contents:
 
    core
+   qc
    nc
    vms
    interactive

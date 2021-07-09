@@ -1,7 +1,23 @@
 
+"""
+The ``named_tests`` module contains the named tests in the
+Argo QC handbook. The main difference between a these tests
+and a regular :class:`~medsrtqc.core.QCOperation` is that
+they (1) have an ID, binary ID,and NVS URI and (2) the
+:func:`~medsrtqc.core.QCOperation.run` method returns
+``True`` or ``False`` to indicate a "passed" or "failed"
+check. Most tests also modify the input
+:class:`~medsrtqc.core.Profile` (e.g., to set flags).
+"""
+
 import numpy as np
 from ..core import QCOperation
 from .flag import Flag
+
+# a lot of this is copied+modified from
+# https://github.com/euroargodev/argortqcpy/blob/main/argortqcpy/checks.py
+# in the future this package should import that one and use it where
+# possible!
 
 
 class QCTest(QCOperation):
@@ -16,8 +32,33 @@ class QCTest(QCOperation):
     argo_name = None
     nvs_uri = None
 
+    def run(self) -> bool:
+        """Run the test and return ``True`` if it passed or ``False`` otherwise"""
+        return super().run()
+
 
 class PressureIncreasingTest(QCTest):
+    """
+    The pressure increasing test checks for monotonically increasing
+    pressure. The test modifies the QC flags for PRES, TEMP, and PSAL
+    and fails if any of these flags were set to ``Flag.BAD``.
+
+    >>> from medsrtqc.qc.named_tests import PressureIncreasingTest
+    >>> from medsrtqc.qc.flag import Flag
+    >>> from medsrtqc.core import Trace, Profile
+    >>> import numpy as np
+    >>> qc5 = np.repeat([Flag.NO_QC], 5)
+    >>> pres =  Trace([0, 50, 0, 50, 100], qc=qc5)
+    >>> pres.pres = pres.value
+    >>> prof = Profile({
+    ...     'PRES': pres,
+    ...     'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5, pres=pres.value),
+    ...     'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5, pres=pres.value)
+    ... })
+    >>> PressureIncreasingTest(prof).run()
+    >>> prof['PRES']
+    """
+
     argo_id = 8
     argo_binary_id = 256
     argo_name = "Pressure increasing test"
