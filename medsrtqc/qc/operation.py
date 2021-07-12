@@ -1,6 +1,6 @@
 
 """
-:class:`QCOperation`s build on the :class:`Profile` and :class:`Trace`,
+:class:`QCOperation` objects build on the :class:`Profile` and :class:`Trace`,
 updating the :class:`Profile` and/or performing operations with side
 effects like creating a plot or logging information to stderr. The
 :class:`QCOperationContext` class provides methods for common actions
@@ -55,13 +55,13 @@ class QCOperationContext:
 
     def error(self, profile, message):
         """
-        Shortcut for `raise QCOperationError()`
+        Shortcut for ``raise QCOperationError()``
         """
         raise QCOperationError(message, profile=profile)
 
     def pyplot(self, profile):
         """
-        Get a version of matplotlib.pyplot used for use in a ``with:``
+        Get a version of matplotlib.pyplot used for use in a ``with``
         statement. The default method returns a context manager that
         wraps a dummy version of the module that does nothing.
         """
@@ -125,11 +125,11 @@ class QCOperationProfileContext:
 
 class QCOperation:
     """
-    A QC operation here is instantiated with a target
-    :class:`Profile` and the previous :class:`Profile` as these
-    are needed to implement many of the tests. QC operations
-    should implement the :func:`run_impl()` method and use the built-in
-    methods to do any data updates.
+    A QC operation is instantiated with the parameters
+    that govern the functioning of the test (if any) and are :func:`run`
+    with the :class:`medsrtqc.core.Profile` as an argument. QC operations
+    should implement the :func:`run_impl` method and use the built-in
+    methods to do any data updates or communication with the user.
     """
 
     def __init__(self):
