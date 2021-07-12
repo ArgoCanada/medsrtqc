@@ -1,5 +1,6 @@
 
-from medsrtqc.core import Profile, QCOperationError, Trace
+from medsrtqc.core import Profile, Trace
+from medsrtqc.qc.operation import QCOperationError
 import unittest
 import numpy as np
 from medsrtqc.qc.flag import Flag

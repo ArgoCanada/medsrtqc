@@ -1,12 +1,12 @@
 
-from ..core import QCOperation
+from .operation import QCOperation
 from .flag import Flag
 
 
 class ResetQCOperation(QCOperation):
 
-    def __init__(self, applier=None):
-        super().__init__(applier)
+    def __init__(self):
+        super().__init__()
         self._vars = None
         self._flag = Flag.NO_QC
         self._qc = True

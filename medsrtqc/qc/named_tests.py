@@ -11,7 +11,7 @@ check. Most tests also modify the input
 """
 
 import numpy as np
-from ..core import QCOperation
+from .operation import QCOperation
 from .flag import Flag
 
 # a lot of this is copied+modified from
