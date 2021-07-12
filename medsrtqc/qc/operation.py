@@ -1,4 +1,13 @@
 
+"""
+:class:`QCOperation`s build on the :class:`Profile` and :class:`Trace`,
+updating the :class:`Profile` and/or performing operations with side
+effects like creating a plot or logging information to stderr. The
+:class:`QCOperationContext` class provides methods for common actions
+to minimize the number of custom :class:`QCOperation` classes needed
+to implement a production QC workflow.
+"""
+
 import sys
 
 class QCOperationError(Exception):
