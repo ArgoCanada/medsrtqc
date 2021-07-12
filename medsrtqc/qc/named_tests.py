@@ -2,9 +2,9 @@
 """
 The ``named_tests`` module contains the named tests in the
 Argo QC handbook. The main difference between a these tests
-and a regular :class:`~medsrtqc.core.QCOperation` is that
+and a regular :class:`~medsrtqc.qc.operation.QCOperation` is that
 they (1) have an ID, binary ID,and NVS URI and (2) the
-:func:`~medsrtqc.core.QCOperation.run` method returns
+:func:`~medsrtqc.qc.operation.QCOperation.run` method returns
 ``True`` or ``False`` to indicate a "passed" or "failed"
 check. Most tests also modify the input
 :class:`~medsrtqc.core.Profile` (e.g., to set flags).
@@ -22,7 +22,7 @@ from .flag import Flag
 
 class QCTest(QCOperation):
     """
-    Whereas a :class:`~medsrtqc.core.QCOperation` is generic and
+    Whereas a :class:`~medsrtqc.qc.operation.QCOperation` is generic and
     can do anything, a ``QCTest`` is a specific operation defined
     within the Argo data management framework. ``QCTest``s have
     names, binary IDs, and specific descriptions.
