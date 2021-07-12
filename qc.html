@@ -170,7 +170,7 @@
 <h1>Quality Control Operations<a class="headerlink" href="#quality-control-operations" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-medsrtqc.qc.operation">
 <span id="common-classes"></span><h2>Common classes<a class="headerlink" href="#module-medsrtqc.qc.operation" title="Permalink to this headline">¶</a></h2>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation`s</span> <span class="pre">build</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">:class:`Profile</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code>,
+<p><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation" title="medsrtqc.qc.operation.QCOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation</span></code></a> objects build on the <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code>,
 updating the <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code> and/or performing operations with side
 effects like creating a plot or logging information to stderr. The
 <a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext" title="medsrtqc.qc.operation.QCOperationContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperationContext</span></code></a> class provides methods for common actions
@@ -179,11 +179,11 @@ to implement a production QC workflow.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.qc.operation.QCOperation">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.operation.</span></span><span class="sig-name descname"><span class="pre">QCOperation</span></span><a class="headerlink" href="#medsrtqc.qc.operation.QCOperation" title="Permalink to this definition">¶</a></dt>
-<dd><p>A QC operation here is instantiated with a target
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code> and the previous <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code> as these
-are needed to implement many of the tests. QC operations
+<dd><p>A QC operation is instantiated with the parameters
+that govern the functioning of the test (if any) and are <a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.run" title="medsrtqc.qc.operation.QCOperation.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a>
+with the <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.core.Profile</span></code></a> as an argument. QC operations
 should implement the <a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.run_impl" title="medsrtqc.qc.operation.QCOperation.run_impl"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_impl()</span></code></a> method and use the built-in
-methods to do any data updates.</p>
+methods to do any data updates or communication with the user.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.qc.operation.QCOperation.error">
 <span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.operation.QCOperation.error" title="Permalink to this definition">¶</a></dt>
@@ -237,7 +237,7 @@ inconvenient to implement in the <code class="xref py py-class docutils literal 
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.qc.operation.QCOperationContext.error">
 <span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.operation.QCOperationContext.error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shortcut for <cite>raise QCOperationError()</cite></p>
+<dd><p>Shortcut for <code class="docutils literal notranslate"><span class="pre">raise</span> <span class="pre">QCOperationError()</span></code></p>
 </dd></dl>
 
 <dl class="py method">
@@ -250,7 +250,7 @@ The default method prints the message to <code class="docutils literal notransla
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.qc.operation.QCOperationContext.pyplot">
 <span class="sig-name descname"><span class="pre">pyplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.operation.QCOperationContext.pyplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a version of matplotlib.pyplot used for use in a <code class="docutils literal notranslate"><span class="pre">with:</span></code>
+<dd><p>Get a version of matplotlib.pyplot used for use in a <code class="docutils literal notranslate"><span class="pre">with</span></code>
 statement. The default method returns a context manager that
 wraps a dummy version of the module that does nothing.</p>
 </dd></dl>

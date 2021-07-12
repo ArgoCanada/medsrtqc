@@ -175,7 +175,8 @@ usage you should only need <a class="reference internal" href="#medsrtqc.vms.rea
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.vms.read_vms_profiles">
 <span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">read_vms_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.read_vms_profiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a binary VMS file into a <a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
+<dd><p>Read a binary VMS file into a <code class="docutils literal notranslate"><span class="pre">list()</span></code> of <a class="reference internal" href="#medsrtqc.vms.VMSProfile" title="medsrtqc.vms.VMSProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfile</span></code></a>
+objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>src</strong> – A filename or file-like object</p>
@@ -199,11 +200,12 @@ usage you should only need <a class="reference internal" href="#medsrtqc.vms.rea
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.vms.write_vms_profiles">
 <span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">write_vms_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.write_vms_profiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write a binary VMS file from a <a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
+<dd><p>Write a binary VMS file from a <code class="docutils literal notranslate"><span class="pre">list()</span></code> of <a class="reference internal" href="#medsrtqc.vms.VMSProfile" title="medsrtqc.vms.VMSProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfile</span></code></a>
+objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>profiles</strong> – A <a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList()</span></code></a></p></li>
+<li><p><strong>profiles</strong> – A <code class="docutils literal notranslate"><span class="pre">list()</span></code> of <a class="reference internal" href="#medsrtqc.vms.VMSProfile" title="medsrtqc.vms.VMSProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfile</span></code></a> objects.</p></li>
 <li><p><strong>dest</strong> – A filename or file-like object</p></li>
 </ul>
 </dd>
@@ -223,17 +225,8 @@ usage you should only need <a class="reference internal" href="#medsrtqc.vms.rea
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">VMSProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.VMSProfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>An implementation of the <code class="xref py py-class docutils literal notranslate"><span class="pre">core.Profile</span></code> type
 backed by data read from the MEDS internal VMS data
-structure. These objects are always created from a
-<a class="reference internal" href="#medsrtqc.vms.VMSProfileList" title="medsrtqc.vms.VMSProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfileList</span></code></a>.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="medsrtqc.vms.VMSProfileList">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.vms.</span></span><span class="sig-name descname"><span class="pre">VMSProfileList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.vms.VMSProfileList" title="Permalink to this definition">¶</a></dt>
-<dd><p>An implementation of the ProfileList type backed by data read from
-the MEDS internal VMS data structure. This is the object
-created by <a class="reference internal" href="#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_vms_profiles()</span></code></a> and is a container for
-<a class="reference internal" href="#medsrtqc.vms.VMSProfile" title="medsrtqc.vms.VMSProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMSProfile</span></code></a> objects.</p>
+structure. These objects are usually created by
+<a class="reference internal" href="#medsrtqc.vms.read_vms_profiles" title="medsrtqc.vms.read_vms_profiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_vms_profiles()</span></code></a>.</p>
 </dd></dl>
 
 <div class="section" id="module-medsrtqc.vms.enc">

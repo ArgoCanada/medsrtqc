@@ -174,13 +174,12 @@
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>QC code in <code class="docutils literal notranslate"><span class="pre">medsrtqc</span></code> is built on the <code class="docutils literal notranslate"><span class="pre">Trace</span></code>, <code class="docutils literal notranslate"><span class="pre">Profile</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">ProfileList</span></code> classes. A <code class="docutils literal notranslate"><span class="pre">Profile</span></code> is roughly what you would get
-from a single-cycle Argo NetCDF file; a <code class="docutils literal notranslate"><span class="pre">ProfileList</span></code> is a container
-of these objects. Both can be subclassed to abstract away the storage
-details such that QC code can be tested on NetCDF files but run with an
-arbitrary storage backend. You can get started with the NetCDF backend
-in a few lines:</p>
+<p>QC code in <code class="docutils literal notranslate"><span class="pre">medsrtqc</span></code> is built on the <code class="docutils literal notranslate"><span class="pre">Trace</span></code> and <code class="docutils literal notranslate"><span class="pre">Profile</span></code>
+classes. A <code class="docutils literal notranslate"><span class="pre">Profile</span></code> is roughly what you would get from a single-cycle
+Argo NetCDF file. The <code class="docutils literal notranslate"><span class="pre">Profile</span></code> can be subclassed to abstract away the
+storage details such that QC code can be tested on NetCDF files but run
+with an arbitrary storage backend. You can get started with the NetCDF
+backend in a few lines:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">medsrtqc.nc</span> <span class="kn">import</span> <span class="n">read_nc_profile</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://data-argo.ifremer.fr/dac/coriolis/6904117/profiles/R6904117_085.nc&#39;</span>
 <span class="n">profile</span> <span class="o">=</span> <span class="n">read_nc_profile</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>

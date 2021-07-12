@@ -10,8 +10,6 @@ VMS IO
 
 .. autoclass:: VMSProfile
 
-.. autoclass:: VMSProfileList
-
 Low-level VMS IO
 --------------------------------------------
 
