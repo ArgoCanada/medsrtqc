@@ -8,6 +8,6 @@ usage you should only need :func:`read_vms_profiles` and
 """
 
 from .read import read_vms_profiles, write_vms_profiles
-from .core_impl import VMSProfile, VMSProfileList
+from .core_impl import VMSProfile
 
-__all__ = ['read_vms_profiles', 'write_vms_profiles', 'VMSProfile', 'VMSProfileList']
+__all__ = ['read_vms_profiles', 'write_vms_profiles', 'VMSProfile']

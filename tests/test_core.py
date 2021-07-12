@@ -1,7 +1,7 @@
 
 import unittest
 import numpy as np
-from medsrtqc.core import Trace, Profile, ProfileList
+from medsrtqc.core import Trace, Profile
 
 
 class TestCore(unittest.TestCase):
@@ -39,27 +39,6 @@ class TestCore(unittest.TestCase):
             profile.keys()
         with self.assertRaises(NotImplementedError):
             'some key' in profile
-
-    def test_abstract_profile_list(self):
-        profile_list = ProfileList()
-        with self.assertRaises(NotImplementedError):
-            profile_list[0]
-        with self.assertRaises(NotImplementedError):
-            profile_list[0] = 'some value'
-        with self.assertRaises(NotImplementedError):
-            len(profile_list)
-
-    def test_profile_list(self):
-        profile = Profile()
-        profile_list = ProfileList([profile])
-        self.assertEqual(len(profile_list), 1)
-        self.assertIsNot(profile_list[0], profile)
-        self.assertIsNone(profile_list[0]._Profile__data)
-        for p in profile_list:
-            self.assertIsNone(p._Profile__data)
-
-        profile_list[0] = Profile({'param': Trace([])})
-        self.assertIsNotNone(profile_list[0]._Profile__data)
 
 
 if __name__ == '__main__':

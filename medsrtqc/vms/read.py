@@ -1,5 +1,5 @@
 
-from .core_impl import VMSProfileList
+from .core_impl import VMSProfile
 from .profiles_enc import PrStnAndPrProfilesEncoding
 from .enc import ArrayOf
 
@@ -9,7 +9,8 @@ _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding())
 
 def read_vms_profiles(src):
     """
-    Read a binary VMS file into a :class:`VMSProfileList`.
+    Read a binary VMS file into a ``list()`` of :class:`VMSProfile`
+    objects.
 
     :param src: A filename or file-like object
 
@@ -35,14 +36,15 @@ def read_vms_profiles(src):
     else:
         raise TypeError("Can't interpret `src` as a file or file-like object")
 
-    return VMSProfileList(data)
+    return [VMSProfile(item) for item in data]
 
 
 def write_vms_profiles(profiles, dest):
     """
-    Write a binary VMS file from a :class:`VMSProfileList`.
+    Write a binary VMS file from a ``list()`` of :class:`VMSProfile`
+    objects.
 
-    :param profiles: A :class:`VMSProfileList()`
+    :param profiles: A ``list()`` of :class:`VMSProfile` objects.
     :param dest: A filename or file-like object
 
     >>> from medsrtqc.vms import write_vms_profiles, read_vms_profiles
@@ -52,13 +54,16 @@ def write_vms_profiles(profiles, dest):
     >>> with tempfile.TemporaryFile() as f:
     ...     write_vms_profiles(profiles, f)
     """
-    if not isinstance(profiles, VMSProfileList):
-        raise TypeError('`profiles` must be a VMSProfileList')
+    for i, item in enumerate(profiles):
+        if not isinstance(item, VMSProfile):
+            msg = 'All items in `profiles` must be a VMSProfile objects.'
+            msg = f'profiles[{i}] is not a VMSProfile object'
+            raise TypeError(msg)
 
     if isinstance(dest, str):
         with open(dest, 'wb') as f:
-            _file_encoding.encode(f, profiles._data)
+            _file_encoding.encode(f, [item._data for item in profiles])
     elif hasattr(dest, 'write'):
-        _file_encoding.encode(dest, profiles._data)
+        _file_encoding.encode(dest, [item._data for item in profiles])
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")

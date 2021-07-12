@@ -6,15 +6,15 @@ import numpy as np
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros
 
-from ..core import Trace, Profile, ProfileList
+from ..core import Trace, Profile
 
 
 class VMSProfile(Profile):
     """
     An implementation of the :class:`core.Profile` type
     backed by data read from the MEDS internal VMS data
-    structure. These objects are always created from a
-    :class:`VMSProfileList`.
+    structure. These objects are usually created by
+    :func:`read_vms_profiles`.
     """
 
     def __init__(self, data) -> None:
@@ -140,25 +140,3 @@ class VMSProfile(Profile):
         self._data = data_copy
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
-
-
-class VMSProfileList(ProfileList):
-    """
-    An implementation of the ProfileList type backed by data read from
-    the MEDS internal VMS data structure. This is the object
-    created by :func:`read_vms_profiles` and is a container for
-    :class:`VMSProfile` objects.
-    """
-
-    def __init__(self, data) -> None:
-        self._data = deepcopy(data)
-
-    def __len__(self):
-        return len(self._data)
-
-    def __getitem__(self, k) -> Profile:
-        return VMSProfile(self._data[k])
-
-    def __iter__(self) -> Iterable[Profile]:
-        for item in self._data:
-            yield VMSProfile(item)

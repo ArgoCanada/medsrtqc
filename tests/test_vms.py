@@ -9,7 +9,8 @@ import numpy as np
 from medsrtqc.resources import resource_path
 import medsrtqc.vms.enc as enc
 import medsrtqc.vms.read as read
-from medsrtqc.vms.core_impl import VMSProfile, VMSProfileList, Trace
+from medsrtqc.core import Trace
+from medsrtqc.vms.core_impl import VMSProfile
 
 
 class TestEncoding(unittest.TestCase):
@@ -100,7 +101,7 @@ class TestVMSRead(unittest.TestCase):
 
         profiles = read.read_vms_profiles(test_file)
         self.assertEqual(len(profiles), 2)
-        self.assertIsInstance(profiles, VMSProfileList)
+        self.assertIsInstance(profiles, list)
 
         for p in profiles:
             self.assertIsInstance(p, VMSProfile)
@@ -176,9 +177,10 @@ class TestVMSRead(unittest.TestCase):
             read.write_vms_profiles(profiles, None)
 
         with open(test_file, 'rb') as f:
-            self.assertEqual(profiles._data, read.read_vms_profiles(f)._data)
+            for i, prof in enumerate(read.read_vms_profiles(f)):
+                self.assertEqual(prof._data, profiles[i]._data)
 
-        size_calc = read._file_encoding.sizeof(profiles._data)
+        size_calc = read._file_encoding.sizeof([item._data for item in profiles])
         with open(test_file, 'rb') as f:
             content = f.read()
             self.assertEqual(size_calc, len(content))

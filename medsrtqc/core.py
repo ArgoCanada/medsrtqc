@@ -4,9 +4,8 @@ Writing portable QC operations shouldn't depend on the underlying
 data storage mechanism, which might be a database, NetCDF file,
 or binary export. The classes in the ``core`` module are designed to
 provide a view of Argo data that can be passed to or returned from
-QC operations. Here Argo data are modeled as a three-level heiarchy
-where :class:`Trace` objects are contained by :class:`Profile` objects
-which are in turn contained by :class:`ProfileList` objects.
+QC operations. Here Argo data are modeled as :class:`Trace` objects
+that are contained by :class:`Profile` objects.
 """
 
 from typing import Iterable, Tuple
@@ -126,34 +125,3 @@ class Profile:
     def items(self) -> Iterable[Tuple[str, Trace]]:
         for k in self.keys():
             yield k, self[k]
-
-
-class ProfileList:
-    """
-    An base class for a collection of Profile objects.
-    These objects are list-like with each member
-    as a :class:`Profile` implementation. The base class wraps
-    a ``list()`` of :class:`Profile` objects.
-    """
-
-    def __init__(self, data=None):
-        self.__data = list(data) if data is not None else data
-
-    def __len__(self):
-        if self.__data is None:
-            raise NotImplementedError()
-        return len(self.__data)
-
-    def __getitem__(self, k) -> Profile:
-        if self.__data is None:
-            raise NotImplementedError()
-        return deepcopy(self.__data[k])
-
-    def __setitem__(self, k, v):
-        if self.__data is None:
-            raise NotImplementedError()
-        self.__data[k] = v
-
-    def __iter__(self) -> Iterable[Profile]:
-        for i in range(len(self)):
-            yield self[i]

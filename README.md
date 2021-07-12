@@ -15,7 +15,7 @@ pip install git+https://github.com/ArgoCanada/medsrtqc.git
 
 ## Examples
 
-QC code in `medsrtqc` is built on the `Trace`, `Profile`, and `ProfileList` classes. A `Profile` is roughly what you would get from a single-cycle Argo NetCDF file; a `ProfileList` is a container of these objects. Both can be subclassed to abstract away the storage details such that QC code can be tested on NetCDF files but run with an arbitrary storage backend. You can get started with the NetCDF backend in a few lines:
+QC code in `medsrtqc` is built on the `Trace` and `Profile` classes. A `Profile` is roughly what you would get from a single-cycle Argo NetCDF file. The `Profile` can be subclassed to abstract away the storage details such that QC code can be tested on NetCDF files but run with an arbitrary storage backend. You can get started with the NetCDF backend in a few lines:
 
 
 ```python
@@ -66,7 +66,7 @@ print(repr(profile['TEMP']))
         pres=[5.27, 5.79, 6.48, [194 values], 201.5, 202.54, 203.5],
         mtime=[masked, masked, masked, [194 values], masked, masked, masked]
     )
-    
+
 
 You can use the interactive plotter to quickly visualize all or part of a profile:
 
@@ -77,9 +77,9 @@ fig, axs = plot(profile, vars=profile.keys()[:6])
 ```
 
 
-    
+
 ![png](README_files/README_5_0.png)
-    
+
 
 
 You can use the `Trace` and `Profile` classes directly to generate unit test data with known statistical properties:
@@ -137,9 +137,9 @@ for i, var in enumerate(('PRES', 'TEMP', 'PSAL')):
 ```
 
 
-    
+
 ![png](README_files/README_9_0.png)
-    
+
 
 
 ## QC a NetCDF file
