@@ -87,7 +87,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Core framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="qc.html">Quality Control Operations</a></li>
@@ -171,12 +171,6 @@ provide a view of Argo data that can be passed to or returned from
 QC operations. Here Argo data are modeled as a three-level heiarchy
 where <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> objects are contained by <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> objects
 which are in turn contained by <a class="reference internal" href="#medsrtqc.core.ProfileList" title="medsrtqc.core.ProfileList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileList</span></code></a> objects.</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation`s</span> <span class="pre">build</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">:class:`Profile</span></code> and <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a>,
-updating the <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> and/or performing operations with side
-effects like creating a plot or logging information to stderr. The
-<a class="reference internal" href="#medsrtqc.core.QCOperationApplier" title="medsrtqc.core.QCOperationApplier"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperationApplier</span></code></a> class provides methods for common actions
-to minimize the number of custom <a class="reference internal" href="#medsrtqc.core.QCOperation" title="medsrtqc.core.QCOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">QCOperation</span></code></a> classes needed
-to implement a production QC workflow.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.core.Profile">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.Profile" title="Permalink to this definition">¶</a></dt>
@@ -196,110 +190,6 @@ a <code class="docutils literal notranslate"><span class="pre">dict</span></code
 These objects are list-like with each member
 as a <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> implementation. The base class wraps
 a <code class="docutils literal notranslate"><span class="pre">list()</span></code> of <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> objects.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">applier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation" title="Permalink to this definition">¶</a></dt>
-<dd><p>A QC operation here is instantiated with a target
-<a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> and the previous <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> as these
-are needed to implement many of the tests. QC operations
-should implement the <a class="reference internal" href="#medsrtqc.core.QCOperation.run_impl" title="medsrtqc.core.QCOperation.run_impl"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_impl()</span></code></a> method and use the built-in
-methods to do any data updates.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.error">
-<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience wrapper for <a class="reference internal" href="#medsrtqc.core.QCOperationApplier.error" title="medsrtqc.core.QCOperationApplier.error"><code class="xref py py-func docutils literal notranslate"><span class="pre">QCOperationApplier.error()</span></code></a></p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.log">
-<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience wrapper for <a class="reference internal" href="#medsrtqc.core.QCOperationApplier.log" title="medsrtqc.core.QCOperationApplier.log"><code class="xref py py-func docutils literal notranslate"><span class="pre">QCOperationApplier.log()</span></code></a></p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.pyplot">
-<span class="sig-name descname"><span class="pre">pyplot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.pyplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience wrapper for <a class="reference internal" href="#medsrtqc.core.QCOperationApplier.pyplot" title="medsrtqc.core.QCOperationApplier.pyplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">QCOperationApplier.pyplot()</span></code></a></p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the test. This is the method used by callers to actually
-run the test. The default method temporarily sets <code class="docutils literal notranslate"><span class="pre">self.profile</span></code> and
-<code class="docutils literal notranslate"><span class="pre">self.previous_profile</span></code> and calls <a class="reference internal" href="#medsrtqc.core.QCOperation.run_impl" title="medsrtqc.core.QCOperation.run_impl"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_impl()</span></code></a>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.run_impl">
-<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.run_impl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test implementation. This method must be implemented by test subclasses.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperation.update_trace">
-<span class="sig-name descname"><span class="pre">update_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperation.update_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience wrapper for <a class="reference internal" href="#medsrtqc.core.QCOperationApplier.update_trace" title="medsrtqc.core.QCOperationApplier.update_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">QCOperationApplier.update_trace()</span></code></a></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperationApplier</span></span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier" title="Permalink to this definition">¶</a></dt>
-<dd><p>QC operations may be run in many different contexts. The obvious context
-is to apply the result of the operation to the underlying
-<a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> (the default), but this class is used to give
-flexibility should users wish to do something else (e.g., print what
-actions would be taken without actually applying them) or require
-specialized actions to perform data updates that are impossible or
-inconvenient to implement in the <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> subclass.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.error">
-<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shortcut for <cite>raise QCOperationError()</cite></p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.log">
-<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print a log message for a given <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a>.
-The default method prints the message to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.pyplot">
-<span class="sig-name descname"><span class="pre">pyplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.pyplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a version of matplotlib.pyplot used for use in a <code class="docutils literal notranslate"><span class="pre">with:</span></code>
-statement. The default method returns a context manager that
-wraps a dummy version of the module that does nothing.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">medsrtqc.core</span> <span class="kn">import</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">Trace</span><span class="p">,</span> <span class="n">QCOperationApplier</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">applier</span> <span class="o">=</span> <span class="n">QCOperationApplier</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">({</span><span class="s1">&#39;param&#39;</span><span class="p">:</span> <span class="n">Trace</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">applier</span><span class="o">.</span><span class="n">pyplot</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">plt</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;param&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationApplier.update_trace">
-<span class="sig-name descname"><span class="pre">update_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationApplier.update_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a given <a class="reference internal" href="#medsrtqc.core.Trace" title="medsrtqc.core.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code></a> for a <a class="reference internal" href="#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a>.
-The default method runs <code class="docutils literal notranslate"><span class="pre">profile[k]</span> <span class="pre">=</span> <span class="pre">trace</span></code>.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="medsrtqc.core.QCOperationError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">medsrtqc.core.</span></span><span class="sig-name descname"><span class="pre">QCOperationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.core.QCOperationError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="docutils literal notranslate"><span class="pre">Exception</span></code> subclass with attributes <code class="docutils literal notranslate"><span class="pre">profile</span></code>, <code class="docutils literal notranslate"><span class="pre">trace</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">trace_key</span></code>. These errors give an opportunity for inspection
-on debugging and potentially more informative printing because
-they contain some context.</p>
 </dd></dl>
 
 <dl class="py class">

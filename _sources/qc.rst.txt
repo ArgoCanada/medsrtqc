@@ -2,8 +2,12 @@
 Quality Control Operations
 ============================================
 
+
 Common classes
 --------------------------------------------
+
+.. automodule:: medsrtqc.qc.operation
+    :members:
 
 .. automodule:: medsrtqc.qc.flag
     :members:
