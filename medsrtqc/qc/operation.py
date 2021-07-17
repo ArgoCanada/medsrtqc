@@ -9,6 +9,7 @@ to implement a production QC workflow.
 """
 
 import sys
+from ..core import Profile
 
 class QCOperationError(Exception):
     """
@@ -133,9 +134,9 @@ class QCOperation:
     """
 
     def __init__(self):
-        self.context = None
-        self.profile = None
-        self.previous_profile = None
+        self.context = QCOperationContext()
+        self.profile = Profile()
+        self.previous_profile = Profile()
 
     def update_trace(self, k, trace):
         """Convenience wrapper for :func:`QCOperationContext.update_trace`"""
