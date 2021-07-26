@@ -19,7 +19,7 @@ class TestCore(unittest.TestCase):
 
     def test_profile(self):
         trace = Trace([1, 2, 3])
-        profile = Profile({'some_param': trace})
+        profile = Profile({'some_param': trace}, {'some_meta': 'some_value'})
         self.assertTrue(np.all(profile['some_param'].value == trace.value))
         self.assertEqual(list(profile.keys()), ['some_param'])
         for key in profile:
@@ -28,6 +28,11 @@ class TestCore(unittest.TestCase):
 
         profile['some other param'] = Trace([])
         self.assertTrue('some other param' in profile)
+
+        self.assertEqual(profile.meta_keys(), ('some_meta', ))
+        self.assertEqual(profile.meta('some_meta'), 'some_value')
+        profile.set_meta('other meta', 'other value')
+        self.assertEqual(profile.meta('other meta'), 'other value')
 
     def test_abstract_profile(self):
         profile = Profile()
@@ -39,6 +44,12 @@ class TestCore(unittest.TestCase):
             profile.keys()
         with self.assertRaises(NotImplementedError):
             'some key' in profile
+        with self.assertRaises(NotImplementedError):
+            profile.meta('some key')
+        with self.assertRaises(NotImplementedError):
+            profile.set_meta('some key', 'some value')
+        with self.assertRaises(NotImplementedError):
+            profile.meta_keys()
 
 
 if __name__ == '__main__':

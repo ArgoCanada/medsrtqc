@@ -98,8 +98,9 @@ class Profile:
     a ``dict`` of :class:`Trace` objects.
     """
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, meta=None):
         self.__data = dict(data) if data is not None else None
+        self.__meta = dict(meta) if meta is not None else None
 
     def keys(self) -> Iterable[str]:
         if self.__data is None:
@@ -125,3 +126,18 @@ class Profile:
     def items(self) -> Iterable[Tuple[str, Trace]]:
         for k in self.keys():
             yield k, self[k]
+
+    def meta_keys(self):
+        if self.__meta is None:
+            raise NotImplementedError()
+        return tuple(self.__meta.keys())
+
+    def meta(self, k):
+        if self.__meta is None:
+            raise NotImplementedError()
+        return self.__meta[k]
+
+    def set_meta(self, k, v):
+        if self.__meta is None:
+            raise NotImplementedError()
+        self.__meta[k] = v
