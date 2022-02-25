@@ -32,7 +32,7 @@ except Exception as err:
 
 try:
     from medsrtqc.interactive import plot
-    fid.write('meds.interactie.plot successfully imported')
+    fid.write('meds.interactie.plot successfully imported\n\n')
 except Exception as err:
     fid.write(f'Exception: {err}\n\n')
 
