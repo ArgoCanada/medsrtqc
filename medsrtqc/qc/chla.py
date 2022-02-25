@@ -39,8 +39,6 @@ class ChlaDarkTest(QCOperation):
         if mixed_layer_depth is not None:
             self.log(f"Mixed layer depth calculated ({mixed_layer_depth} dbar)")
 
-        # here is where we'd apply the non-photochemical quenching (NPC) correction
-
         # update the CHLA trace
         self.update_trace('CHLA', chla)
 
@@ -77,3 +75,15 @@ class ChlaDarkTest(QCOperation):
             plt.gca().axhline(y = mixed_layer_depth, linestyle='--')
 
         return mixed_layer_depth
+
+class ChlaSpikeTest(QCOperation):
+
+    def run_impl(self):
+        chla = self.profile['CHLA']
+        self.update_trace('CHLA', chla)
+
+class ChlaNPQTest(QCOperation):
+
+    def run_impl(self):
+        chla = self.profile['CHLA']
+        self.update_trace('CHLA', chla)
