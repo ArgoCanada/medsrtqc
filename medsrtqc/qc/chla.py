@@ -40,7 +40,7 @@ class ChlaTest(QCOperation):
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
 
         # CHLA spike test
-        res = chla - self.running_median(chla, 5)
+        res = chla - self.running_median(5)
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
         Flag.update_safely(chla.adjusted_qc, Flag.BAD, spike_values)
@@ -81,12 +81,12 @@ class ChlaTest(QCOperation):
 
         return mixed_layer_depth
 
-    def running_median(self, x, n):
+    def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
-        n = 5
+        x = self.profile['CHLA']
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
         med = [np.median(c) for c in b]
-        med = np.array(k*[med[0]] + med + k*[med[-1]])
+        med = np.array(k*[np.nan] + med + k*[np.nan])
         return med
