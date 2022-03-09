@@ -6,7 +6,7 @@ from .operation import QCOperation, QCOperationError
 from .flag import Flag
 
 
-class ChlaDarkTest(QCOperation):
+class ChlaTest(QCOperation):
 
     def run_impl(self):
         chla = self.profile['CHLA']
@@ -37,7 +37,15 @@ class ChlaDarkTest(QCOperation):
             self.log(e)
 
         if mixed_layer_depth is not None:
-            self.log(f"Mixed layer depth calculated ({mixed_layer_depth} dbar)")
+            self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
+
+        # CHLA spike test
+        res = chla - self.running_median(chla, 5)
+        spike_values = res < 2*np.percentile(res, 10)
+        Flag.update_safely(chla.qc, Flag.BAD, spike_values)
+        Flag.update_safely(chla.adjusted_qc, Flag.BAD, spike_values)
+        
+        # CHLA NPQ correction
 
         # update the CHLA trace
         self.update_trace('CHLA', chla)
@@ -71,19 +79,14 @@ class ChlaDarkTest(QCOperation):
         mixed_layer_depth = pres.value[mixed_layer_start_index]
         self.log(f'...mixed layer depth found at {mixed_layer_depth} dbar')
 
-        with self.pyplot() as plt:
-            plt.gca().axhline(y = mixed_layer_depth, linestyle='--')
-
         return mixed_layer_depth
 
-class ChlaSpikeTest(QCOperation):
-
-    def run_impl(self):
-        chla = self.profile['CHLA']
-        self.update_trace('CHLA', chla)
-
-class ChlaNPQTest(QCOperation):
-
-    def run_impl(self):
-        chla = self.profile['CHLA']
-        self.update_trace('CHLA', chla)
+    def running_median(self, x, n):
+        self.log(f'Calculating running median over window size {n}')
+        n = 5
+        ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
+        b = [row[row > 0] for row in x[ix]]
+        k = int(n/2)
+        med = [np.median(c) for c in b]
+        med = np.array(k*[med[0]] + med + k*[med[-1]])
+        return med
