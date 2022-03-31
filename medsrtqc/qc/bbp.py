@@ -11,6 +11,15 @@ class bbpSpikeTest(QCOperation):
         bbp = self.profile['BBP']
         self.update_trace('BBP', bbp)
 
+        bbp = self.profile['BBP']
+
+        # NOTE this is copied from CHLA, verify in manual that this is proper flagging
+        self.log('Setting previously unset flags for BBP to PROBABLY_BAD')
+        Flag.update_safely(bbp.qc, to=Flag.PROBABLY_BAD)
+
+        self.log('Setting previously unset flags for BBP_ADJUSTED to GOOD')
+        Flag.update_safely(bbp.adjusted_qc, to=Flag.GOOD)
+
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
         x = self.profile['BBP']
