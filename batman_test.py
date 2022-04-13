@@ -16,9 +16,15 @@ fid.write('Module Import Tests\n')
 fid.write('#' + 79*'-' + '\n\n')
 
 try:
-    from medsrtqc.qc.chla import ChlaDarkTest
-    test = ChlaDarkTest()
-    fid.write('medsrtqc.qc.chla.ChlaDarkTest successfully imported\n\n')
+    import gsw
+    fid.write('gsw successfully imported\n\n')
+except Exception as err:
+    fid.write(f'Exception: {err}\n\n')
+
+try:
+    from medsrtqc.qc.chla import ChlaTest
+    test = ChlaTest()
+    fid.write('medsrtqc.qc.chla.ChlaTest successfully imported\n\n')
 except Exception as err:
     fid.write(f'Exception: {err}\n\n')
 
