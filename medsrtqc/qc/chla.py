@@ -95,12 +95,25 @@ class ChlaTest(QCOperation):
         chla.adjusted = (fluo.values - dark_prime_chla)*scale_chla
 
         # CHLA spike test
-        res = chla - self.running_median(5)
+        self.log('Performing negative spike test')
+        median_chla = self.running_median(5)
+        res = chla - median_chla
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
         Flag.update_safely(chla.adjusted_qc, Flag.BAD, spike_values)
         
         # CHLA NPQ correction
+        self.log('Performing Non-Photochemical Quenching (NPQ) test')
+        if not flag_mld:
+            positive_spikes = res > 2*np.percentile(res, 90)
+            depthNPQ_ix = np.where(median_chla[~positive_spikes] == np.nanmax(median_chla[~positive_spikes]))[0][0]
+            depthNPQ = chla.pres[depthNPQ_ix]
+            if depthNPQ < 0.9*mixed_layer_depth:
+                self.log(f'Adjusting surface values (P < {depthNPQ}dbar) to CHLA({depthNPQ}) = {chla.values[depthNPQ_ix]}mg/m3')
+                chla.adjusted[:depthNPQ_ix] = chla.adjusted[depthNPQ_ix]
+                self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
+                Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
+                Flag.update_safely(chla.adjusted_qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
 
         # Roesler et al. 2017 factor of 2 global bias
         chla.adjusted = chla.adjusted/2
