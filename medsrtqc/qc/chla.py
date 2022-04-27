@@ -9,10 +9,18 @@ from .flag import Flag
 class ChlaTest(QCOperation):
 
     def run_impl(self):
+        # note - need to calculate CHLA up here from FLUORESCENCE_CHLA
+        # not sure where it will come from - need from Anh
+        fluo = self.profile['FLUORESCENCE_CHLA']
         chla = self.profile['CHLA']
 
-        self.log('Setting previously unset flags for CHLA to PROBABLY_BAD')
-        Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
+        # dark_chla = grab factory dark CHLA
+        dark_chla = 4 # dummy placeholder
+        # scale_chla = grab factory scale factor
+        scale_chla = 1.13 # dummy placeholder
+
+        self.log('Setting previously unset flags for CHLA to GOOD')
+        Flag.update_safely(chla.qc, to=Flag.GOOD)
 
         self.log('Setting previously unset flags for CHLA_ADJUSTED to GOOD')
         Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
@@ -24,17 +32,59 @@ class ChlaTest(QCOperation):
         Flag.update_safely(chla.adjusted_qc, Flag.BAD, values_outside_range)
 
         # dark count test
-        self.log('Checking for previous FLOAT_DARK, FLOAT_DARK_QC, and PRELIM_DARK')
+        self.log('Checking for previous DARK_CHLA')
+        # get previous dark count here
+        # last_dark_chla = grab last DARK_CHLA considered good for calibration
+        last_dark_chla = 5 # dummy placeholder
+
+        self.log('Testing if factory calibration matches last good dark count')
+        # test 1
+        if dark_chla != last_dark_chla:
+            self.log('LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD')
+            Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
 
         # the mixed layer depth calculation can fail
         mixed_layer_depth = None
+        flag_mld = False
         try:
             mixed_layer_depth = self.mixed_layer_depth()
+            flag_mld = True
         except QCOperationError as e:
             self.log(e)
 
         if mixed_layer_depth is not None:
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
+        
+        # constants for mixed layer test
+        delta_depth = 200
+        delta_dark = 50
+
+        # maximum pressure reached on this profile
+        max_pres = np.nanmax(chla.pres)
+
+        # test 2
+        if not flag_mld:
+            if max_pres < mixed_layer_depth + delta_depth + delta_dark:
+                self.log('Max pressure is insufficiently deep, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
+                dark_prime_chla = last_dark_chla
+                Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
+                Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_GOOD)
+            else:
+                dark_prime_chla = np.nanmedian(fluo.values[fluo.pres > (max_pres - delta_dark)])
+        
+            # test 3
+            if np.abs(dark_prime_chla - dark_chla) > 0.2*dark_chla:
+                self.log('DARK_PRIME_CHLA is more than 20%% different than last good calibration, reverting to LAST_DARK_CHLA and setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to PROBABLY_BAD')
+                dark_prime_chla = last_dark_chla
+                Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
+                Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_BAD)
+            else:
+                if dark_prime_chla != dark_chla:
+                    self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
+                    last_dark_chla = dark_prime_chla
+                    Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
+                    Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
+
 
         # CHLA spike test
         res = chla - self.running_median(5)
