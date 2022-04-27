@@ -17,16 +17,13 @@ class ChlaTest(QCOperation):
         self.log('Setting previously unset flags for CHLA_ADJUSTED to GOOD')
         Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
 
+        # global range test
         self.log('Applying global range test to CHLA')
         values_outside_range = (chla.value < -0.1) | (chla.value > 100.0)
         Flag.update_safely(chla.qc, Flag.BAD, values_outside_range)
         Flag.update_safely(chla.adjusted_qc, Flag.BAD, values_outside_range)
 
-        # the DARK correction is not well-defined yet because it needs some
-        # values from the NetCDF that aren't actually in any NetCDFs yet
-        # these variables are FLOAT_DARK/FLOAT_DARK_QC (which may not exist)
-        # and PRELIM_DARK (which stores the iDARK values until there are 5, at which
-        # point the FLOAT_DARK/FLOAT_DARK_QC is calculated)
+        # dark count test
         self.log('Checking for previous FLOAT_DARK, FLOAT_DARK_QC, and PRELIM_DARK')
 
         # the mixed layer depth calculation can fail
