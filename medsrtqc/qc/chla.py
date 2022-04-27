@@ -76,7 +76,7 @@ class ChlaTest(QCOperation):
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
             Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_GOOD)
         else:
-            dark_prime_chla = np.nanmedian(fluo.values[fluo.pres > (max_pres - delta_dark)])
+            dark_prime_chla = np.nanmedian(fluo.value[fluo.pres > (max_pres - delta_dark)])
     
         # test 3
         if np.abs(dark_prime_chla - dark_chla) > 0.2*dark_chla:
@@ -92,12 +92,12 @@ class ChlaTest(QCOperation):
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
 
-        chla.adjusted = (fluo.values - dark_prime_chla)*scale_chla
+        chla.adjusted = (fluo.valvalueues - dark_prime_chla)*scale_chla
 
         # CHLA spike test
         self.log('Performing negative spike test')
         median_chla = self.running_median(5)
-        res = chla - median_chla
+        res = chla.value - median_chla
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
         Flag.update_safely(chla.adjusted_qc, Flag.BAD, spike_values)
@@ -109,7 +109,7 @@ class ChlaTest(QCOperation):
             depthNPQ_ix = np.where(median_chla[~positive_spikes] == np.nanmax(median_chla[~positive_spikes]))[0][0]
             depthNPQ = chla.pres[depthNPQ_ix]
             if depthNPQ < 0.9*mixed_layer_depth:
-                self.log(f'Adjusting surface values (P < {depthNPQ}dbar) to CHLA({depthNPQ}) = {chla.values[depthNPQ_ix]}mg/m3')
+                self.log(f'Adjusting surface values (P < {depthNPQ}dbar) to CHLA({depthNPQ}) = {chla.value[depthNPQ_ix]}mg/m3')
                 chla.adjusted[:depthNPQ_ix] = chla.adjusted[depthNPQ_ix]
                 self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
