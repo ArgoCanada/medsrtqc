@@ -23,8 +23,8 @@ class bbpSpikeTest(QCOperation):
             lower_lim = -0.000025
 
         # NOTE this is copied from CHLA, verify in manual that this is proper flagging
-        self.log('Setting previously unset flags for BBP to PROBABLY_BAD')
-        Flag.update_safely(bbp.qc, to=Flag.PROBABLY_BAD)
+        self.log('Setting previously unset flags for BBP to GOOD')
+        Flag.update_safely(bbp.qc, to=Flag.GOOD)
 
         self.log('Setting previously unset flags for BBP_ADJUSTED to GOOD')
         Flag.update_safely(bbp.adjusted_qc, to=Flag.GOOD)
