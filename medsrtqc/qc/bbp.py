@@ -35,6 +35,14 @@ class bbpSpikeTest(QCOperation):
         Flag.update_safely(bbp.qc, Flag.BAD, values_outside_range)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, values_outside_range)
 
+        # BBP spike test
+        self.log('Performing negative spike test')
+        median_chla = self.running_median(5)
+        res = bbp.values - median_chla
+        spike_values = res < 2*np.percentile(res, 10)
+        Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
+        Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
+
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
         x = self.profile['BBP']
