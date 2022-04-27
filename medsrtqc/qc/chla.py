@@ -44,6 +44,9 @@ class ChlaTest(QCOperation):
         
         # CHLA NPQ correction
 
+        # Roesler et al. 2017 factor of 2 global bias
+        chla.adjusted = chla.adjusted/2
+
         # update the CHLA trace
         self.update_trace('CHLA', chla)
 
