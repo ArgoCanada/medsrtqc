@@ -1,4 +1,5 @@
 
+import copy
 import numpy as np
 
 from .operation import QCOperation, QCOperationError
@@ -43,7 +44,11 @@ class bbpSpikeTest(QCOperation):
 
     def convert(self):
         beta = self.profile['BETA_BACKSCATTERING']
-        # return bbp
+        bbp = copy.deepcopy(beta)
+        
+        
+        
+        return bbp
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
