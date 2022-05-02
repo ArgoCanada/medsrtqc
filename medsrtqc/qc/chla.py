@@ -1,10 +1,10 @@
 
+import copy
 import numpy as np
 import gsw
 
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
-
 
 class ChlaTest(QCOperation):
 
@@ -12,14 +12,12 @@ class ChlaTest(QCOperation):
         # note - need to calculate CHLA up here from FLUORESCENCE_CHLA
         # not sure where it will come from - need from Anh
         fluo = self.profile['FLUORESCENCE_CHLA']
-        chla = self.profile['CHLA']
 
         # dark_chla = grab factory dark CHLA
         dark_chla = 4 # dummy placeholder
         # scale_chla = grab factory scale factor
         scale_chla = 1.13 # dummy placeholder
-
-        chla.values = (fluo.values - dark_chla)*scale_chla
+        chla = self.convert(dark_chla, scale_chla)
 
         self.log('Setting previously unset flags for CHLA to GOOD')
         Flag.update_safely(chla.qc, to=Flag.GOOD)
@@ -92,7 +90,7 @@ class ChlaTest(QCOperation):
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
 
-        chla.adjusted = (fluo.valvalueues - dark_prime_chla)*scale_chla
+        chla.adjusted = self.convert(dark_prime_chla, scale_chla, adjusted=True)
 
         # CHLA spike test
         self.log('Performing negative spike test')
@@ -151,6 +149,18 @@ class ChlaTest(QCOperation):
         self.log(f'...mixed layer depth found at {mixed_layer_depth} dbar')
 
         return mixed_layer_depth
+
+    def convert(self, dark, scale, adjusted=False):
+        fluo = self.profile['FLUORESCENCE_CHLA']
+
+        if adjusted:
+            # just return the value so it can be assigned to a Trace().adjusted
+            return (fluo.value - dark) * scale
+        else:
+            # create a trace, update value to be converted unit
+            chla = copy.deepcopy(fluo)
+            chla.value = (fluo.value - dark)*scale
+            return chla
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
