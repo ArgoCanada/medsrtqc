@@ -7,8 +7,7 @@ from .flag import Flag
 class bbpSpikeTest(QCOperation):
 
     def run_impl(self):
-        beta = self.profile['BETA_BACKSCATTERING']
-        bbp = self.profile['BBP']
+        bbp = self.convert()
 
         # get wavelength
         # wavelength = get wavelength, similar to dark counts or scale
@@ -22,7 +21,6 @@ class bbpSpikeTest(QCOperation):
             self.log(f'No valid wavelength provided (wavelength = {wavelength:d}), setting lower limit of range check to -0.000025')
             lower_lim = -0.000025
 
-        # NOTE this is copied from CHLA, verify in manual that this is proper flagging
         self.log('Setting previously unset flags for BBP to GOOD')
         Flag.update_safely(bbp.qc, to=Flag.GOOD)
 
@@ -42,6 +40,10 @@ class bbpSpikeTest(QCOperation):
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
+
+    def convert(self):
+        beta = self.profile['BETA_BACKSCATTERING']
+        # return bbp
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
