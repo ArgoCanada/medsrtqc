@@ -4,15 +4,21 @@ import numpy as np
 
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
+from ..betasw import betasw
 
-class bbpSpikeTest(QCOperation):
+class bbpTest(QCOperation):
 
     def run_impl(self):
-        bbp = self.convert()
-
-        # get wavelength
+        # get sensor constants
         # wavelength = get wavelength, similar to dark counts or scale
         wavelength = 700 # dummy placeholder, also will probably always be 700nm
+        # theta = get sensor angle, depending on sensor type
+        theta = 142 # dummy placeholder, though probably accurate for our sensors (2 channels)
+        # chi = get chi value, again based on sensor type
+        chi = 1.097 # again hard coded dummy placeholder, but probably correct
+
+        # convert sensor value to backscatter
+        bbp = self.convert(wavelength, theta, chi)
 
         if wavelength == 532:
             lower_lim = -0.000005
