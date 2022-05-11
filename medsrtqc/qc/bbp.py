@@ -12,13 +12,9 @@ class bbpTest(QCOperation):
         # get sensor constants
         # wavelength = get wavelength, similar to dark counts or scale
         wavelength = 700 # dummy placeholder, also will probably always be 700nm
-        # theta = get sensor angle, depending on sensor type
-        theta = 142 # dummy placeholder, though probably accurate for our sensors (2 channels)
-        # chi = get chi value, again based on sensor type
-        chi = 1.097 # again hard coded dummy placeholder, but probably correct
 
         # convert sensor value to backscatter
-        bbp = self.convert(wavelength, theta, chi)
+        bbp = self.convert(wavelength)
 
         if wavelength == 532:
             lower_lim = -0.000005
@@ -48,11 +44,28 @@ class bbpTest(QCOperation):
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
 
-    def convert(self):
+    def convert(self, wavelength):
         beta = self.profile['BETA_BACKSCATTERING']
         bbp = copy.deepcopy(beta)
+
+        # get scale and dark value
+        # dark = ...
+        dark = 4 # dummy placeholder
+        # scale = ...
+        scale = 1.4e-2
+
+        # get position and physical data
+        lon = -48
+        lat = 46
+        T = self.profile['TEMP'].value
+        S = self.profile['PSAL'].value
+
+        # theta = get sensor angle, depending on sensor type
+        theta = 142 # dummy placeholder, though probably accurate for our sensors (2 channels)
+        # chi = get chi value, again based on sensor type
+        chi = 1.097 # again hard coded dummy placeholder, but probably correct
         
-        
+        bbp.value = 2*np.pi*chi*((beta.value - dark)*scale - betasw(T, S, lon, lat, wavelength))
         
         return bbp
 
