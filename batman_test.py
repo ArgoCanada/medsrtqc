@@ -29,6 +29,13 @@ except Exception as err:
     fid.write(f'Exception: {err}\n\n')
 
 try:
+    from medsrtqc.qc.bbp import bbpTest
+    test = bbpTest()
+    fid.write('medsrtqc.qc.bbp.bbpTest successfully imported\n\n')
+except Exception as err:
+    fid.write(f'Exception: {err}\n\n')
+
+try:
     from medsrtqc.nc import read_nc_profile
     url = 'https://data-argo.ifremer.fr/dac/coriolis/6904117/profiles/R6904117_085.nc'
     profile = read_nc_profile(url)
