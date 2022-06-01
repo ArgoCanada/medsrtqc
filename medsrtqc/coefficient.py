@@ -80,7 +80,7 @@ def read_coef_file():
             doxy_sn = line.split(',')[0]
             line = ','.join(line.split(',')[1:])
             
-            coeff[wmo] = dict(doxy_sn=doxy_sn)
+            coeff[wmo] = dict(DOXY_SN=doxy_sn)
             for c in line.split(','):
                 if c.strip():
                     name, value = c.split('=')
