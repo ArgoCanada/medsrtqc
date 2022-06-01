@@ -44,10 +44,10 @@ class ChlaTest(QCOperation):
 
         # the mixed layer depth calculation can fail
         mixed_layer_depth = None
-        flag_mld = False
+        flag_mld = True
         try:
             mixed_layer_depth = self.mixed_layer_depth()
-            flag_mld = True
+            flag_mld = False
         except QCOperationError as e:
             self.log(e)
 
@@ -90,7 +90,7 @@ class ChlaTest(QCOperation):
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
 
-        chla.adjusted = self.convert(dark_prime_chla, scale_chla, adjusted=True)
+        chla.adjusted = self.convert(dark_prime_chla, scale_chla, value_only=True)
 
         # CHLA spike test
         self.log('Performing negative spike test')
@@ -160,7 +160,7 @@ class ChlaTest(QCOperation):
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
-        x = self.profile['CHLA']
+        x = self.profile['FLU1'].value
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
