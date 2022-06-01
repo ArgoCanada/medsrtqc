@@ -5,18 +5,19 @@ import gsw
 
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
+from ..coefficient import coeff
 
 class ChlaTest(QCOperation):
 
     def run_impl(self):
         # note - need to calculate CHLA up here from FLUORESCENCE_CHLA
         # not sure where it will come from - need from Anh
-        fluo = self.profile['FLUORESCENCE_CHLA']
+        fluo = self.profile['FLU3']
 
-        # dark_chla = grab factory dark CHLA
-        dark_chla = 4 # dummy placeholder
-        # scale_chla = grab factory scale factor
-        scale_chla = 1.13 # dummy placeholder
+        wmo = '6903026' # dummy placeholder - how to get wmo?
+
+        dark_chla = coeff[wmo]['DARK_CHLA']
+        scale_chla = coeff[wmo]['SCALE_CHLA']
         chla = self.convert(dark_chla, scale_chla)
 
         self.log('Setting previously unset flags for CHLA to GOOD')
@@ -117,7 +118,7 @@ class ChlaTest(QCOperation):
         chla.adjusted = chla.adjusted/2
 
         # update the CHLA trace
-        self.update_trace('CHLA', chla)
+        self.update_trace('FLU1', chla)
 
     def mixed_layer_depth(self):
         self.log('Calculating mixed layer depth')
@@ -135,11 +136,6 @@ class ChlaTest(QCOperation):
         conservative_temp = gsw.CT_from_t(abs_salinity, temp.value, pres.value)
         density = gsw.sigma0(abs_salinity, conservative_temp)
 
-        with self.pyplot() as plt:
-            plt.plot(density, pres.value)
-            plt.gca().invert_yaxis()
-            plt.gca().set_xlabel('sigma0')
-
         mixed_layer_start = (np.diff(density) > 0.03) & (pres.value[:-1] > 10)
         if not np.any(mixed_layer_start):
             self.error("Can't determine mixed layer depth (no density changes > 0.03 below 10 dbar)")
@@ -150,11 +146,12 @@ class ChlaTest(QCOperation):
 
         return mixed_layer_depth
 
-    def convert(self, dark, scale, adjusted=False):
-        fluo = self.profile['FLUORESCENCE_CHLA']
+    def convert(self, dark, scale, value_only=False):
+        fluo = self.profile['FLU3']
 
-        if adjusted:
+        if value_only:
             # just return the value so it can be assigned to a Trace().adjusted
+            # or in another context
             return (fluo.value - dark) * scale
         else:
             # create a trace, update value to be converted unit
