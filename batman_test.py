@@ -58,8 +58,9 @@ prof = profs[0]
 
 # print out the profile and flags before test
 fid.write('#' + 79*'-' + '\n')
-fid.write('Before Pressure Increasing Test\n')
+fid.write('Example: Pressure Increasing Test')
 fid.write('#' + 79*'-' + '\n\n')
+fid.write('Before Pressure Increasing Test:\n\n')
 fid.write(repr(prof['PRES']) + '\n\n')
 fid.write('>> prof["TEMP"].qc\n\n')
 fid.write(repr(prof['TEMP'].qc) + '\n\n')
@@ -68,12 +69,21 @@ fid.write(repr(prof['TEMP'].qc) + '\n\n')
 test.run(prof)  # False
 
 # print out the profile and flags after the test
-fid.write('#' + 79*'-' + '\n')
-fid.write('After Pressure Increasing Test\n')
-fid.write('#' + 79*'-' + '\n\n')
+fid.write('After Pressure Increasing Test:\n\n')
 fid.write(repr(prof['PRES']) + '\n\n')
 
 fid.write('>> prof["TEMP"].qc\n\n')
 fid.write(repr(prof['TEMP'].qc) + '\n')
+
+# now load a BGC profile
+profs = read_vms_profiles(resource_path('bgc_vms.dat'))
+prof = profs[0]
+
+fid.write('#' + 79*'-' + '\n')
+fid.write('Example: BGC VMS File\n')
+fid.write('#' + 79*'-' + '\n\n')
+
+fid.write('>> prof["FLU3"]\n\n')
+fid.write(repr(prof['FLU3']) + '\n')
 
 fid.close()
