@@ -86,4 +86,8 @@ fid.write('#' + 79*'-' + '\n\n')
 fid.write('>> prof["FLU3"]\n\n')
 fid.write(repr(prof['FLU3']) + '\n')
 
+# try to run chla test
+test = ChlaTest()
+test.run(prof)
+
 fid.close()
