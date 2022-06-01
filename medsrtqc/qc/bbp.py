@@ -55,7 +55,7 @@ class bbpTest(QCOperation):
         scale = coeff[f'{wmo}']['SCALE_BACKSCATTERING700']
 
         # get position and physical data
-        lon = -48
+        lon = -48 # not sure if I can get coords from VMS?
         lat = 46
         P = self.profile['TEMP'].pres
         T = self.profile['TEMP'].value
