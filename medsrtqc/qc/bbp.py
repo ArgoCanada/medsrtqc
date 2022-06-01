@@ -5,6 +5,7 @@ import numpy as np
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
 from ..betasw import betasw
+from ..coefficient import coeff
 
 class bbpTest(QCOperation):
 
@@ -45,14 +46,13 @@ class bbpTest(QCOperation):
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
 
     def convert(self, wavelength):
-        beta = self.profile['BETA_BACKSCATTERING']
+        beta = self.profile['BBP$']
         bbp = copy.deepcopy(beta)
+        wmo = 6903026 # dummy placeholder - how to get wmo?
 
         # get scale and dark value
-        # dark = ...
-        dark = 4 # dummy placeholder
-        # scale = ...
-        scale = 1.4e-2
+        dark = coeff[f'{wmo}']['DARK_BACKSCATTERING700']
+        scale = coeff[f'{wmo}']['SCALE_BACKSCATTERING700']
 
         # get position and physical data
         lon = -48
