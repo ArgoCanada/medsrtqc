@@ -57,6 +57,7 @@ class bbpTest(QCOperation):
         # get position and physical data
         lon = -48
         lat = 46
+        P = self.profile['TEMP'].pres
         T = self.profile['TEMP'].value
         S = self.profile['PSAL'].value
 
@@ -65,7 +66,7 @@ class bbpTest(QCOperation):
         # chi = get chi value, again based on sensor type
         chi = 1.097 # again hard coded dummy placeholder, but probably correct
         
-        bbp.value = 2*np.pi*chi*((beta.value - dark)*scale - betasw(T, S, lon, lat, wavelength))
+        bbp.value = 2*np.pi*chi*((beta.value - dark)*scale - betasw(P, T, S, lon, lat, wavelength, theta))
         
         return bbp
 
