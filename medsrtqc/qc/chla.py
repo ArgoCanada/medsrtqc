@@ -10,14 +10,12 @@ from ..coefficient import coeff
 class ChlaTest(QCOperation):
 
     def run_impl(self):
-        # note - need to calculate CHLA up here from FLUORESCENCE_CHLA
-        # not sure where it will come from - need from Anh
         fluo = self.profile['FLU3']
 
-        wmo = '6903026' # dummy placeholder - how to get wmo?
+        wmo = 6903026 # dummy placeholder - how to get wmo?
 
-        dark_chla = coeff[wmo]['DARK_CHLA']
-        scale_chla = coeff[wmo]['SCALE_CHLA']
+        dark_chla = coeff[f'{wmo}']['DARK_CHLA']
+        scale_chla = coeff[f'{wmo}']['SCALE_CHLA']
         chla = self.convert(dark_chla, scale_chla)
 
         self.log('Setting previously unset flags for CHLA to GOOD')
@@ -86,6 +84,7 @@ class ChlaTest(QCOperation):
         else:
             # test 4
             if dark_prime_chla != dark_chla:
+                # need to write function in ..coefficient to write LAST_DARK_CHLA to the coefficient file
                 self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
                 last_dark_chla = dark_prime_chla
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
