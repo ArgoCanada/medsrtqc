@@ -10,13 +10,13 @@ from ..coefficient import coeff
 class ChlaTest(QCOperation):
 
     def run_impl(self):
+        chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
 
         wmo = 6903026 # dummy placeholder - how to get wmo?
 
         dark_chla = coeff[f'{wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{wmo}']['SCALE_CHLA']
-        chla = self.convert(dark_chla, scale_chla)
 
         self.log('Setting previously unset flags for CHLA to GOOD')
         Flag.update_safely(chla.qc, to=Flag.GOOD)
