@@ -11,9 +11,9 @@ fid = open('meds_python_rtqc_log.log', 'w')
 # but I will attempt to import them here in order to see if
 # their import will throw an error
 
-fid.write('#' + 79*'-' + '\n')
+fid.write(80*'-' + '\n')
 fid.write('Module Import Tests\n')
-fid.write('#' + 79*'-' + '\n\n')
+fid.write(80*'-' + '\n\n')
 
 try:
     import gsw
@@ -57,9 +57,9 @@ test = PressureIncreasingTest()
 prof = profs[0]
 
 # print out the profile and flags before test
-fid.write('#' + 79*'-' + '\n')
+fid.write(80*'-' + '\n')
 fid.write('Example: Pressure Increasing Test')
-fid.write('#' + 79*'-' + '\n\n')
+fid.write(80*'-' + '\n\n')
 fid.write('Before Pressure Increasing Test:\n\n')
 fid.write(repr(prof['PRES']) + '\n\n')
 fid.write('>> prof["TEMP"].qc\n\n')
@@ -79,9 +79,9 @@ fid.write(repr(prof['TEMP'].qc) + '\n')
 profs = read_vms_profiles(resource_path('bgc_vms.dat'))
 prof = profs[0]
 
-fid.write('#' + 79*'-' + '\n')
+fid.write(80*'-' + '\n')
 fid.write('Example: BGC VMS File\n')
-fid.write('#' + 79*'-' + '\n\n')
+fid.write(80*'-' + '\n\n')
 
 fid.write('>> prof["FLU3"]\n\n')
 fid.write(repr(prof['FLU3']) + '\n')
