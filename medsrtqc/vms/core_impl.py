@@ -1,4 +1,5 @@
 
+from warnings import warn
 from typing import Iterable
 from copy import deepcopy
 
@@ -98,9 +99,9 @@ class VMSProfile(Profile):
         if not np.all(v.pres == current_value.pres):
             raise ValueError("Can't update Trace.pres in a VMSProfile")
         if not np.all(v.adjusted.mask):
-            raise ValueError("Can't update Trace.adjusted in a VMSProfile")
+            warn("Trace.adjusted was updated in a VMSProfile")
         if not np.all(v.adjusted_qc.mask):
-            raise ValueError("Can't update Trace.adjusted_qc in a VMSProfile")
+            warn("Trace.adjusted_qc was updated in a VMSProfile")
         if not np.all(v.mtime.mask):
             raise ValueError("Can't update Trace.mtime in a VMSProfile")
 
