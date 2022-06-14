@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import contextlib
+
 from medsrtqc.vms import read_vms_profiles
 from medsrtqc.resources import resource_path
 from medsrtqc.qc.named_tests import PressureIncreasingTest
@@ -58,18 +60,22 @@ prof = profs[0]
 
 # print out the profile and flags before test
 fid.write(80*'-' + '\n')
-fid.write('Example: Pressure Increasing Test')
+fid.write('Example: Pressure Increasing Test\n')
 fid.write(80*'-' + '\n\n')
 fid.write('Before Pressure Increasing Test:\n\n')
+fid.write('>> prof["PRES"]\n\n')
 fid.write(repr(prof['PRES']) + '\n\n')
 fid.write('>> prof["TEMP"].qc\n\n')
 fid.write(repr(prof['TEMP'].qc) + '\n\n')
 
 # run the test
+fid.write('>> test = PressureIncreasingTest()\n')
+fid.write('>> test.run(prof)\n\n')
 test.run(prof)  # False
 
 # print out the profile and flags after the test
 fid.write('After Pressure Increasing Test:\n\n')
+fid.write('>> prof["PRES"]\n\n')
 fid.write(repr(prof['PRES']) + '\n\n')
 
 fid.write('>> prof["TEMP"].qc\n\n')
@@ -83,11 +89,17 @@ fid.write(80*'-' + '\n')
 fid.write('Example: BGC VMS File\n')
 fid.write(80*'-' + '\n\n')
 
-fid.write('>> prof["FLU3"]\n\n')
-fid.write(repr(prof['FLU3']) + '\n')
+# show chlorophyll
+fid.write('>> prof["FLU1"] # chlorophyll\n\n')
+fid.write(repr(prof['FLU1']) + '\n\n')
 
 # try to run chla test
+fid.write('>> test = ChlaTest()\n')
+fid.write('>> test.run(prof)\n\n')
 test = ChlaTest()
-test.run(prof)
+with contextlib.redirect_stderr(fid):
+    test.run(prof)
+fid.write('\n>> prof["FLU1"] # chlorophyll\n\n')
+fid.write(repr(prof['FLU1']) + '\n\n')
 
 fid.close()
