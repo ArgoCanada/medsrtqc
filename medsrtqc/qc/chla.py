@@ -10,8 +10,12 @@ from ..coefficient import coeff
 class ChlaTest(QCOperation):
 
     def run_impl(self):
+        self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
+
+        chla.adjusted.mask = False
+        chla.adjusted_qc.mask = False
 
         wmo = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
 
@@ -116,8 +120,14 @@ class ChlaTest(QCOperation):
         # Roesler et al. 2017 factor of 2 global bias
         chla.adjusted = chla.adjusted/2
 
+        print(chla)
+
         # update the CHLA trace
         self.update_trace('FLU1', chla)
+
+        print(self.profile['FLU1'])
+
+        return chla
 
     def mixed_layer_depth(self):
         self.log('Calculating mixed layer depth')

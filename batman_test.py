@@ -98,7 +98,7 @@ fid.write('>> test = ChlaTest()\n')
 fid.write('>> test.run(prof)\n\n')
 test = ChlaTest()
 with contextlib.redirect_stderr(fid):
-    test.run(prof)
+    chla = test.run(prof)
 fid.write('\n>> prof["FLU1"] # chlorophyll\n\n')
 fid.write(repr(prof['FLU1']) + '\n\n')
 
