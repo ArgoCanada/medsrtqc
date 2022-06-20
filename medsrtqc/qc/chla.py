@@ -94,7 +94,7 @@ class ChlaTest(QCOperation):
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
 
-        chla.adjusted = self.convert(dark_prime_chla, scale_chla, value_only=True)
+        chla.adjusted = self.convert(dark_prime_chla, scale_chla)
 
         # CHLA spike test
         self.log('Performing negative spike test')
@@ -155,18 +155,10 @@ class ChlaTest(QCOperation):
 
         return mixed_layer_depth
 
-    def convert(self, dark, scale, value_only=False):
+    def convert(self, dark, scale):
         fluo = self.profile['FLU3']
 
-        if value_only:
-            # just return the value so it can be assigned to a Trace().adjusted
-            # or in another context
-            return (fluo.value - dark) * scale
-        else:
-            # create a trace, update value to be converted unit
-            chla = copy.deepcopy(fluo)
-            chla.value = (fluo.value - dark)*scale
-            return chla
+        return (fluo.value - dark) * scale
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
