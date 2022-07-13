@@ -12,7 +12,7 @@ class bbpTest(QCOperation):
         wavelength = 700 # dummy placeholder, also will probably always be 700nm
 
         # convert sensor value to backscatter
-        bbp = self.prof['B700']
+        bbp = self.profile['B700']
         
         if wavelength == 532:
             lower_lim = -0.000005
