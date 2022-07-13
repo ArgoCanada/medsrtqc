@@ -1,11 +1,8 @@
 
-import copy
 import numpy as np
 
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
-from ..betasw import betasw
-from ..coefficient import coeff
 
 class bbpTest(QCOperation):
 
@@ -15,8 +12,8 @@ class bbpTest(QCOperation):
         wavelength = 700 # dummy placeholder, also will probably always be 700nm
 
         # convert sensor value to backscatter
-        bbp = self.convert(wavelength)
-
+        bbp = self.prof['B700']
+        
         if wavelength == 532:
             lower_lim = -0.000005
         elif wavelength == 700:
@@ -44,31 +41,6 @@ class bbpTest(QCOperation):
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
-
-    def convert(self, wavelength):
-        beta = self.profile['BBP$']
-        bbp = copy.deepcopy(beta)
-        wmo = 6903026 # dummy placeholder - how to get wmo?
-
-        # get scale and dark value
-        dark = coeff[f'{wmo}']['DARK_BACKSCATTERING700']
-        scale = coeff[f'{wmo}']['SCALE_BACKSCATTERING700']
-
-        # get position and physical data
-        lon = -48 # not sure if I can get coords from VMS?
-        lat = 46
-        P = self.profile['TEMP'].pres
-        T = self.profile['TEMP'].value
-        S = self.profile['PSAL'].value
-
-        # theta = get sensor angle, depending on sensor type
-        theta = 142 # dummy placeholder, though probably accurate for our sensors (2 channels)
-        # chi = get chi value, again based on sensor type
-        chi = 1.097 # again hard coded dummy placeholder, but probably correct
-        
-        bbp.value = 2*np.pi*chi*((beta.value - dark)*scale - betasw(P, T, S, lon, lat, wavelength, theta))
-        
-        return bbp
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
