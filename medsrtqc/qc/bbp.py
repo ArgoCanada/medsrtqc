@@ -44,7 +44,7 @@ class bbpTest(QCOperation):
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
-        x = self.profile['BBP']
+        x = self.profile['B700']
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
