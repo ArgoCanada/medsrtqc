@@ -36,8 +36,8 @@ class bbpTest(QCOperation):
 
         # BBP spike test
         self.log('Performing negative spike test')
-        median_chla = self.running_median(5)
-        res = bbp.values - median_chla
+        median_bbp = self.running_median(5)
+        res = bbp.value - median_bbp
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
