@@ -120,12 +120,8 @@ class ChlaTest(QCOperation):
         # Roesler et al. 2017 factor of 2 global bias
         chla.adjusted = chla.adjusted/2
 
-        print(chla)
-
         # update the CHLA trace
         self.update_trace('FLU1', chla)
-
-        print(self.profile['FLU1'])
 
         return chla
 
