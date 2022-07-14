@@ -67,17 +67,20 @@ class Flag:
         NO_QC: set(),
         GOOD: {
             NO_QC,
+            FILL_VALUE,
         },
         PROBABLY_GOOD: {
             NO_QC,
             GOOD,
             CHANGED,
+            FILL_VALUE,
         },
         PROBABLY_BAD: {
             NO_QC,
             GOOD,
             PROBABLY_GOOD,
             CHANGED,
+            FILL_VALUE,
         },
         BAD: {
             NO_QC,
@@ -85,16 +88,20 @@ class Flag:
             PROBABLY_GOOD,
             CHANGED,
             PROBABLY_BAD,
+            FILL_VALUE,
         },
         CHANGED: {
             NO_QC,
+            FILL_VALUE,
         },
         ESTIMATED: {
             NO_QC,
             GOOD,
             PROBABLY_GOOD,
+            FILL_VALUE,
         },
         MISSING: {
             NO_QC,
+            FILL_VALUE,
         },
     }

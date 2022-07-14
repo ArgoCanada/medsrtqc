@@ -68,7 +68,7 @@ class Trace:
 
     def __repr__(self) -> str:
         summaries = []
-        for attr in ['value', 'qc', 'adjusted', 'adjusted_error', 'pres', 'mtime']:
+        for attr in ['value', 'qc', 'adjusted', 'adjusted_qc', 'adjusted_error', 'pres', 'mtime']:
             v = getattr(self, attr)
 
             if self._n == 0:

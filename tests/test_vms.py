@@ -163,6 +163,22 @@ class TestVMSRead(unittest.TestCase):
             temp.mtime[:] = 0
             prof['TEMP'] = temp
 
+    def test_vms_profile_update_adjusted(self):
+        # load a bgc VMS file (source files from coriolis)
+        profs = read.read_vms_profiles(resource_path('bgc_vms.dat'))
+        prof = profs[0]
+
+        chla_trace = prof["FLU1"]
+
+        chla_trace.qc[0] = b'5'
+        prof["FLU1"] = chla_trace
+
+        chla_trace.adjusted = chla_trace.value
+
+        prof["FLU1"] = chla_trace
+        chla_trace_updated = prof["FLU1"]
+        self.assertTrue(np.all(chla_trace_updated.adjusted == chla_trace.value))
+
     def test_read_write(self):
         with self.assertRaises(TypeError):
             read.read_vms_profiles(None)

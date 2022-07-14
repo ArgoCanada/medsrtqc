@@ -1,4 +1,5 @@
 
+from warnings import warn
 from typing import Iterable
 from copy import deepcopy
 
@@ -98,9 +99,9 @@ class VMSProfile(Profile):
         if not np.all(v.pres == current_value.pres):
             raise ValueError("Can't update Trace.pres in a VMSProfile")
         if not np.all(v.adjusted.mask):
-            raise ValueError("Can't update Trace.adjusted in a VMSProfile")
+            warn("Trace.adjusted was updated in a VMSProfile")
         if not np.all(v.adjusted_qc.mask):
-            raise ValueError("Can't update Trace.adjusted_qc in a VMSProfile")
+            warn("Trace.adjusted_qc was updated in a VMSProfile")
         if not np.all(v.mtime.mask):
             raise ValueError("Can't update Trace.mtime in a VMSProfile")
 
@@ -109,6 +110,27 @@ class VMSProfile(Profile):
         # I don't think speed will ever be an issue here but if so it is possible
         # to reduce the amount of copying.
         data_copy = deepcopy(self._data)
+
+        # should be another method like "add_new_pr_profile()"
+        if False:
+            # add an adjusted paramter that's a copy of the value param
+            adjusted_trace = None
+            for pr_profile in self._data['PR_PROFILE']:
+                if pr_profile['FXD']['PROF_TYPE'] == k:
+                    # figure out how to update pr_profile['FXD']
+                    # to have this do what you want (i.e., have the
+                    # corect PROF_TYPE)
+                    # modify pr_profile here
+                    pr_profile['FXD']['PROF_TYPE'] = 'FLU7'
+                    data_copy['PR_PROFILE'].append(pr_profile)
+
+            if not adjusted_trace:
+                raise ValueError("No such trace for k")
+
+            # (now set adjusted trace values)
+            # make a new trace whose value is adjusted
+            # and whose qc is adjusted_qc
+            # by doing self["FLU7"] = new_trace
 
         # PRES is special because it isn't stored explicitly
         # strategy is to check exact values and update the flag
@@ -120,7 +142,6 @@ class VMSProfile(Profile):
                     if not np.any(pres_match):
                         continue
                     m['DP_FLAG'] = bytes(v.qc[pres_match][0])
-
         else:
             # the data might be split into segments so we have to keep track of
             # the index within the trace separately
