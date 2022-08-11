@@ -130,6 +130,8 @@ class ChlaTest(QCOperation):
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
+        self.profile['FLU7'].value = chla.adjusted
+        self.profile['FLU7'].qc =  chla.adjusted_qc
 
         return chla
 
