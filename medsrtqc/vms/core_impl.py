@@ -99,9 +99,9 @@ class VMSProfile(Profile):
         if not np.all(v.pres == current_value.pres):
             raise ValueError("Can't update Trace.pres in a VMSProfile")
         if not np.all(v.adjusted.mask):
-            warn("Trace.adjusted was updated in a VMSProfile")
+            warn("Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
         if not np.all(v.adjusted_qc.mask):
-            warn("Trace.adjusted_qc was updated in a VMSProfile")
+            warn("Trace.adjusted_qc was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
         if not np.all(v.mtime.mask):
             raise ValueError("Can't update Trace.mtime in a VMSProfile")
 
