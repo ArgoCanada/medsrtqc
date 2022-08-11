@@ -3,6 +3,8 @@ import copy
 import numpy as np
 import gsw
 
+from medsrtqc.resources import resource_path
+
 from .operation import QCOperation, QCOperationError
 from .flag import Flag
 from ..coefficient import coeff
@@ -18,6 +20,9 @@ class ChlaTest(QCOperation):
         chla.adjusted_qc.mask = False
 
         wmo = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
+        cycle = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
+        self.wmo = wmo
+        self.cycle = cycle
 
         dark_chla = coeff[f'{wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{wmo}']['SCALE_CHLA']
@@ -93,6 +98,9 @@ class ChlaTest(QCOperation):
                 last_dark_chla = dark_prime_chla
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
+        
+        self.save_last_dark_chla(last_dark_chla)
+
 
         chla.adjusted = self.convert(dark_prime_chla, scale_chla)
 
@@ -165,3 +173,8 @@ class ChlaTest(QCOperation):
         med = [np.median(c) for c in b]
         med = np.array(k*[np.nan] + med + k*[np.nan])
         return med
+
+    def save_last_dark_chla(self, v):
+
+        with open(resource_path('last_dark_chla.csv'), 'a') as fn:
+            fn.write(f'{self.wmo:d},{self.cycle:d},{v:d}\n')
