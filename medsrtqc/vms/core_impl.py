@@ -84,7 +84,7 @@ class VMSProfile(Profile):
 
         return Trace(value, qc=qc, pres=pres)
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v, use_adjusted=False):
         # check dimensions against current
         current_value = self[k]
         if len(v) != len(current_value):
@@ -95,9 +95,9 @@ class VMSProfile(Profile):
         # make sure this is the case or else some updates are going
         # to get lost
         if not np.all(v.value == current_value.value):
-            raise ValueError("Can't update Trace.value in a VMSProfile")
+            warn("Trace.value was updated in a VMSProfile, please ensure this was intended!")
         if not np.all(v.pres == current_value.pres):
-            raise ValueError("Can't update Trace.pres in a VMSProfile")
+            raise ValueError("Updating Trace.pres in a VMSProfile is not permitted")
         if not np.all(v.adjusted.mask):
             warn("Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
         if not np.all(v.adjusted_qc.mask):
@@ -149,7 +149,12 @@ class VMSProfile(Profile):
             for pr_profile in data_copy['PR_PROFILE']:
                 if pr_profile['FXD']['PROF_TYPE'] == k:
                     for m in pr_profile['PROF']:
-                        m['Q_PARM'] = bytes(v.qc[trace_i])
+                        if use_adjusted:
+                            m['PARM'] = v.adjusted[trace_i]
+                            m['Q_PARM'] = bytes(v.adjusted_qc[trace_i])
+                        else:
+                            m['PARM'] = v.value[trace_i]
+                            m['Q_PARM'] = bytes(v.qc[trace_i])
                         trace_i += 1
 
             # bookkeeping in case the check above didn't catch this
