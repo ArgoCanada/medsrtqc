@@ -20,7 +20,7 @@ class ChlaTest(QCOperation):
         chla.adjusted_qc.mask = False
 
         wmo = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
-        cycle = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
+        cycle = 5 # dummy placeholder - how to get wmo? probably in VMS file name?
         self.wmo = wmo
         self.cycle = cycle
 
@@ -43,7 +43,7 @@ class ChlaTest(QCOperation):
         self.log('Checking for previous DARK_CHLA')
         # get previous dark count here
         # last_dark_chla = grab last DARK_CHLA considered good for calibration
-        last_dark_chla = 5 # dummy placeholder
+        last_dark_chla = self.read_last_dark_chla()
 
         self.log('Testing if factory calibration matches last good dark count')
         # test 1
@@ -98,8 +98,8 @@ class ChlaTest(QCOperation):
                 last_dark_chla = dark_prime_chla
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
-        
-        self.save_last_dark_chla(last_dark_chla)
+
+        self.save_last_dark_chla(int(last_dark_chla))
 
 
         chla.adjusted = self.convert(dark_prime_chla, scale_chla)
@@ -174,7 +174,31 @@ class ChlaTest(QCOperation):
         med = np.array(k*[np.nan] + med + k*[np.nan])
         return med
 
+    def read_last_dark_chla(self):
+
+        with open(resource_path('last_dark_chla.csv'), 'r') as fid:
+            fid.readline()
+            wmo = []
+            cyc = []
+            ldc = []
+            for line in fid:
+                wmo.append(int(line.split(',')[0].strip()))
+                cyc.append(int(line.split(',')[1].strip()))
+                ldc.append(int(line.split(',')[2].strip()))
+
+            wmo = np.array(wmo)
+            cyc = np.array(cyc)
+            ldc = np.array(ldc)
+
+            ix = np.where((wmo == self.wmo) & (cyc == np.nanmax(cyc)))[0][0]
+
+            return ldc[ix]
+
     def save_last_dark_chla(self, v):
 
-        with open(resource_path('last_dark_chla.csv'), 'a') as fn:
-            fn.write(f'{self.wmo:d},{self.cycle:d},{v:d}\n')
+        print(type(self.wmo))
+        print(type(self.cycle))
+        print(type(v))
+
+        with open(resource_path('last_dark_chla.csv'), 'a') as fid:
+            fid.write(f'{self.wmo:d},{self.cycle:d},{v:d}\n')
