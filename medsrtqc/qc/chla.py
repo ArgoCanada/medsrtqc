@@ -16,13 +16,8 @@ class ChlaTest(QCOperation):
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
 
-        wmo = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
-        cycle = 5 # dummy placeholder - how to get wmo? probably in VMS file name?
-        self.wmo = wmo
-        self.cycle = cycle
-
-        dark_chla = coeff[f'{wmo}']['DARK_CHLA']
-        scale_chla = coeff[f'{wmo}']['SCALE_CHLA']
+        dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
+        scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
 
         self.log('Setting previously unset flags for CHLA to GOOD')
         Flag.update_safely(chla.qc, to=Flag.GOOD)
@@ -127,8 +122,9 @@ class ChlaTest(QCOperation):
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
-        self.profile['FLU7'].value = chla.adjusted
-        self.profile['FLU7'].qc = chla.adjusted_qc
+        # comment out until implemented as field in VMS file
+        # self.profile['FLUA'].value = chla.adjusted
+        # self.profile['FLUA'].qc = chla.adjusted_qc
 
         return chla
 
@@ -189,15 +185,11 @@ class ChlaTest(QCOperation):
             cyc = np.array(cyc)
             ldc = np.array(ldc)
 
-            ix = np.where((wmo == self.wmo) & (cyc == np.nanmax(cyc)))[0][0]
+            ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc)))[0][0]
 
             return ldc[ix]
 
     def save_last_dark_chla(self, v):
 
-        print(type(self.wmo))
-        print(type(self.cycle))
-        print(type(v))
-
         with open(resource_path('last_dark_chla.csv'), 'a') as fid:
-            fid.write(f'{self.wmo:d},{self.cycle:d},{v:d}\n')
+            fid.write(f'{self.profile.wmo:d},{self.profile.cycle_number:d},{v:d}\n')
