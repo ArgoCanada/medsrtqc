@@ -20,4 +20,5 @@ for p in profs:
         chla_test.run(p)
         bbp_test.run(p)
 
-write_vms_profiles(profs, 'output_file.dat')
+f = open('output_file.dat', 'wb')
+write_vms_profiles(profs, f)

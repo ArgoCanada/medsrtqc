@@ -81,27 +81,25 @@ Trace(
 >> test = ChlaTest()
 >> test.run(prof)
 
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Setting previously unset flags for CHLA to GOOD
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Applying global range test to CHLA
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Checking for previous DARK_CHLA
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Testing if factory calibration matches last good dark count
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Calculating mixed layer depth
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] ...mixed layer depth found at 85.0 dbar
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Mixed layer depth calculated (85.0 dbar)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] ...mixed layer depth found at 85.0 dbar
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Mixed layer depth calculated (85.0 dbar)
 c:\ProgramData\Anaconda3\envs\py39\lib\site-packages\numpy\core\fromnumeric.py:755: UserWarning: Warning: 'partition' will ignore the 'mask' of the MaskedArray.
   a.partition(kth, axis=axis, kind=kind, order=order)
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Performing negative spike test
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Calculating running median over window size 5
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Performing Non-Photochemical Quenching (NPQ) test
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Adjusting surface values (P < 69.80000305175781dbar) to CHLA(69.80000305175781) = 1.3724000453948975mg/m3
-[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001C51A8B1C10>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
-c:\Users\GordonC\Documents\projects\medsrtqc\medsrtqc\vms\core_impl.py:102: UserWarning: Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Adjusting surface values (P < 69.80000305175781dbar) to CHLA(69.80000305175781) = 1.3724000453948975mg/m3
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
+c:\Users\GordonC\Documents\projects\medsrtqc\medsrtqc\vms\core_impl.py:109: UserWarning: Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True
   warn("Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
-c:\Users\GordonC\Documents\projects\medsrtqc\medsrtqc\vms\core_impl.py:104: UserWarning: Trace.adjusted_qc was updated, to update adjusted variable, ensure `use_adjusted` is set to True
-  warn("Trace.adjusted_qc was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
 
 >> prof["FLU1"] # chlorophyll
 
