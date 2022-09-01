@@ -16,9 +16,6 @@ class ChlaTest(QCOperation):
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
 
-        chla.adjusted.mask = False
-        chla.adjusted_qc.mask = False
-
         wmo = 6903026 # dummy placeholder - how to get wmo? probably in VMS file name?
         cycle = 5 # dummy placeholder - how to get wmo? probably in VMS file name?
         self.wmo = wmo
