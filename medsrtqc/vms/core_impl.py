@@ -27,6 +27,13 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
+        # save the wmo and cycle
+        self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
+        for d in data['PR_STN']['SURFACE']:
+            if d['PCODE'] == 'PFN$':
+                self.cycle_number = int(d['PARM'])
+                break
+
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
 
