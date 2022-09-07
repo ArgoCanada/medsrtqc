@@ -124,7 +124,6 @@ class ArrayOf(Encoding):
         return value
 
     def encode(self, file: BinaryIO, value: Iterable):
-        print(type(self._encoding))
         if self._max_length is not None and len(value) > self._max_length:
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
