@@ -83,7 +83,7 @@ class Character(Encoding):
         return encoded.decode(self._encoding)
 
     def encode(self, file: BytesIO, value):
-        encoded = str(value).encode(self._encoding)
+        encoded = value if isinstance(value, bytes) else str(value).encode(self._encoding)
         if len(encoded) <= self._length:
             file.write(encoded.ljust(self._length, self._pad))
         else:
@@ -124,6 +124,7 @@ class ArrayOf(Encoding):
         return value
 
     def encode(self, file: BinaryIO, value: Iterable):
+        print(type(self._encoding))
         if self._max_length is not None and len(value) > self._max_length:
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
