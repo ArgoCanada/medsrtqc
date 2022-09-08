@@ -32,6 +32,8 @@ class TestChlaTest(unittest.TestCase):
             'FLU1': ncp['CHLA'],
             'FLU3': ncp['FLUORESCENCE_CHLA']
         })
+        ncp_writable.wmo = 6904117
+        ncp_writable.cycle = 85
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)

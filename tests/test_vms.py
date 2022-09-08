@@ -142,15 +142,15 @@ class TestVMSRead(unittest.TestCase):
         self.assertTrue(np.all(prof['PRES'].qc == b'4'))
 
         # attempt to update non-qc attrs
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.value[:] = 0
             prof['TEMP'] = temp
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.adjusted[:] = 0
             prof['TEMP'] = temp
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.adjusted_qc[:] = b'4'
             prof['TEMP'] = temp
