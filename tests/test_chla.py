@@ -35,7 +35,7 @@ class TestChlaTest(unittest.TestCase):
         # this isn't true, but equally demonstrates ability to look up coefficients
         # we don't have coeffs for 6904117
         ncp_writable.wmo = 6903026
-        ncp_writable.cycle = 85
+        ncp_writable.cycle_number = 85
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)
