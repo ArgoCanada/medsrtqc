@@ -12,7 +12,7 @@ class bbpTest(QCOperation):
         wavelength = 700 # dummy placeholder, also will probably always be 700nm
 
         # convert sensor value to backscatter
-        bbp = self.profile['B700']
+        bbp = self.profile['BBP$']
         
         if wavelength == 532:
             lower_lim = -0.000005
@@ -42,9 +42,11 @@ class bbpTest(QCOperation):
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
         Flag.update_safely(bbp.adjusted_qc, Flag.BAD, spike_values)
 
+        self.update_trace('BBP$', bbp)
+
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
-        x = self.profile['B700'].value
+        x = self.profile['BBP$'].value
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
