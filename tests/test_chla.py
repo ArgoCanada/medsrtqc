@@ -5,7 +5,7 @@ import numpy as np
 from medsrtqc.core import Profile
 from medsrtqc.resources import resource_path
 from medsrtqc.nc import read_nc_profile
-from medsrtqc.qc.chla import ChlaDarkTest
+from medsrtqc.qc.chla import ChlaTest
 from medsrtqc.qc.operation import QCOperationContext
 from medsrtqc.qc.util import ResetQCOperation
 from medsrtqc.qc.flag import Flag
@@ -17,7 +17,7 @@ class TestContext(QCOperationContext):
         pass
 
 
-class TestChlaDarkTest(unittest.TestCase):
+class TestChlaTest(unittest.TestCase):
 
     def test_basic(self):
         ncp = read_nc_profile(
@@ -36,7 +36,7 @@ class TestChlaDarkTest(unittest.TestCase):
         ResetQCOperation().run(ncp_writable)
         self.assertTrue(np.all(ncp_writable['CHLA'].qc == Flag.NO_QC))
 
-        test = ChlaDarkTest()
+        test = ChlaTest()
         test.run(ncp_writable, context=TestContext())
         self.assertTrue(np.all(ncp_writable['CHLA'].qc == Flag.PROBABLY_BAD))
 
