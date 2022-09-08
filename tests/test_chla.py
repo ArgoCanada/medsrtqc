@@ -29,16 +29,16 @@ class TestChlaTest(unittest.TestCase):
             'PRES': ncp['PRES'],
             'TEMP': ncp['TEMP'],
             'PSAL': ncp['PSAL'],
-            'CHLA': ncp['CHLA']
+            'FLU1': ncp['CHLA']
         })
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)
-        self.assertTrue(np.all(ncp_writable['CHLA'].qc == Flag.NO_QC))
+        self.assertTrue(np.all(ncp_writable['FLU1'].qc == Flag.NO_QC))
 
         test = ChlaTest()
         test.run(ncp_writable, context=TestContext())
-        self.assertTrue(np.all(ncp_writable['CHLA'].qc == Flag.PROBABLY_BAD))
+        self.assertTrue(np.all(ncp_writable['FLU1'].qc == Flag.PROBABLY_BAD))
 
 
 if __name__ == '__main__':
