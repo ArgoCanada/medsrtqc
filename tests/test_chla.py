@@ -29,7 +29,8 @@ class TestChlaTest(unittest.TestCase):
             'PRES': ncp['PRES'],
             'TEMP': ncp['TEMP'],
             'PSAL': ncp['PSAL'],
-            'FLU1': ncp['CHLA']
+            'FLU1': ncp['CHLA'],
+            'FLU3': ncp['FLUORESCENCE_CHLA']
         })
 
         # reset the QC flags for CHLA
