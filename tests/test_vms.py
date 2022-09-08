@@ -173,7 +173,7 @@ class TestVMSRead(unittest.TestCase):
         chla_trace.qc[0] = b'5'
         chla_trace.adjusted = chla_trace.value
 
-        prof["FLU1"] = chla_trace
+        prof["FLU1"].adjusted = chla_trace.adjusted
         chla_trace_updated = prof["FLU1"]
         self.assertTrue(np.all(chla_trace_updated.adjusted == chla_trace.value))
 

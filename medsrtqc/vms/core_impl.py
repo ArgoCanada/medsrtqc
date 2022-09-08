@@ -91,7 +91,7 @@ class VMSProfile(Profile):
 
         return Trace(value, qc=qc, pres=pres)
 
-    def __setitem__(self, k, v, use_adjusted=False):
+    def __setitem__(self, k, v):
         # check dimensions against current
         current_value = self[k]
         if len(v) != len(current_value):
@@ -156,12 +156,8 @@ class VMSProfile(Profile):
             for pr_profile in data_copy['PR_PROFILE']:
                 if pr_profile['FXD']['PROF_TYPE'] == k:
                     for m in pr_profile['PROF']:
-                        if use_adjusted:
-                            m['PARM'] = v.adjusted[trace_i]
-                            m['Q_PARM'] = bytes(v.adjusted_qc[trace_i])
-                        else:
-                            m['PARM'] = v.value[trace_i]
-                            m['Q_PARM'] = bytes(v.qc[trace_i])
+                        m['PARM'] = v.value[trace_i]
+                        m['Q_PARM'] = bytes(v.qc[trace_i])
                         trace_i += 1
 
             # bookkeeping in case the check above didn't catch this
