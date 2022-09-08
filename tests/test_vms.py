@@ -171,8 +171,6 @@ class TestVMSRead(unittest.TestCase):
         chla_trace = prof["FLU1"]
 
         chla_trace.qc[0] = b'5'
-        prof["FLU1"] = chla_trace
-
         chla_trace.adjusted = chla_trace.value
 
         prof["FLU1"] = chla_trace
