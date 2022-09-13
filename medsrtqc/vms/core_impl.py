@@ -105,10 +105,6 @@ class VMSProfile(Profile):
             warn("Trace.value was updated in a VMSProfile, please ensure this was intended!")
         if not np.all(v.pres == current_value.pres):
             raise ValueError("Updating Trace.pres in a VMSProfile is not permitted")
-        if not np.all(v.adjusted.mask):
-            warn("Trace.adjusted was updated, to update adjusted variable, ensure it is manually assigned")
-        if not np.all(v.adjusted_qc.mask):
-            warn("Trace.adjusted_qc was updated, to update adjusted variable, ensure it is manually assigned")
         if not np.all(v.mtime.mask):
             raise ValueError("Can't update Trace.mtime in a VMSProfile")
 
@@ -169,3 +165,11 @@ class VMSProfile(Profile):
         self._data = data_copy
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
+
+        # adjusted and adjusted_qc fields need to be updated manually because they are not stored anywhere in _data
+        if not np.all(v.adjusted.mask):
+            warn("Trace.adjusted was updated, to update adjusted variable, ensure it is manually assigned")
+            self[k].adjusted = v.adjusted
+        if not np.all(v.adjusted_qc.mask):
+            warn("Trace.adjusted_qc was updated, to update adjusted variable, ensure it is manually assigned")
+            self[k].adjusted_qc = v.adjusted_qc
