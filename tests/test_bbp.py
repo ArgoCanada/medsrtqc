@@ -50,7 +50,7 @@ class TestBbpTest(unittest.TestCase):
         )
 
         # betasw(P, T, S, lon, lat, wavelength, theta)
-        beta_seawater = betasw(ncp['PRES'], ncp['TEMP'], ncp['PSAL'], 0, 0, 700, 70)
+        beta_seawater = betasw(ncp['PRES'].value, ncp['TEMP'].value, ncp['PSAL'].value, 0, 0, 700, 70)
 
         self.assertTrue(np.all(beta_seawater[~np.isnan(beta_seawater)] > 0))
 
