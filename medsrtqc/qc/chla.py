@@ -62,8 +62,9 @@ class ChlaTest(QCOperation):
         # maximum pressure reached on this profile
         max_pres = np.nanmax(chla.pres)
 
+        # I find the QC manual unclear on what to do here, should check with perhaps Catherine Schmechtig on how to process w/ no MLD
+        if flag_mld: # pragma: no cover
         # test 2
-        if flag_mld: # I find the QC manual unclear on what to do here, should check with perhaps Catherine Schmechtig on how to process w/ no MLD
             self.log('No mixed layer found, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
             dark_prime_chla = last_dark_chla
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)

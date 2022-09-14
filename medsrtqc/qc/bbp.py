@@ -14,13 +14,15 @@ class bbpTest(QCOperation):
         # convert sensor value to backscatter
         bbp = self.profile['BBP$']
         
-        if wavelength == 532:
-            lower_lim = -0.000005
-        elif wavelength == 700:
-            lower_lim = -0.000025
-        else:
-            self.log(f'No valid wavelength provided (wavelength = {wavelength:d}), setting lower limit of range check to -0.000025')
-            lower_lim = -0.000025
+        # all sensors presumed to be 700nm for now, if able to fetch diff wavelengths from
+        # VMS file, uncomment following if statement
+        # if wavelength == 532:
+            # lower_lim = -0.000005
+        # elif wavelength == 700:
+        lower_lim = -0.000025
+        # else:
+            # self.log(f'No valid wavelength provided (wavelength = {wavelength:d}), setting lower limit of range check to -0.000025')
+            # lower_lim = -0.000025
 
         self.log('Setting previously unset flags for BBP to GOOD')
         Flag.update_safely(bbp.qc, to=Flag.GOOD)
