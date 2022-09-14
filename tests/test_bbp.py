@@ -41,7 +41,7 @@ class TestBbpTest(unittest.TestCase):
 
         test = bbpTest()
         test.run(ncp_writable, context=TestContext())
-        self.assertTrue(np.all(ncp_writable['FLU1'].qc == Flag.GOOD))
+        self.assertTrue(np.all(ncp_writable['BBP$'].qc == Flag.GOOD))
 
     def test_betasw(self):
 
