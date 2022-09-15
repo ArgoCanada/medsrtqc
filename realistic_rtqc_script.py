@@ -19,7 +19,7 @@ with contextlib.redirect_stderr(log_file):
     bbp_test  = bbpTest()
     for p in profs:
         chla_test.run(p)
-        bbp_test.run(p)
+        # bbp_test.run(p)
 
     # export profiles with altered flags, CHLA_ADJUSTED likely populated
     f = open('output_file.dat', 'wb')

@@ -4,10 +4,10 @@ import numpy as np
 import gsw
 
 from medsrtqc.resources import resource_path
-
-from .operation import QCOperation, QCOperationError
-from .flag import Flag
-from ..coefficient import coeff
+from medsrtqc.core import Trace
+from medsrtqc.qc.operation import QCOperation, QCOperationError
+from medsrtqc.qc.flag import Flag
+from medsrtqc.coefficient import coeff
 
 class ChlaTest(QCOperation):
 
@@ -15,6 +15,8 @@ class ChlaTest(QCOperation):
         self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
+        # adjusted = self.profile['FLUA']
+        adjusted = Trace(pres=chla.pres, value=chla.value, qc=chla.qc)
 
         dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
@@ -23,13 +25,13 @@ class ChlaTest(QCOperation):
         Flag.update_safely(chla.qc, to=Flag.GOOD)
 
         self.log('Setting previously unset flags for CHLA_ADJUSTED to GOOD')
-        Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
+        Flag.update_safely(adjusted.qc, to=Flag.GOOD)
 
         # global range test
         self.log('Applying global range test to CHLA')
         values_outside_range = (chla.value < -0.1) | (chla.value > 100.0)
         Flag.update_safely(chla.qc, Flag.BAD, values_outside_range)
-        Flag.update_safely(chla.adjusted_qc, Flag.BAD, values_outside_range)
+        Flag.update_safely(adjusted.qc, Flag.BAD, values_outside_range)
 
         # dark count test
         self.log('Checking for previous DARK_CHLA')
@@ -70,12 +72,12 @@ class ChlaTest(QCOperation):
             self.log('No mixed layer found, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
             dark_prime_chla = last_dark_chla
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_GOOD)
+            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
         elif max_pres < mixed_layer_depth + delta_depth + delta_dark:
             self.log('Max pressure is insufficiently deep, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
             dark_prime_chla = last_dark_chla
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_GOOD)
+            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
         else:
             dark_prime_chla = np.nanmedian(fluo.value[fluo.pres > (max_pres - delta_dark)])
     
@@ -84,7 +86,7 @@ class ChlaTest(QCOperation):
             self.log('DARK_PRIME_CHLA is more than 20%% different than last good calibration, reverting to LAST_DARK_CHLA and setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to PROBABLY_BAD')
             dark_prime_chla = last_dark_chla
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-            Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_BAD)
+            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_BAD)
         else:
             # test 4
             if dark_prime_chla != last_dark_chla:
@@ -92,12 +94,15 @@ class ChlaTest(QCOperation):
                 self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
                 last_dark_chla = dark_prime_chla
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-                Flag.update_safely(chla.adjusted_qc, to=Flag.GOOD)
+                Flag.update_safely(adjusted.qc, to=Flag.GOOD)
 
         self.save_last_dark_chla(int(last_dark_chla))
 
-
-        chla.adjusted = self.convert(dark_prime_chla, scale_chla)
+        adjusted = Trace(
+            pres=adjusted.pres, 
+            value=self.convert(dark_prime_chla, scale_chla)/2, # Roesler et al. 2017 factor of 2 global bias
+            qc=adjusted.qc
+        )
 
         # CHLA spike test
         self.log('Performing negative spike test')
@@ -105,7 +110,7 @@ class ChlaTest(QCOperation):
         res = chla.value - median_chla
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
-        Flag.update_safely(chla.adjusted_qc, Flag.BAD, spike_values)
+        Flag.update_safely(adjusted.qc, Flag.BAD, spike_values)
         
         # CHLA NPQ correction
         self.log('Performing Non-Photochemical Quenching (NPQ) test')
@@ -118,16 +123,13 @@ class ChlaTest(QCOperation):
                 chla.adjusted[:depthNPQ_ix] = chla.adjusted[depthNPQ_ix]
                 self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
-                Flag.update_safely(chla.adjusted_qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
+                Flag.update_safely(adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
 
-        # Roesler et al. 2017 factor of 2 global bias
-        chla.adjusted = chla.adjusted/2
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
         # comment out until implemented as field in VMS file
-        # self.profile['FLUA'].value = chla.adjusted
-        # self.profile['FLUA'].qc = chla.adjusted_qc
+        # self.update_trace('FLUA', adjusted)
 
         return chla
 
