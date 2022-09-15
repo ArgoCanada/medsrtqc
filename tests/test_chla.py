@@ -51,7 +51,7 @@ class TestChlaTest(unittest.TestCase):
             'TEMP': ncp['TEMP'],
             'PSAL': ncp['PSAL'],
             'FLU1': ncp['CHLA'],
-            'FLU3': ncp['BETA_BACKSCATTERING']
+            'FLU3': ncp['BETA_BACKSCATTERING700']
         })
         test.run(ncp_writable, context=TestContext())
         self.assertTrue(np.all(ncp_writable['FLU1'].qc == Flag.PROBABLY_BAD))
