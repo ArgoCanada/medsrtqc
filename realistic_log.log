@@ -1,0 +1,74 @@
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] ...mixed layer depth found at 85.0 dbar
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Mixed layer depth calculated (85.0 dbar)
+C:\ProgramData\Anaconda3\envs\py39\lib\site-packages\numpy\core\fromnumeric.py:755: UserWarning: Warning: 'partition' will ignore the 'mask' of the MaskedArray.
+  a.partition(kth, axis=axis, kind=kind, order=order)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Adjusting surface values (P < 69.80000305175781dbar) to CHLA(69.80000305175781) = 1.3724000453948975mg/m3
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
+C:\Users\GordonC\Documents\projects\medsrtqc\medsrtqc\vms\core_impl.py:107: UserWarning: Trace.adjusted was updated, to update adjusted variable, ensure it is manually assigned
+  warn("Trace.adjusted was updated, to update adjusted variable, ensure it is manually assigned")
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Setting previously unset flags for BBP to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Setting previously unset flags for BBP_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Applying global range test to BBP
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFB240D0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Can't determine mixed layer depth (no density changes > 0.03 below 10 dbar)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] No mixed layer found, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Setting previously unset flags for BBP to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Setting previously unset flags for BBP_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Applying global range test to BBP
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFC5B6A0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] ...mixed layer depth found at 98.9000015258789 dbar
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Mixed layer depth calculated (98.9000015258789 dbar)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Adjusting surface values (P < 88.69999694824219dbar) to CHLA(88.69999694824219) = 2.0878000259399414mg/m3
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Setting previously unset flags for BBP to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Setting previously unset flags for BBP_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Applying global range test to BBP
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE48F10>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] ...mixed layer depth found at 98.9000015258789 dbar
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Mixed layer depth calculated (98.9000015258789 dbar)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Adjusting surface values (P < 88.69999694824219dbar) to CHLA(88.69999694824219) = 2.0878000259399414mg/m3
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Setting previously unset flags for BBP to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Setting previously unset flags for BBP_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Applying global range test to BBP
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x0000029DEFE67400>] Calculating running median over window size 5
