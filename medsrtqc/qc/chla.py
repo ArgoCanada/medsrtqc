@@ -42,7 +42,7 @@ class ChlaTest(QCOperation):
         if dark_chla != last_dark_chla:
             self.log('LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD')
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-        else:
+        else: # pragma: no cover
             self.log('LAST_DARK_CHLA and DARK_CHLA match, leaving CHLA_QC flags as GOOD')
 
         # the mixed layer depth calculation can fail
