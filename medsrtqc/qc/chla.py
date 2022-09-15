@@ -87,7 +87,7 @@ class ChlaTest(QCOperation):
             Flag.update_safely(chla.adjusted_qc, to=Flag.PROBABLY_BAD)
         else:
             # test 4
-            if dark_prime_chla != dark_chla:
+            if dark_prime_chla != last_dark_chla:
                 # need to write function in ..coefficient to write LAST_DARK_CHLA to the coefficient file
                 self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
                 last_dark_chla = dark_prime_chla
