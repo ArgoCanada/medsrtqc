@@ -59,7 +59,7 @@ class PrStnSurfaceEncoding(enc.StructEncoding):
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', enc.Character(150)),
+            ('PCODE', enc.Character(4)),
             ('PARM', enc.Real4()),
             ('Q_PARM', enc.Character(1))
         )
@@ -70,8 +70,8 @@ class PrStnSurfCodesEncoding(enc.StructEncoding):
 
     def __init__(self) -> None:
         super().__init__(
-            ('PCODE', enc.Character(150)),
-            ('CPARM', enc.Character(512)),
+            ('PCODE', enc.Character(4)),
+            ('CPARM', enc.Character(10)),
             ('Q_PARM', enc.Character(1))
         )
 
