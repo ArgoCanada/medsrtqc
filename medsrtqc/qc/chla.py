@@ -36,7 +36,6 @@ class ChlaTest(QCOperation):
         # dark count test
         self.log('Checking for previous DARK_CHLA')
         # get previous dark count here
-        # last_dark_chla = grab last DARK_CHLA considered good for calibration
         last_dark_chla = self.read_last_dark_chla()
 
         self.log('Testing if factory calibration matches last good dark count')
@@ -101,7 +100,8 @@ class ChlaTest(QCOperation):
         adjusted = Trace(
             pres=adjusted.pres, 
             value=self.convert(dark_prime_chla, scale_chla)/2, # Roesler et al. 2017 factor of 2 global bias
-            qc=adjusted.qc
+            qc=adjusted.qc,
+            mtime=adjusted.mtime
         )
 
         # CHLA spike test
