@@ -43,7 +43,7 @@ class TestChlaTest(unittest.TestCase):
 
         test = ChlaTest()
         test.run(ncp_writable, context=TestContext())
-        self.assertTrue(np.all(ncp_writable['FLU1'].qc == Flag.PROBABLY_BAD) | np.all(ncp_writable['FLU1'].qc == Flag.GOOD))
+        self.assertTrue(np.all(ncp_writable['FLU1'].qc != Flag.NO_QC))
 
 
 if __name__ == '__main__':
