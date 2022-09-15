@@ -46,10 +46,11 @@ class TestChlaTest(unittest.TestCase):
         test.run(ncp_writable, context=TestContext())
         self.assertTrue(np.all(ncp_writable['FLU1'].qc != Flag.NO_QC))
 
-    def test_bad_deepvalue(self):
+    def test_bad_counts(self):
 
         vms = read_vms_profiles(resource_path('bgc_vms.dat'))
 
+        # use counts from backscatter, which will be way off of chla counts
         ncp_writable = Profile({
             'PRES': vms[0]['PRES'],
             'TEMP': vms[0]['TEMP'],
