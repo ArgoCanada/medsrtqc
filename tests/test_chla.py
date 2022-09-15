@@ -45,6 +45,11 @@ class TestChlaTest(unittest.TestCase):
         test.run(ncp_writable, context=TestContext())
         self.assertTrue(np.all(ncp_writable['FLU1'].qc != Flag.NO_QC))
 
+        # change counts to be way off so that new dark count is more than 20% different
+        ncp_writable['FLU1'].value = ncp_writable['FLU1'].value + 200
+        test.run(ncp_writable, context=TestContext())
+        self.assertTrue(np.all(ncp_writable['FLU1'].qc != Flag.PROBABLY_BAD))
+
 
 if __name__ == '__main__':
     unittest.main()
