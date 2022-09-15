@@ -146,7 +146,7 @@ class VMSProfile(Profile):
             for pr_profile in data_copy['PR_PROFILE']:
                 for m in pr_profile['PROF']:
                     pres_match = v.value == m['DEPTH_PRESS']
-                    if not np.any(pres_match):
+                    if not np.any(pres_match): # pragma: no cover
                         continue
                     m['DP_FLAG'] = bytes(v.qc[pres_match][0])
         else:

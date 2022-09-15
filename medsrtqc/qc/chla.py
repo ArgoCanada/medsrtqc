@@ -51,7 +51,7 @@ class ChlaTest(QCOperation):
         try:
             mixed_layer_depth = self.mixed_layer_depth()
             flag_mld = False
-        except QCOperationError as e:
+        except QCOperationError as e: # pragma: no cover
             self.log(e)
 
         if mixed_layer_depth is not None:
@@ -148,7 +148,7 @@ class ChlaTest(QCOperation):
         density = gsw.sigma0(abs_salinity, conservative_temp)
 
         mixed_layer_start = (np.diff(density) > 0.03) & (pres.value[:-1] > 10)
-        if not np.any(mixed_layer_start):
+        if not np.any(mixed_layer_start): # pragma: no cover
             self.error("Can't determine mixed layer depth (no density changes > 0.03 below 10 dbar)")
 
         mixed_layer_start_index = np.where(mixed_layer_start)[0][0]
