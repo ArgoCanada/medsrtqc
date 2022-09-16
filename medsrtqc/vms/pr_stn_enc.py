@@ -98,7 +98,7 @@ class PrStnEncoding(enc.StructEncoding):
     def __init__(self) -> None:
         super().__init__(
             ('FXD', PrStnFxdEncoding()),
-            ('PROF', enc.ArrayOf(PrStnProfEncoding(), max_length=20)),
+            ('PROF', enc.ArrayOf(PrStnProfEncoding(), max_length=1500)),
             ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(), max_length=20)),
             ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(), max_length=20)),
             ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(), max_length=100))

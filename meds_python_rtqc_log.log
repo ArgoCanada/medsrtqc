@@ -1,0 +1,115 @@
+--------------------------------------------------------------------------------
+Module Import Tests
+--------------------------------------------------------------------------------
+
+gsw successfully imported
+
+medsrtqc.qc.chla.ChlaTest successfully imported
+
+medsrtqc.qc.bbp.bbpTest successfully imported
+
+medsrtqc.nc.read_nc_profile successfully imported and executed
+
+meds.interactie.plot successfully imported
+
+--------------------------------------------------------------------------------
+Example: Pressure Increasing Test
+--------------------------------------------------------------------------------
+
+Before Pressure Increasing Test:
+
+>> prof["PRES"]
+
+Trace(
+    value=[976.0, 977.4, 977.5, [11 values], 984.9, 986.5, 986.8],
+    qc=[b'0', b'0', b'0', [11 values], b'0', b'0', b'0'],
+    adjusted=[masked, masked, masked, [11 values], masked, masked, masked],
+    adjusted_qc=[masked, masked, masked, [11 values], masked, masked, masked],
+    adjusted_error=[masked, masked, masked, [11 values], masked, masked, masked],
+    pres=[976.0, 977.4, 977.5, [11 values], 984.9, 986.5, 986.8],
+    mtime=[masked, masked, masked, [11 values], masked, masked, masked]
+)
+
+>> prof["TEMP"].qc
+
+masked_array(data=[b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0',
+                   b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0'],
+             mask=False,
+       fill_value=b'N/A',
+            dtype='|S1')
+
+>> test = PressureIncreasingTest()
+>> test.run(prof)
+
+After Pressure Increasing Test:
+
+>> prof["PRES"]
+
+Trace(
+    value=[976.0, 977.4, 977.5, [11 values], 984.9, 986.5, 986.8],
+    qc=[b'0', b'0', b'0', [11 values], b'0', b'0', b'0'],
+    adjusted=[masked, masked, masked, [11 values], masked, masked, masked],
+    adjusted_qc=[masked, masked, masked, [11 values], masked, masked, masked],
+    adjusted_error=[masked, masked, masked, [11 values], masked, masked, masked],
+    pres=[976.0, 977.4, 977.5, [11 values], 984.9, 986.5, 986.8],
+    mtime=[masked, masked, masked, [11 values], masked, masked, masked]
+)
+
+>> prof["TEMP"].qc
+
+masked_array(data=[b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0',
+                   b'0', b'0', b'0', b'4', b'0', b'0', b'0', b'0'],
+             mask=False,
+       fill_value=b'N/A',
+            dtype='|S1')
+--------------------------------------------------------------------------------
+Example: BGC VMS File
+--------------------------------------------------------------------------------
+
+>> prof["FLU1"] # chlorophyll
+
+Trace(
+    value=[0.2774, 0.2847, 0.2774, [1288 values], 0.0365, 0.0292, 0.0365],
+    qc=[b'0', b'0', b'0', [1288 values], b'0', b'0', b'0'],
+    adjusted=[masked, masked, masked, [1288 values], masked, masked, masked],
+    adjusted_qc=[masked, masked, masked, [1288 values], masked, masked, masked],
+    adjusted_error=[masked, masked, masked, [1288 values], masked, masked, masked],
+    pres=[-0.1, -1.7014118e+38, -1.7014118e+38, [1288 values], 979.4, 979.4, 979.3],
+    mtime=[masked, masked, masked, [1288 values], masked, masked, masked]
+)
+
+>> test = ChlaTest()
+>> test.run(prof)
+
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting previously unset flags for CHLA to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting previously unset flags for CHLA_ADJUSTED to GOOD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Applying global range test to CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Checking for previous DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Testing if factory calibration matches last good dark count
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Calculating mixed layer depth
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] ...mixed layer depth found at 85.0 dbar
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Mixed layer depth calculated (85.0 dbar)
+c:\ProgramData\Anaconda3\envs\py39\lib\site-packages\numpy\core\fromnumeric.py:755: UserWarning: Warning: 'partition' will ignore the 'mask' of the MaskedArray.
+  a.partition(kth, axis=axis, kind=kind, order=order)
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Performing negative spike test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Calculating running median over window size 5
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Performing Non-Photochemical Quenching (NPQ) test
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Adjusting surface values (P < 69.80000305175781dbar) to CHLA(69.80000305175781) = 1.3724000453948975mg/m3
+[<medsrtqc.vms.core_impl.VMSProfile object at 0x000001FE31089DF0>] Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed
+c:\Users\GordonC\Documents\projects\medsrtqc\medsrtqc\vms\core_impl.py:109: UserWarning: Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True
+  warn("Trace.adjusted was updated, to update adjusted variable, ensure `use_adjusted` is set to True")
+
+>> prof["FLU1"] # chlorophyll
+
+Trace(
+    value=[0.2774, 0.2847, 0.2774, [1288 values], 0.0365, 0.0292, 0.0365],
+    qc=[b'3', b'3', b'3', [1288 values], b'3', b'3', b'3'],
+    adjusted=[masked, masked, masked, [1288 values], masked, masked, masked],
+    adjusted_qc=[masked, masked, masked, [1288 values], masked, masked, masked],
+    adjusted_error=[masked, masked, masked, [1288 values], masked, masked, masked],
+    pres=[-0.1, -1.7014118e+38, -1.7014118e+38, [1288 values], 979.4, 979.4, 979.3],
+    mtime=[masked, masked, masked, [1288 values], masked, masked, masked]
+)
+

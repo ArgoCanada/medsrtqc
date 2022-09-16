@@ -142,15 +142,15 @@ class TestVMSRead(unittest.TestCase):
         self.assertTrue(np.all(prof['PRES'].qc == b'4'))
 
         # attempt to update non-qc attrs
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.value[:] = 0
             prof['TEMP'] = temp
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.adjusted[:] = 0
             prof['TEMP'] = temp
-        with self.assertRaises(ValueError):
+        with self.assertWarns(Warning):
             temp = prof['TEMP']
             temp.adjusted_qc[:] = b'4'
             prof['TEMP'] = temp
@@ -162,6 +162,24 @@ class TestVMSRead(unittest.TestCase):
             temp = prof['TEMP']
             temp.mtime[:] = 0
             prof['TEMP'] = temp
+
+    # CG, 14-09-2022: updating adjusted does not work because there is no
+    # place to put adjusted in the VMS file, and therefore in prof._data
+    # commenting this test out for now as it is non-critical for RTQC, but
+    # leaving it in as this issue should be resolved at a later date.
+    # def test_vms_profile_update_adjusted(self):
+    #     # load a bgc VMS file (source files from coriolis)
+    #     profs = read.read_vms_profiles(resource_path('bgc_vms.dat'))
+    #     prof = profs[0]
+
+    #     chla_trace = prof["FLU1"]
+
+    #     chla_trace.qc[0] = b'5'
+    #     chla_trace.adjusted = chla_trace.value
+
+    #     prof["FLU1"].adjusted = chla_trace.adjusted
+    #     chla_trace_updated = prof["FLU1"]
+    #     self.assertTrue(np.all(chla_trace_updated.adjusted == chla_trace.value))
 
     def test_read_write(self):
         with self.assertRaises(TypeError):

@@ -1,4 +1,5 @@
 
+from warnings import warn
 from typing import Iterable
 from copy import deepcopy
 
@@ -25,6 +26,13 @@ class VMSProfile(Profile):
         # do some pre-processing to make fetching data easier
         self._by_param = None
         self._update_by_param_from_data()
+
+        # save the wmo and cycle
+        self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
+        for d in data['PR_STN']['SURFACE']:
+            if d['PCODE'] == 'PFN$':
+                self.cycle_number = int(d['PARM'])
+                break
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
@@ -94,13 +102,13 @@ class VMSProfile(Profile):
         # make sure this is the case or else some updates are going
         # to get lost
         if not np.all(v.value == current_value.value):
-            raise ValueError("Can't update Trace.value in a VMSProfile")
-        if not np.all(v.pres == current_value.pres):
-            raise ValueError("Can't update Trace.pres in a VMSProfile")
+            warn("Trace.value was updated in a VMSProfile, please ensure this was intended!")
         if not np.all(v.adjusted.mask):
-            raise ValueError("Can't update Trace.adjusted in a VMSProfile")
+            warn("Trace.adjusted was updated, to update adjusted variable, ensure it is manually assigned")
         if not np.all(v.adjusted_qc.mask):
-            raise ValueError("Can't update Trace.adjusted_qc in a VMSProfile")
+            warn("Trace.adjusted_qc was updated, to update adjusted variable, ensure it is manually assigned")
+        if not np.all(v.pres == current_value.pres):
+            raise ValueError("Updating Trace.pres in a VMSProfile is not permitted")
         if not np.all(v.mtime.mask):
             raise ValueError("Can't update Trace.mtime in a VMSProfile")
 
@@ -110,6 +118,27 @@ class VMSProfile(Profile):
         # to reduce the amount of copying.
         data_copy = deepcopy(self._data)
 
+        # should be another method like "add_new_pr_profile()"
+        if False:
+            # add an adjusted paramter that's a copy of the value param
+            adjusted_trace = None
+            for pr_profile in self._data['PR_PROFILE']:
+                if pr_profile['FXD']['PROF_TYPE'] == k:
+                    # figure out how to update pr_profile['FXD']
+                    # to have this do what you want (i.e., have the
+                    # corect PROF_TYPE)
+                    # modify pr_profile here
+                    pr_profile['FXD']['PROF_TYPE'] = 'FLU7'
+                    data_copy['PR_PROFILE'].append(pr_profile)
+
+            if not adjusted_trace:
+                raise ValueError("No such trace for k")
+
+            # (now set adjusted trace values)
+            # make a new trace whose value is adjusted
+            # and whose qc is adjusted_qc
+            # by doing self["FLU7"] = new_trace
+
         # PRES is special because it isn't stored explicitly
         # strategy is to check exact values and update the flag
         # for that
@@ -117,10 +146,9 @@ class VMSProfile(Profile):
             for pr_profile in data_copy['PR_PROFILE']:
                 for m in pr_profile['PROF']:
                     pres_match = v.value == m['DEPTH_PRESS']
-                    if not np.any(pres_match):
+                    if not np.any(pres_match): # pragma: no cover
                         continue
                     m['DP_FLAG'] = bytes(v.qc[pres_match][0])
-
         else:
             # the data might be split into segments so we have to keep track of
             # the index within the trace separately
@@ -128,6 +156,7 @@ class VMSProfile(Profile):
             for pr_profile in data_copy['PR_PROFILE']:
                 if pr_profile['FXD']['PROF_TYPE'] == k:
                     for m in pr_profile['PROF']:
+                        m['PARM'] = v.value[trace_i]
                         m['Q_PARM'] = bytes(v.qc[trace_i])
                         trace_i += 1
 
@@ -140,3 +169,4 @@ class VMSProfile(Profile):
         self._data = data_copy
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
+

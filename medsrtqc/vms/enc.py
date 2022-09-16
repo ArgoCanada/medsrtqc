@@ -83,7 +83,7 @@ class Character(Encoding):
         return encoded.decode(self._encoding)
 
     def encode(self, file: BytesIO, value):
-        encoded = str(value).encode(self._encoding)
+        encoded = value if isinstance(value, bytes) else str(value).encode(self._encoding)
         if len(encoded) <= self._length:
             file.write(encoded.ljust(self._length, self._pad))
         else:

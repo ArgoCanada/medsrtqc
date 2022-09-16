@@ -78,7 +78,7 @@ class TestNetCDFProfile(unittest.TestCase):
             self.assertIsInstance(read_nc_profile(f.read())._datasets[0], Dataset)
 
     def test_dataset_url(self):
-        path = 'dac/coriolis/6904117/profiles/BR6904117_085.nc'
+        path = 'dac/coriolis/6904117/profiles/BD6904117_085.nc'
         url = 'https://data-argo.ifremer.fr/' + path
         self.assertIsInstance(read_nc_profile(url)._datasets[0], Dataset)
 
