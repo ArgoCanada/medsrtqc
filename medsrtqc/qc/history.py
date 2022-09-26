@@ -1,6 +1,5 @@
 
-from typing import OrderedDict
-
+from collections import OrderedDict
 
 class QCx:
 
