@@ -51,7 +51,7 @@ class preTestCheck(QCOperation):
                     ('Q_PARM', d['Q_PARM'])])\
                 for d in data['PR_PROFILE'][ix]['PROF']\
             ]
-            data['PR_PROFILE'].append(FLUA)
+            data['PR_PROFILE'].insert(ix+1, FLUA)
 
         # update data with new variable
         self.profile._data = data
