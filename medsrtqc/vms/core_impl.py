@@ -119,27 +119,6 @@ class VMSProfile(Profile):
         # to reduce the amount of copying.
         data_copy = deepcopy(self._data)
 
-        # should be another method like "add_new_pr_profile()"
-        if False:
-            # add an adjusted paramter that's a copy of the value param
-            adjusted_trace = None
-            for pr_profile in self._data['PR_PROFILE']:
-                if pr_profile['FXD']['PROF_TYPE'] == k:
-                    # figure out how to update pr_profile['FXD']
-                    # to have this do what you want (i.e., have the
-                    # corect PROF_TYPE)
-                    # modify pr_profile here
-                    pr_profile['FXD']['PROF_TYPE'] = 'FLU7'
-                    data_copy['PR_PROFILE'].append(pr_profile)
-
-            if not adjusted_trace:
-                raise ValueError("No such trace for k")
-
-            # (now set adjusted trace values)
-            # make a new trace whose value is adjusted
-            # and whose qc is adjusted_qc
-            # by doing self["FLU7"] = new_trace
-
         # PRES is special because it isn't stored explicitly
         # strategy is to check exact values and update the flag
         # for that
