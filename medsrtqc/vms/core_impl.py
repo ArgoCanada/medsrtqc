@@ -192,7 +192,7 @@ class VMSProfile(Profile):
                 adjusted_trace['FXD']['MKEY'] = new_mkey
                 data_copy['PR_PROFILE'].insert(i, adjusted_trace)
         
-        if not adjusted_trace:
+        if not adjusted_trace: #pragma: no cover
             raise ValueError(f"No such trace for f{k}")
 
         adjusted_stn = None
@@ -204,7 +204,7 @@ class VMSProfile(Profile):
                 adjusted_stn['PROF_TYPE'] = nk
                 data_copy['PR_STN']['PROF'].insert(i, adjusted_stn)
 
-        if not adjusted_stn:
+        if not adjusted_stn: # pragma: no cover
             raise ValueError(f"No such PR_STN_PROF for f{k}")
 
         # everything worked, so update the underlying data
