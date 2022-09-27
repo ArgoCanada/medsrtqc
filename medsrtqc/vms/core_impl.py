@@ -1,6 +1,6 @@
 
 from warnings import warn
-from typing import Iterable
+from typing import Iterable, OrderedDict
 from copy import deepcopy
 
 import numpy as np
@@ -191,7 +191,6 @@ class VMSProfile(Profile):
                 new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
                 adjusted_trace['FXD']['MKEY'] = new_mkey
                 data_copy['PR_PROFILE'].insert(i, adjusted_trace)
-                
         
         if not adjusted_trace:
             raise ValueError(f"No such trace for f{k}")

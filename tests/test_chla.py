@@ -30,8 +30,9 @@ class TestChlaTest(unittest.TestCase):
             'PRES': ncp['PRES'],
             'TEMP': ncp['TEMP'],
             'PSAL': ncp['PSAL'],
+            'FLU3': ncp['FLUORESCENCE_CHLA'],
             'FLU1': ncp['CHLA'],
-            'FLU3': ncp['FLUORESCENCE_CHLA']
+            'FLUA': ncp['CHLA'],
         })
         # this isn't true, but equally demonstrates ability to look up coefficients
         # we don't have coeffs for 6904117
