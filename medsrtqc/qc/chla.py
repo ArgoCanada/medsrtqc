@@ -125,7 +125,6 @@ class ChlaTest(QCOperation):
 
 
         # update the CHLA trace
-        print(chla)
         self.update_trace('FLU1', chla)
         self.update_trace('FLUA', adjusted)
 

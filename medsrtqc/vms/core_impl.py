@@ -7,6 +7,7 @@ import numpy as np
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros
 
+from ..history import QCx
 from ..core import Trace, Profile
 
 
@@ -165,6 +166,51 @@ class VMSProfile(Profile):
                 msg = f"Wrong number of values in trace ({trace_i}/{len(v)}) whilst updating '{k}'"
                 raise ValueError(msg)
 
+        # everything worked, so update the underlying data
+        self._data = data_copy
+        # ...and recalculate the _by_param attribute
+        self._update_by_param_from_data()
+
+    def add_new_pr_profile(self, k, nk):
+
+        data_copy = deepcopy(self._data)
+
+        adjusted_trace = None
+        i = 0
+        for pr_profile in self._data['PR_PROFILE']:
+            i += 1
+            if pr_profile['FXD']['PROF_TYPE'] == k:
+                adjusted_trace = pr_profile
+                adjusted_trace['FXD']['PROF_TYPE'] = nk
+                new_mkey = str(int(self._data['PR_PROFILE'][-1]['FXD']['MKEY'])+1).rjust(8, '0')
+                adjusted_trace['FXD']['MKEY'] = new_mkey
+                data_copy['PR_PROFILE'].insert(i, adjusted_trace)
+        
+        if not adjusted_trace:
+            raise ValueError(f"No such trace for f{k}")
+
+        adjusted_stn = None
+        i = 0
+        for prof in self._data['PR_STN']['PROF']:
+            i += 1
+            if prof['PROF_TYPE'] == k:
+                adjusted_stn = prof
+                adjusted_stn['PROF_TYPE'] = nk
+                data_copy['PR_STN']['PROF'].insert(i, adjusted_stn)
+
+        # everything worked, so update the underlying data
+        self._data = data_copy
+        # ...and recalculate the _by_param attribute
+        self._update_by_param_from_data()
+    
+    def add_qcp_qcf(self):
+        data_copy = deepcopy(self._data)
+
+        current_vars = [d['PCODE'] for d in data_copy['PR_STN']['SURF_CODES']]
+        for v in ['QCP$', 'QCF$']:
+            if v not in current_vars:
+                data_copy['PR_STN']['SURF_CODES'].append(QCx.blank(v))
+        
         # everything worked, so update the underlying data
         self._data = data_copy
         # ...and recalculate the _by_param attribute
