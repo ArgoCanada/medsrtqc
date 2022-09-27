@@ -1,6 +1,6 @@
 
 from warnings import warn
-from typing import Iterable, OrderedDict
+from typing import Iterable
 from copy import deepcopy
 
 import numpy as np
