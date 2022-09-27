@@ -198,6 +198,9 @@ class VMSProfile(Profile):
                 adjusted_stn['PROF_TYPE'] = nk
                 data_copy['PR_STN']['PROF'].insert(i, adjusted_stn)
 
+        if not adjusted_stn:
+            raise ValueError(f"No such PR_STN_PROF for f{k}")
+
         # everything worked, so update the underlying data
         self._data = data_copy
         # ...and recalculate the _by_param attribute
