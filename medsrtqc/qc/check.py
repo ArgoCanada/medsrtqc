@@ -10,7 +10,6 @@ class preTestCheck(QCOperation):
     def run_impl(self):
 
         self.list_tests()
-        self.profile.add_qcp_qcf()
         self.profile.add_new_pr_profile('FLU1', 'FLUA')
 
         return self.tests
