@@ -201,10 +201,10 @@ class TestVMSRead(unittest.TestCase):
         size_calc = read._file_encoding.sizeof([item._data for item in profiles])
         with open(test_file, 'rb') as f:
             content = f.read()
-            self.assertGreaterEqual(size_calc, len(content))
+            self.assertEqual(size_calc, len(content))
             written_content = BytesIO()
             read.write_vms_profiles(profiles, written_content)
-            self.assertTrue(type(written_content.getvalue()) is bytes)
+            self.assertEqual(written_content.getvalue(), content)
 
             fd, tmp = tempfile.mkstemp()
             try:

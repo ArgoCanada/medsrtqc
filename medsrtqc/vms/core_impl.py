@@ -28,6 +28,12 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
+        
+    
+    def prepare(self):
+        # this function so that read_vms_profiles() does not add information
+        # but also means it will need to be called before performing QC
+        data = self._data
         # save the wmo and cycle
         self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
         for d in data['PR_STN']['SURFACE']:
