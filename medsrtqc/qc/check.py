@@ -21,9 +21,9 @@ class preTestCheck(QCOperation):
 
         tests = list()
         if 'FLU1' in self.profile.keys():
-            tests.append(ChlaTest())
+            tests.append('CHLA')
         if 'BBP$' in self.profile.keys():
-            tests.append(bbpTest())
+            tests.append('BBP')
 
         self.tests = tests
     

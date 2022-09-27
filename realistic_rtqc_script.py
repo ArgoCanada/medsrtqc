@@ -3,6 +3,7 @@ import sys
 import contextlib
 
 from medsrtqc.vms import read_vms_profiles, write_vms_profiles
+from medsrtqc.qc.check import preTestCheck
 from medsrtqc.qc.chla import ChlaTest
 from medsrtqc.qc.bbp import bbpTest
 
@@ -15,11 +16,15 @@ with contextlib.redirect_stderr(log_file):
     profs = read_vms_profiles(vms_file)
 
     # run tests on chlorophyll and bbp
-    chla_test = ChlaTest()
-    bbp_test  = bbpTest()
+    check = preTestCheck()
     for p in profs:
-        chla_test.run(p)
-        bbp_test.run(p)
+        tests = check.run(p)
+        if 'CHLA' in tests:
+            chla_test = ChlaTest()
+            chla_test.run(p)
+        if 'BBP' in tests:
+            bbp_test = bbpTest()
+            bbp_test.run(p)
 
     # export profiles with altered flags, CHLA_ADJUSTED likely populated
     f = open('output_file.dat', 'wb')

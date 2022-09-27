@@ -22,7 +22,7 @@ class TestPreCheckTest(unittest.TestCase):
         tests = check.run(p, context=TestContext())
         self.assertTrue(len(tests) == 2)
 
-        self.assertTrue('FLU1' in p.keys())
+        self.assertTrue('FLUA' in p.keys())
 
 if __name__ == '__main__':
     unittest.main()
