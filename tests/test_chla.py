@@ -56,8 +56,9 @@ class TestChlaTest(unittest.TestCase):
             'PRES': vms[0]['PRES'],
             'TEMP': vms[0]['TEMP'],
             'PSAL': vms[0]['PSAL'],
+            'FLU3': vms[0]['B700'],
             'FLU1': vms[0]['FLU1'],
-            'FLU3': vms[0]['B700']
+            'FLUA': vms[0]['FLU1'],
         })
 
         # this isn't true, but equally demonstrates ability to look up coefficients
