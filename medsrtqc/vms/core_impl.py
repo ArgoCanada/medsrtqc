@@ -179,12 +179,19 @@ class VMSProfile(Profile):
         i = 0
         for pr_profile in self._data['PR_PROFILE']:
             i += 1
+            # iterate MKEY if it comes after FLUA insertion
+            if adjusted_trace is not None:
+                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
+                pr_profile['FXD']['MKEY'] = new_mkey
+                data_copy['PR_PROFILE'][i] = pr_profile
+            # add the new variable
             if pr_profile['FXD']['PROF_TYPE'] == k:
                 adjusted_trace = pr_profile
                 adjusted_trace['FXD']['PROF_TYPE'] = nk
-                new_mkey = str(int(self._data['PR_PROFILE'][-1]['FXD']['MKEY'])+1).rjust(8, '0')
+                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
                 adjusted_trace['FXD']['MKEY'] = new_mkey
                 data_copy['PR_PROFILE'].insert(i, adjusted_trace)
+                
         
         if not adjusted_trace:
             raise ValueError(f"No such trace for f{k}")
