@@ -35,6 +35,9 @@ class VMSProfile(Profile):
                 self.cycle_number = int(d['PARM'])
                 break
 
+        self.add_qcp_qcf()
+        self.qc_tests = QCx.to_array(self.get_qc('QCP$'), self.get_qc('QCF$'))
+
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
 
@@ -203,4 +206,10 @@ class VMSProfile(Profile):
         self._data = data_copy
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
+    
+    def get_qc(self, v):
+
+        for d in self._data['PR_STN']['SURF_CODES']:
+            if d['PCODE'] == v:
+                return d['CPARM']
 
