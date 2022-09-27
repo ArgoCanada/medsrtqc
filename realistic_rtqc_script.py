@@ -16,6 +16,7 @@ with contextlib.redirect_stderr(log_file):
     # run tests on chlorophyll and bbp
     check = preTestCheck()
     for p in profs:
+        p.prepare()
         tests = check.run(p)
         for t in tests:
             t.run(p)
