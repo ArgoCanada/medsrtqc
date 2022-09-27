@@ -1,6 +1,4 @@
 
-import copy
-
 from medsrtqc.qc.chla import ChlaTest
 from medsrtqc.qc.bbp import bbpTest
 from medsrtqc.qc.operation import QCOperation
@@ -10,7 +8,8 @@ class preTestCheck(QCOperation):
     def run_impl(self):
 
         self.list_tests()
-        self.profile.add_new_pr_profile('FLU1', 'FLUA')
+        if 'FLUA' in self.profile.keys():
+            self.profile.add_new_pr_profile('FLU1', 'FLUA')
 
         return self.tests
 

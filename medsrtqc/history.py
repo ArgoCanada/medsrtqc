@@ -28,6 +28,13 @@ def test_index(test):
     test_numbers = list(range(1, 24)) + list(range(57, 64))
     return test_numbers.index(test)
 
+def qc_array(qc):
+    # hex to numeric
+    tests = read_qc_hex(qc)
+    test_indices = [i-1 for i in tests]
+
+    QC_array = np.zeros((30,))
+    QC_array[test_indices] = 1
 class QCx:
 
     @staticmethod
@@ -42,13 +49,10 @@ class QCx:
         return history_qctest
 
     @staticmethod
-    def to_array(qc):
-        # hex to numeric
-        tests = read_qc_hex(qc)
-        test_indices = [i-1 for i in tests]
-
-        QC_array = np.zeros((30,))
-        QC_array[test_indices] = 1
+    def qc_tests(qcp, qcf):
+        output_array = np.zeros((2, 30))
+        output_array[0,:] = qc_array(qcp)
+        output_array[1,:] = qc_array(qcf)
 
     @staticmethod
     def update_safely(qc, test, passfail):

@@ -36,7 +36,7 @@ class VMSProfile(Profile):
                 break
 
         self.add_qcp_qcf()
-        self.qc_tests = QCx.to_array(self.get_qc('QCP$'), self.get_qc('QCF$'))
+        self.qc_tests = QCx.qc_tests(self.get_qc('QCP$'), self.get_qc('QCF$'))
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
