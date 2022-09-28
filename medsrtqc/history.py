@@ -81,6 +81,17 @@ class QCx:
         else: # pragma: no cover
             raise ValueError(f'passfail input not recognized, must be one of {pass_list} or {fail_list}')
 
+    @staticmethod
+    def array_to_hex(qcx):
+        test_numbers = list(range(1, 24)) + list(range(57, 64))
+        num = 0
+
+        for i in qcx:
+            if i == 1:
+                num += 2**test_numbers[i]
+        
+        return hex(num)
+
     test_descriptions = [
         '1. Platform Identification test',
         '2. Impossible Date test',

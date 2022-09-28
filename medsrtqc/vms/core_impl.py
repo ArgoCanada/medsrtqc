@@ -219,3 +219,19 @@ class VMSProfile(Profile):
             if d['PCODE'] == v:
                 return d['CPARM']
 
+    def update_qcx(self):
+
+        if not hasattr(self, 'qc_tests'):
+            raise LookupError('Profile has no attribute qc_tests, call VMSProfile().prepare() to add it')
+        
+        data_copy = deepcopy(self._data)
+        for d in data_copy['PR_STN']['SURF_CODES']:
+            if d['PCODE'] == 'QCP$':
+                d['CPARM'] = QCx.array_to_hex(self.qc_tests[0,:])
+            elif d['PCODE'] == 'QCF$':
+                d['CPARM'] = QCx.array_to_hex(self.qc_tests[1,:])
+        
+        # update the underlying data
+        self._data = data_copy
+        # ...and recalculate the _by_param attribute
+        self._update_by_param_from_data()
