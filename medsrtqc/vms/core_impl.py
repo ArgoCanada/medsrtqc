@@ -186,7 +186,7 @@ class VMSProfile(Profile):
         for prof in self._data['PR_STN']['PROF']:
             i += 1
             if prof['PROF_TYPE'] == k:
-                adjusted_stn = prof
+                adjusted_stn = deepcopy(prof)
                 adjusted_stn['PROF_TYPE'] = nk
                 data_copy['PR_STN']['PROF'].insert(i, adjusted_stn)
 
