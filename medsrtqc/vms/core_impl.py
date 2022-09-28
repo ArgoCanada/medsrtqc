@@ -158,6 +158,9 @@ class VMSProfile(Profile):
         self._update_by_param_from_data()
 
     def add_new_pr_profile(self, k, nk):
+        """
+        Add a new variable to Profile. Data is stored in Profile._data['PR_PROFILE']
+        """
 
         data_copy = deepcopy(self._data)
 
@@ -193,6 +196,8 @@ class VMSProfile(Profile):
         if not adjusted_stn: # pragma: no cover
             raise ValueError(f"No such PR_STN_PROF for f{k}")
 
+        data_copy['PR_STN']['FXD']['NO_PROF'] = len(data_copy['PR_STN']['PROF'])
+
         # everything worked, so update the underlying data
         self._data = data_copy
         # ...and recalculate the _by_param attribute
@@ -205,6 +210,8 @@ class VMSProfile(Profile):
         for v in ['QCP$', 'QCF$']:
             if v not in current_vars:
                 data_copy['PR_STN']['SURF_CODES'].append(QCx.blank(v))
+        
+        data_copy['PR_STN']['FXD']['SPARMS'] = len(data_copy['PR_STN']['SURF_CODES'])
         
         # everything worked, so update the underlying data
         self._data = data_copy
