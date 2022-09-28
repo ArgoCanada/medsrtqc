@@ -42,7 +42,7 @@ class VMSProfile(Profile):
                 break
 
         self.add_qcp_qcf()
-        self.qc_tests = QCx.qc_tests(self.get_qc('QCP$'), self.get_qc('QCF$'))
+        self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
@@ -213,7 +213,7 @@ class VMSProfile(Profile):
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
     
-    def get_qc(self, v):
+    def get_surf_code(self, v):
 
         for d in self._data['PR_STN']['SURF_CODES']:
             if d['PCODE'] == v:

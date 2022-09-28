@@ -29,12 +29,17 @@ def test_index(test):
     return test_numbers.index(test)
 
 def qc_array(qc):
-    # hex to numeric
-    tests = read_qc_hex(qc)
-    test_indices = [i-1 for i in tests]
 
     QC_array = np.zeros((30,))
-    QC_array[test_indices] = 1
+
+    # hex to numeric
+    tests = read_qc_hex(qc)
+    if len(tests) != 0:
+        test_indices = [i-1 for i in tests]
+        QC_array[test_indices] = 1
+
+    return QC_array
+
 class QCx:
 
     @staticmethod
@@ -54,21 +59,27 @@ class QCx:
         output_array[0,:] = qc_array(qcp)
         output_array[1,:] = qc_array(qcf)
 
+        return output_array
+
     @staticmethod
     def update_safely(qc, test, passfail):
         qcp = 0
         qcf = 1
         ix = test_index(test)
-        if passfail in ['p', 'P', 'PASS', 'pass', 1, '1']:
+        pass_list = ['p', 'P', 'PASS', 'pass', 1, '1']
+        fail_list = ['f', 'F', 'FAIL', 'fail', 0, '0']
+
+        if passfail in pass_list:
             if qc[qcp, ix] == 0 and qc[qcf, ix] == 0:
                 qc[qcp, ix] = 1
-        
-        if passfail in ['f', 'fail', 'F', 'FAIL', 0, '0']:
+        elif passfail in fail_list:
             if qc[qcp, ix] == 0 and qc[qcf, ix] == 0:
                 qc[qcf, ix] = 1
             elif qc[qcp, ix] == 1:
                 qc[qcf, ix] = 1
                 qc[qcp, ix] = 0
+        else: # pragma: no cover
+            raise ValueError(f'passfail input not recognized, must be one of {pass_list} or {fail_list}')
 
     test_descriptions = [
         '1. Platform Identification test',
