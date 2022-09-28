@@ -30,7 +30,7 @@ def test_index(test):
 
 def qc_array(qc):
 
-    QC_array = np.zeros((30,))
+    QC_array = np.zeros((30,), dtype=int)
 
     # hex to numeric
     tests = read_qc_hex(qc)
@@ -55,7 +55,7 @@ class QCx:
 
     @staticmethod
     def qc_tests(qcp, qcf):
-        output_array = np.zeros((2, 30))
+        output_array = np.zeros((2, 30), dtype=int)
         output_array[0,:] = qc_array(qcp)
         output_array[1,:] = qc_array(qcf)
 
@@ -86,9 +86,9 @@ class QCx:
         test_numbers = list(range(1, 24)) + list(range(57, 64))
         num = 0
 
-        for i in qcx:
-            if i == 1:
-                num += 2**test_numbers[i]
+        for q, t in zip(qcx, test_numbers):
+            if q == 1:
+                num += 2**t
         
         return hex(num)
 
