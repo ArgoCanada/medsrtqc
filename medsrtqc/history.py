@@ -49,7 +49,7 @@ class QCx:
 
         history_qctest = OrderedDict(
             PCODE=v,
-            CPARM=hex(0).lstrip("0x").rstrip("L").ljust(10),
+            CPARM=hex(0),
             Q_PARM='0'
         )
 
@@ -92,7 +92,7 @@ class QCx:
             if q == 1:
                 num += 2**t
         
-        return hex(num).lstrip("0x").rstrip("L").ljust(10)
+        return hex(num)
 
     test_descriptions = [
         '1. Platform Identification test',
