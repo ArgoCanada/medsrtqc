@@ -48,7 +48,7 @@ class QCOperationContext:
         profile[k] = trace
 
         if hasattr(profile, 'qc_tests'):
-            self.update_qcx()
+            profile.update_qcx()
 
     def log(self, profile, message):
         """

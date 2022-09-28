@@ -3,6 +3,8 @@ from collections import OrderedDict
 import numpy as np
 
 def read_qc_hex(hex_code):
+    if len(hex_code.strip()) == 0:
+        hex_code = hex(0)
     num = int(hex_code, 16)
     # list to save test number in
     tests = []
@@ -47,7 +49,7 @@ class QCx:
 
         history_qctest = OrderedDict(
             PCODE=v,
-            CPARM=str(hex(0)),
+            CPARM=hex(0).lstrip("0x").rstrip("L").ljust(10),
             Q_PARM='0'
         )
 
@@ -90,7 +92,7 @@ class QCx:
             if q == 1:
                 num += 2**t
         
-        return hex(num)
+        return hex(num).lstrip("0x").rstrip("L").ljust(10)
 
     test_descriptions = [
         '1. Platform Identification test',

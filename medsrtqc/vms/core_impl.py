@@ -28,8 +28,6 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-        
-    
     def prepare(self):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
