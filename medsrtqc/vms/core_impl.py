@@ -172,7 +172,7 @@ class VMSProfile(Profile):
                 data_copy['PR_PROFILE'][i] = pr_profile
             # add the new variable
             if pr_profile['FXD']['PROF_TYPE'] == k:
-                adjusted_trace = pr_profile
+                adjusted_trace = deepcopy(pr_profile)
                 adjusted_trace['FXD']['PROF_TYPE'] = nk
                 new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
                 adjusted_trace['FXD']['MKEY'] = new_mkey
