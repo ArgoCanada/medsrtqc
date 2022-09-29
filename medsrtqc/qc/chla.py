@@ -14,7 +14,8 @@ class ChlaTest(QCOperation):
         self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
-        adjusted = self.profile['FLUA']
+        # adjusted = self.profile['FLUA']
+        adjusted = Trace(pres=chla.pres, value=chla.value, qc=chla.qc)
 
         dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
@@ -126,7 +127,8 @@ class ChlaTest(QCOperation):
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
-        self.update_trace('FLUA', adjusted)
+        # comment out until implemented as field in VMS file
+        # self.update_trace('FLUA', adjusted)
 
         return chla
 

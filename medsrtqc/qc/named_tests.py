@@ -36,20 +36,6 @@ class QCTest(QCOperation):
         """Run the test and return ``True`` if it passed or ``False`` otherwise"""
         return super().run_impl()
 
-class GlobalRangeTest(QCTest):
-    """
-    This test applies a gross filter on observed values for DOXY, TEMP_DOXY,
-    CHLA and BBP.
-    """
-
-    argo_id = 6
-    argo_binary_id = 64
-    argo_name = "Global Range test"
-    nvs_uri = "http://vocab.nerc.ac.uk/collection/R11/current/6/"
-
-    def run_impl(self):
-
-        raise NotImplementedError('Global range test not yet implemented')
 
 class PressureIncreasingTest(QCTest):
     """
@@ -118,53 +104,3 @@ class PressureIncreasingTest(QCTest):
 
         # fail for any flags set as BAD
         return not np.any(non_monotonic_elements | constant | running_maximum_constant)
-
-class SpikeTest(QCTest):
-    """
-    The difference between sequential measurements, where one measurement is
-    significantly different from adjacent ones, is a spike in both size and
-    gradient. For CHLA and BBP spikes contain information, mainly in case of
-    positive spikes. This is the reason why we set up a test to discriminate
-    negative spikes for these variables. For DOXY and TEMP_DOXY, negative and
-    positive spikes are flagged.
-    """
-
-    argo_id = 9
-    argo_binary_id = 512
-    argo_name = "Spike test"
-    nvs_uri = "http://vocab.nerc.ac.uk/collection/R11/current/9/"
-
-    def run_impl(self):
-
-        raise NotImplementedError('Global range test not yet implemented')
-
-class StuckValueTest(QCTest):
-    """
-    This test looks for all biogeochemical sensor outputs (i.e. 'i' and 'b'
-    parameter measurements transmitted by the float) in a vertical profile
-    being identical. 
-    """
-
-    argo_id = 13
-    argo_binary_id = 8192
-    argo_name = "Stuck Value test"
-    nvs_uri = "http://vocab.nerc.ac.uk/collection/R11/current/13/"
-
-    def run_impl(self):
-
-        raise NotImplementedError('Global range test not yet implemented')
-class FrozenProfileTest(QCTest):
-    """
-    This test is used to detect a float that reproduces the same profile (with
-    very small deviations) over and over again.
-    """
-
-    argo_id = 18
-    argo_binary_id = 261144
-    argo_name = "Frozen profile test"
-    nvs_uri = "http://vocab.nerc.ac.uk/collection/R11/current/18/"
-
-    def run_impl(self):
-
-        raise NotImplementedError('Frozen profile test not yet implemented')
-

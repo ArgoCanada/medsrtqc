@@ -47,9 +47,6 @@ class QCOperationContext:
         """
         profile[k] = trace
 
-        if hasattr(profile, 'qc_tests'):
-            profile.update_qcx()
-
     def log(self, profile, message):
         """
         Print a log message for a given :class:`Profile`.

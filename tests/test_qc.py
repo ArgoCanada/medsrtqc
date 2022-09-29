@@ -41,19 +41,6 @@ class TestUtil(unittest.TestCase):
         self.assertTrue(np.all(prof['PRES'].qc == Flag.NO_QC))
         self.assertTrue(np.all(prof['PRES'].adjusted_qc == Flag.GOOD))
 
-class TestGlobalRangeTest(unittest.TestCase):
-
-    def test_basic(self):
-        qc5 = np.repeat([Flag.NO_QC], 5)
-        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
-        pres.pres = pres.value
-        prof = Profile({
-            'PRES': pres,
-            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5),
-            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
-        })
-        with self.assertRaises(NotImplementedError):
-            tests.GlobalRangeTest().run(prof)
 
 class TestPressureIncreasingTest(unittest.TestCase):
 
@@ -120,47 +107,6 @@ class TestPressureIncreasingTest(unittest.TestCase):
         self.assertTrue(np.all(prof['TEMP'].qc == qc_expected))
         self.assertTrue(np.all(prof['PSAL'].qc == qc_expected))
 
-class TestSpikeTest(unittest.TestCase):
-
-    def test_basic(self):
-        qc5 = np.repeat([Flag.NO_QC], 5)
-        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
-        pres.pres = pres.value
-        prof = Profile({
-            'PRES': pres,
-            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5),
-            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
-        })
-        with self.assertRaises(NotImplementedError):
-            tests.SpikeTest().run(prof)
-
-
-class TestStuckValueTest(unittest.TestCase):
-
-    def test_basic(self):
-        qc5 = np.repeat([Flag.NO_QC], 5)
-        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
-        pres.pres = pres.value
-        prof = Profile({
-            'PRES': pres,
-            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5),
-            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
-        })
-        with self.assertRaises(NotImplementedError):
-            tests.StuckValueTest().run(prof)
-class TestFrozenProfileTest(unittest.TestCase):
-
-    def test_basic(self):
-        qc5 = np.repeat([Flag.NO_QC], 5)
-        pres =  Trace([0, 50, 100, 150, 200], qc=qc5)
-        pres.pres = pres.value
-        prof = Profile({
-            'PRES': pres,
-            'TEMP': Trace([10, 5, 7, 7, 7], qc=qc5),
-            'PSAL': Trace([8, 9, 10, 11, 12], qc=qc5)
-        })
-        with self.assertRaises(NotImplementedError):
-            tests.FrozenProfileTest().run(prof)
 
 if __name__ == '__main__':
     unittest.main()

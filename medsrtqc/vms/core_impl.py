@@ -7,7 +7,6 @@ import numpy as np
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros
 
-from ..history import QCx
 from ..core import Trace, Profile
 
 
@@ -28,19 +27,12 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self):
-        # this function so that read_vms_profiles() does not add information
-        # but also means it will need to be called before performing QC
-        data = self._data
         # save the wmo and cycle
         self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
         for d in data['PR_STN']['SURFACE']:
             if d['PCODE'] == 'PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
-
-        self.add_qcp_qcf()
-        self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
@@ -126,6 +118,27 @@ class VMSProfile(Profile):
         # to reduce the amount of copying.
         data_copy = deepcopy(self._data)
 
+        # should be another method like "add_new_pr_profile()"
+        if False:
+            # add an adjusted paramter that's a copy of the value param
+            adjusted_trace = None
+            for pr_profile in self._data['PR_PROFILE']:
+                if pr_profile['FXD']['PROF_TYPE'] == k:
+                    # figure out how to update pr_profile['FXD']
+                    # to have this do what you want (i.e., have the
+                    # corect PROF_TYPE)
+                    # modify pr_profile here
+                    pr_profile['FXD']['PROF_TYPE'] = 'FLU7'
+                    data_copy['PR_PROFILE'].append(pr_profile)
+
+            if not adjusted_trace:
+                raise ValueError("No such trace for k")
+
+            # (now set adjusted trace values)
+            # make a new trace whose value is adjusted
+            # and whose qc is adjusted_qc
+            # by doing self["FLU7"] = new_trace
+
         # PRES is special because it isn't stored explicitly
         # strategy is to check exact values and update the flag
         # for that
@@ -157,86 +170,3 @@ class VMSProfile(Profile):
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
 
-    def add_new_pr_profile(self, k, nk):
-        """
-        Add a new variable to Profile. Data is stored in Profile._data['PR_PROFILE']
-        """
-
-        data_copy = deepcopy(self._data)
-
-        adjusted_trace = None
-        i = 0
-        for pr_profile in self._data['PR_PROFILE']:
-            i += 1
-            # iterate MKEY if it comes after FLUA insertion
-            if adjusted_trace is not None:
-                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
-                pr_profile['FXD']['MKEY'] = new_mkey
-                data_copy['PR_PROFILE'][i] = pr_profile
-            # add the new variable
-            if pr_profile['FXD']['PROF_TYPE'] == k:
-                adjusted_trace = deepcopy(pr_profile)
-                adjusted_trace['FXD']['PROF_TYPE'] = nk
-                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
-                adjusted_trace['FXD']['MKEY'] = new_mkey
-                data_copy['PR_PROFILE'].insert(i, adjusted_trace)
-        
-        if not adjusted_trace: #pragma: no cover
-            raise ValueError(f"No such trace for f{k}")
-
-        adjusted_stn = None
-        i = 0
-        for prof in self._data['PR_STN']['PROF']:
-            i += 1
-            if prof['PROF_TYPE'] == k:
-                adjusted_stn = deepcopy(prof)
-                adjusted_stn['PROF_TYPE'] = nk
-                data_copy['PR_STN']['PROF'].insert(i, adjusted_stn)
-
-        if not adjusted_stn: # pragma: no cover
-            raise ValueError(f"No such PR_STN_PROF for f{k}")
-
-        data_copy['PR_STN']['FXD']['NO_PROF'] = len(data_copy['PR_STN']['PROF'])
-
-        # everything worked, so update the underlying data
-        self._data = data_copy
-        # ...and recalculate the _by_param attribute
-        self._update_by_param_from_data()
-    
-    def add_qcp_qcf(self):
-        data_copy = deepcopy(self._data)
-
-        current_vars = [d['PCODE'] for d in data_copy['PR_STN']['SURF_CODES']]
-        for v in ['QCP$', 'QCF$']:
-            if v not in current_vars:
-                data_copy['PR_STN']['SURF_CODES'].append(QCx.blank(v))
-        
-        data_copy['PR_STN']['FXD']['SPARMS'] = len(data_copy['PR_STN']['SURF_CODES'])
-        
-        # everything worked, so update the underlying data
-        self._data = data_copy
-        # ...and recalculate the _by_param attribute
-        self._update_by_param_from_data()
-    
-    def get_surf_code(self, v):
-
-        for d in self._data['PR_STN']['SURF_CODES']:
-            if d['PCODE'] == v:
-                return d['CPARM']
-
-    def update_qcx(self):
-
-        if not hasattr(self, 'qc_tests'):
-            raise LookupError('Profile has no attribute qc_tests, call VMSProfile().prepare() to add it')
-        
-        data_copy = deepcopy(self._data)
-        for d in data_copy['PR_STN']['SURF_CODES']:
-            if d['PCODE'] == 'QCP$':
-                d['CPARM'] = QCx.array_to_hex(self.qc_tests[0,:])
-            elif d['PCODE'] == 'QCF$':
-                d['CPARM'] = QCx.array_to_hex(self.qc_tests[1,:])
-        
-        # update the underlying data
-        self._data = data_copy
-        # ...and recalculate the _by_param attribute
-        self._update_by_param_from_data()
