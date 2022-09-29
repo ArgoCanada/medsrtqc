@@ -37,7 +37,7 @@ class TestChlaTest(unittest.TestCase):
 
         vms = read_vms_profiles(resource_path('bgc_vms.dat'))
         prof = vms[0]
-        prof.update_trace('FLU3', prof['B700'])
+        prof['FLU3'] = prof['B700']
         
         # reset the QC flags for CHLA
         ResetQCOperation().run(prof)

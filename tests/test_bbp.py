@@ -21,9 +21,10 @@ class TestBbpTest(unittest.TestCase):
 
     def test_basic(self):
         vms = read_nc_profile(
-            resource_path('bgc_vms.nc'),
+            resource_path('bgc_vms.dat'),
         )
         prof = vms[0]
+        prof.prepare()
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(prof)
