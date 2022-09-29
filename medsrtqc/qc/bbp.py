@@ -13,9 +13,9 @@ class bbpTest(QCOperation):
         
         if 'B700' in self.profile.keys():
             lower_lim = -0.000025
-        elif 'B532' in self.profile.keys():
+        elif 'B532' in self.profile.keys(): # pragma: no cover
             lower_lim = -0.000005
-        else:
+        else: # pragma: no cover
             self.log(f'No valid wavelength information found, setting lower limit of range check to -0.000025')
             lower_lim = -0.000025
 

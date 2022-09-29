@@ -60,11 +60,11 @@ class PrStnSurfaceEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
     def __init__(self, ver=1) -> None:
-        if ver == 1:
+        if ver == 1: 
             pcode_length = 4
         elif ver == 2:
             pcode_length = 150
-        else:
+        else: # pragma: no cover
             raise ValueError(f'Invalid version number: {ver}')
 
 
@@ -85,7 +85,7 @@ class PrStnSurfCodesEncoding(enc.StructEncoding):
         elif ver == 2:
             pcode_length = 150
             cparm_length = 512
-        else:
+        else: # pragma: no cover
             raise ValueError(f'Invalid version number: {ver}')
 
         super().__init__(

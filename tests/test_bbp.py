@@ -28,6 +28,7 @@ class TestBbpTest(unittest.TestCase):
             'PRES': ncp['PRES'],
             'TEMP': ncp['TEMP'],
             'PSAL': ncp['PSAL'],
+            'B700': ncp['BETA_BACKSCATTERING700'],
             'BBP$': ncp['BBP700'],
         })
         # this isn't true, but equally demonstrates ability to look up coefficients

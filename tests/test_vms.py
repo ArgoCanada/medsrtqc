@@ -205,6 +205,8 @@ class TestVMSRead(unittest.TestCase):
             written_content = BytesIO()
             read.write_vms_profiles(profiles, written_content)
             self.assertEqual(written_content.getvalue(), content)
+            read.write_vms_profiles(profiles, written_content, ver=2)
+            self.assertLess(written_content.getvalue(), content)
 
             fd, tmp = tempfile.mkstemp()
             try:
