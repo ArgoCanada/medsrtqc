@@ -38,6 +38,7 @@ class TestChlaTest(unittest.TestCase):
         # we don't have coeffs for 6904117
         ncp_writable.wmo = 6903026
         ncp_writable.cycle_number = 85
+        ncp_writable.qc_tests = np.zeros((2, 30), dtype=int)
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)
@@ -65,7 +66,7 @@ class TestChlaTest(unittest.TestCase):
         # we don't have coeffs for 6904117
         ncp_writable.wmo = 6903026
         ncp_writable.cycle_number = 85
-        ncp_writable.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
+        ncp_writable.qc_tests = np.zeros((2, 30), dtype=int)
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)
