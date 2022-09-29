@@ -20,31 +20,18 @@ class TestContext(QCOperationContext):
 class TestBbpTest(unittest.TestCase):
 
     def test_basic(self):
-        ncp = read_nc_profile(
-            resource_path('BR6904117_085.nc'),
-            resource_path('R6904117_085.nc')
+        vms = read_nc_profile(
+            resource_path('bgc_vms.nc'),
         )
-
-        ncp_writable = Profile({
-            'PRES': ncp['PRES'],
-            'TEMP': ncp['TEMP'],
-            'PSAL': ncp['PSAL'],
-            'B700': ncp['BETA_BACKSCATTERING700'],
-            'BBP$': ncp['BBP700'],
-        })
-        # this isn't true, but equally demonstrates ability to look up coefficients
-        # we don't have coeffs for 6904117
-        ncp_writable.wmo = 6903026
-        ncp_writable.cycle_number = 85
-        ncp_writable.qc_tests = np.zeros((2, 30), dtype=int)
+        prof = vms[0]
 
         # reset the QC flags for CHLA
-        ResetQCOperation().run(ncp_writable)
-        self.assertTrue(np.all(ncp_writable['BBP$'].qc == Flag.NO_QC))
+        ResetQCOperation().run(prof)
+        self.assertTrue(np.all(prof['BBP$'].qc == Flag.NO_QC))
 
         test = bbpTest()
-        test.run(ncp_writable, context=TestContext())
-        self.assertTrue(np.all(ncp_writable['BBP$'].qc == Flag.GOOD))
+        test.run(prof, context=TestContext())
+        self.assertTrue(np.all(prof['BBP$'].qc == Flag.GOOD))
 
     def test_betasw(self):
 
@@ -52,7 +39,6 @@ class TestBbpTest(unittest.TestCase):
             resource_path('R6904117_085.nc')
         )
 
-        # betasw(P, T, S, lon, lat, wavelength, theta)
         beta_seawater = betasw(ncp['PRES'].value, ncp['TEMP'].value, ncp['PSAL'].value, 0, 0, 700, 70)
 
         self.assertTrue(np.all(beta_seawater[~np.isnan(beta_seawater)] > 0))
