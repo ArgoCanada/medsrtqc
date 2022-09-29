@@ -11,6 +11,7 @@ from medsrtqc.qc.operation import QCOperationContext
 from medsrtqc.qc.util import ResetQCOperation
 from medsrtqc.qc.flag import Flag
 from medsrtqc.qc.history import QCx
+from medsrtqc.vms.read import read_vms_profiles
 
 # quiet context for testing
 class TestContext(QCOperationContext):
@@ -20,9 +21,7 @@ class TestContext(QCOperationContext):
 class TestBbpTest(unittest.TestCase):
 
     def test_basic(self):
-        vms = read_nc_profile(
-            resource_path('bgc_vms.dat'),
-        )
+        vms = read_vms_profiles(resource_path('bgc_vms.dat'))
         prof = vms[0]
         prof.prepare()
 
