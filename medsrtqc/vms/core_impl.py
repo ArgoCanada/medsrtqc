@@ -39,8 +39,8 @@ class VMSProfile(Profile):
                 self.cycle_number = int(d['PARM'])
                 break
         
-        if 'FLU1' in self.profile.keys() and 'FLUA' not in self.profile.keys():
-            self.profile.add_new_pr_profile('FLU1', 'FLUA')
+        if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
+            self.add_new_pr_profile('FLU1', 'FLUA')
 
         self.add_qcp_qcf()
         self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
