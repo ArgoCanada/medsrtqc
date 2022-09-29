@@ -10,6 +10,7 @@ from medsrtqc.qc.bbp import bbpTest
 from medsrtqc.qc.operation import QCOperationContext
 from medsrtqc.qc.util import ResetQCOperation
 from medsrtqc.qc.flag import Flag
+from medsrtqc.qc.history import QCx
 
 # quiet context for testing
 class TestContext(QCOperationContext):
@@ -35,6 +36,7 @@ class TestBbpTest(unittest.TestCase):
         # we don't have coeffs for 6904117
         ncp_writable.wmo = 6903026
         ncp_writable.cycle_number = 85
+        ncp_writable.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
         # reset the QC flags for CHLA
         ResetQCOperation().run(ncp_writable)
