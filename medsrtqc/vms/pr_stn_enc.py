@@ -1,6 +1,8 @@
 
 from collections import OrderedDict
 from typing import BinaryIO
+
+from matplotlib.widgets import EllipseSelector
 from . import enc
 
 
@@ -57,9 +59,17 @@ class PrStnProfEncoding(enc.StructEncoding):
 class PrStnSurfaceEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver=1) -> None:
+        if ver == 1:
+            pcode_length = 4
+        elif ver == 2:
+            pcode_length = 150
+        else:
+            raise ValueError(f'Invalid version number: {ver}')
+
+
         super().__init__(
-            ('PCODE', enc.Character(4)),
+            ('PCODE', enc.Character(pcode_length)),
             ('PARM', enc.Real4()),
             ('Q_PARM', enc.Character(1))
         )
@@ -68,10 +78,19 @@ class PrStnSurfaceEncoding(enc.StructEncoding):
 class PrStnSurfCodesEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver=1) -> None:
+        if ver == 1:
+            pcode_length = 4
+            cparm_length = 10
+        elif ver == 2:
+            pcode_length = 150
+            cparm_length = 512
+        else:
+            raise ValueError(f'Invalid version number: {ver}')
+
         super().__init__(
-            ('PCODE', enc.Character(4)),
-            ('CPARM', enc.Character(10)),
+            ('PCODE', enc.Character(pcode_length)),
+            ('CPARM', enc.Character(cparm_length)),
             ('Q_PARM', enc.Character(1))
         )
 
@@ -95,12 +114,12 @@ class PrStnHistoryEncoding(enc.StructEncoding):
 class PrStnEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver=1) -> None:
         super().__init__(
             ('FXD', PrStnFxdEncoding()),
             ('PROF', enc.ArrayOf(PrStnProfEncoding(), max_length=1500)),
-            ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(), max_length=20)),
-            ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(), max_length=20)),
+            ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(ver), max_length=20)),
+            ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(ver), max_length=20)),
             ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(), max_length=100))
         )
 

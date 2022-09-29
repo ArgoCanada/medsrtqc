@@ -23,5 +23,5 @@ with contextlib.redirect_stderr(log_file):
 
     # export profiles with altered flags, CHLA_ADJUSTED likely populated
     f = open('output_file.dat', 'wb')
-    write_vms_profiles(profs, f)
+    write_vms_profiles(profs, f, ver=2)
     f.close()

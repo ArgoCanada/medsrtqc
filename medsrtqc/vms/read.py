@@ -3,11 +3,7 @@ from .core_impl import VMSProfile
 from .profiles_enc import PrStnAndPrProfilesEncoding
 from .enc import ArrayOf
 
-
-_file_encoding = ArrayOf(PrStnAndPrProfilesEncoding())
-
-
-def read_vms_profiles(src):
+def read_vms_profiles(src, ver=1):
     """
     Read a binary VMS file into a ``list()`` of :class:`VMSProfile`
     objects.
@@ -27,6 +23,8 @@ def read_vms_profiles(src):
         fill_value=1e+20)
     """
 
+    _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding(ver))
+
     data = None
     if isinstance(src, str):
         with open(src, 'rb') as f:
@@ -39,7 +37,7 @@ def read_vms_profiles(src):
     return [VMSProfile(item) for item in data]
 
 
-def write_vms_profiles(profiles, dest):
+def write_vms_profiles(profiles, dest, ver=1):
     """
     Write a binary VMS file from a ``list()`` of :class:`VMSProfile`
     objects.
@@ -54,6 +52,9 @@ def write_vms_profiles(profiles, dest):
     >>> with tempfile.TemporaryFile() as f:
     ...     write_vms_profiles(profiles, f)
     """
+
+    _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding(ver))
+
     for i, item in enumerate(profiles):
         if not isinstance(item, VMSProfile):
             msg = 'All items in `profiles` must be a VMSProfile objects.'
