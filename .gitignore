@@ -8,4 +8,5 @@ __pycache__
 docs/_build
 docs/README.rst
 docs/README_files
+*ocproc*
 # *.log
