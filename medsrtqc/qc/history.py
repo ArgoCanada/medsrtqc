@@ -68,8 +68,8 @@ class QCx:
         qcp = 0
         qcf = 1
         ix = test_index(test)
-        pass_list = ['p', 'P', 'PASS', 'pass', 1, '1']
-        fail_list = ['f', 'F', 'FAIL', 'fail', 0, '0']
+        pass_list = ['p', 'P', 'PASS', 'pass', 1, '1', True]
+        fail_list = ['f', 'F', 'FAIL', 'fail', 0, '0', False]
 
         if passfail in pass_list:
             if qc[qcp, ix] == 0 and qc[qcf, ix] == 0:

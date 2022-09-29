@@ -7,8 +7,8 @@ import numpy as np
 from numpy.ma import MaskedArray
 from numpy.ma.core import zeros
 
-from ..history import QCx
-from ..core import Trace, Profile
+from medsrtqc.qc.history import QCx
+from medsrtqc.core import Trace, Profile
 
 
 class VMSProfile(Profile):
