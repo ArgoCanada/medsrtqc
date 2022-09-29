@@ -6,6 +6,7 @@ from medsrtqc.resources import resource_path
 from medsrtqc.core import Trace
 from medsrtqc.qc.operation import QCOperation, QCOperationError
 from medsrtqc.qc.flag import Flag
+from medsrtqc.qc.history import QCx
 from medsrtqc.coefficient import coeff
 
 class ChlaTest(QCOperation):
@@ -15,6 +16,8 @@ class ChlaTest(QCOperation):
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
         adjusted = self.profile['FLUA']
+
+        all_passed = True
 
         dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
@@ -27,9 +30,11 @@ class ChlaTest(QCOperation):
 
         # global range test
         self.log('Applying global range test to CHLA')
-        values_outside_range = (chla.value < -0.1) | (chla.value > 100.0)
+        values_outside_range = (chla.value < -0.1) | (chla.value > 50.0)
         Flag.update_safely(chla.qc, Flag.BAD, values_outside_range)
         Flag.update_safely(adjusted.qc, Flag.BAD, values_outside_range)
+        QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
+        all_passed = all_passed and any(values_outside_range)
 
         # dark count test
         self.log('Checking for previous DARK_CHLA')
@@ -41,6 +46,7 @@ class ChlaTest(QCOperation):
         if dark_chla != last_dark_chla:
             self.log('LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD')
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
+            all_passed = False
         else: # pragma: no cover
             self.log('LAST_DARK_CHLA and DARK_CHLA match, leaving CHLA_QC flags as GOOD')
 
@@ -84,14 +90,15 @@ class ChlaTest(QCOperation):
             dark_prime_chla = last_dark_chla
             Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
             Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_BAD)
+            all_passed = False
         else:
             # test 4
             if dark_prime_chla != last_dark_chla:
-                # need to write function in ..coefficient to write LAST_DARK_CHLA to the coefficient file
                 self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
                 last_dark_chla = dark_prime_chla
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
                 Flag.update_safely(adjusted.qc, to=Flag.GOOD)
+                all_passed = False
 
         self.save_last_dark_chla(int(last_dark_chla))
 
@@ -107,8 +114,11 @@ class ChlaTest(QCOperation):
         median_chla = self.running_median(5)
         res = chla.value - median_chla
         spike_values = res < 2*np.percentile(res, 10)
+
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
         Flag.update_safely(adjusted.qc, Flag.BAD, spike_values)
+        all_passed = all_passed and any(spike_values)
+        QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
         
         # CHLA NPQ correction
         self.log('Performing Non-Photochemical Quenching (NPQ) test')
@@ -122,7 +132,10 @@ class ChlaTest(QCOperation):
                 self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
                 Flag.update_safely(adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
-
+                all_passed = False
+        
+        # update QCP/QCF
+        QCx.update_safely(self.profile.qc_tests, 63, all_passed)
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
