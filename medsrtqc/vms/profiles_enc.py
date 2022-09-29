@@ -9,10 +9,10 @@ from .pr_profile_enc import PrProfileEncoding
 class PrStnAndPrProfilesEncoding(enc.StructEncoding):
     """Encoding for a common grouping of PR_STN + all PR_PROFILEs"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver) -> None:
         super().__init__(
-            ('PR_STN', PrStnEncoding()),
-            ('PR_PROFILE', enc.ArrayOf(PrProfileEncoding()))
+            ('PR_STN', PrStnEncoding(ver)),
+            ('PR_PROFILE', enc.ArrayOf(PrProfileEncoding())),
         )
 
     def decode(self, file: BinaryIO, value=None) -> OrderedDict:

@@ -8,8 +8,6 @@ class preTestCheck(QCOperation):
     def run_impl(self):
 
         self.list_tests()
-        if 'FLU1' in self.profile.keys() and 'FLUA' not in self.profile.keys():
-            self.profile.add_new_pr_profile('FLU1', 'FLUA')
 
         return self.tests
 
