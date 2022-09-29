@@ -23,6 +23,7 @@ def read_vms_profiles(src, ver=1):
         fill_value=1e+20)
     """
 
+    global _file_encoding
     _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding(ver))
 
     data = None
@@ -52,7 +53,8 @@ def write_vms_profiles(profiles, dest, ver=1):
     >>> with tempfile.TemporaryFile() as f:
     ...     write_vms_profiles(profiles, f)
     """
-
+    
+    global _file_encoding
     _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding(ver))
 
     for i, item in enumerate(profiles):
