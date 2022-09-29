@@ -81,7 +81,7 @@ class QCx:
                 qc[qcf, ix] = 1
                 qc[qcp, ix] = 0
         else: # pragma: no cover
-            raise ValueError(f'passfail input not recognized, must be one of {pass_list} or {fail_list}')
+            raise ValueError(f'passfail input not recognized, must be one of {pass_list} to pass or {fail_list} to fail')
 
     @staticmethod
     def array_to_hex(qcx):
