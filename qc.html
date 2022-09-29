@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,8 +43,60 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core framework</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quality Control Operations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-medsrtqc.qc.operation">Common classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-medsrtqc.qc.named_tests">Named Argo QC tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-medsrtqc.qc.operation">Common classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation"><code class="docutils literal notranslate"><span class="pre">QCOperation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.error"><code class="docutils literal notranslate"><span class="pre">QCOperation.error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.log"><code class="docutils literal notranslate"><span class="pre">QCOperation.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.pyplot"><code class="docutils literal notranslate"><span class="pre">QCOperation.pyplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.run"><code class="docutils literal notranslate"><span class="pre">QCOperation.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.run_impl"><code class="docutils literal notranslate"><span class="pre">QCOperation.run_impl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperation.update_trace"><code class="docutils literal notranslate"><span class="pre">QCOperation.update_trace()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext"><code class="docutils literal notranslate"><span class="pre">QCOperationContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext.error"><code class="docutils literal notranslate"><span class="pre">QCOperationContext.error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext.log"><code class="docutils literal notranslate"><span class="pre">QCOperationContext.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext.pyplot"><code class="docutils literal notranslate"><span class="pre">QCOperationContext.pyplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationContext.update_trace"><code class="docutils literal notranslate"><span class="pre">QCOperationContext.update_trace()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationError"><code class="docutils literal notranslate"><span class="pre">QCOperationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.operation.QCOperationProfileContext"><code class="docutils literal notranslate"><span class="pre">QCOperationProfileContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.flag.Flag"><code class="docutils literal notranslate"><span class="pre">Flag</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.flag.Flag.label"><code class="docutils literal notranslate"><span class="pre">Flag.label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.flag.Flag.update_safely"><code class="docutils literal notranslate"><span class="pre">Flag.update_safely()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.flag.Flag.value"><code class="docutils literal notranslate"><span class="pre">Flag.value()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-medsrtqc.qc.named_tests">Named Argo QC tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.FrozenProfileTest"><code class="docutils literal notranslate"><span class="pre">FrozenProfileTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.FrozenProfileTest.run_impl"><code class="docutils literal notranslate"><span class="pre">FrozenProfileTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.GlobalRangeTest"><code class="docutils literal notranslate"><span class="pre">GlobalRangeTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.GlobalRangeTest.run_impl"><code class="docutils literal notranslate"><span class="pre">GlobalRangeTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.PressureIncreasingTest"><code class="docutils literal notranslate"><span class="pre">PressureIncreasingTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.PressureIncreasingTest.run_impl"><code class="docutils literal notranslate"><span class="pre">PressureIncreasingTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.QCTest"><code class="docutils literal notranslate"><span class="pre">QCTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.QCTest.run_impl"><code class="docutils literal notranslate"><span class="pre">QCTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.SpikeTest"><code class="docutils literal notranslate"><span class="pre">SpikeTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.SpikeTest.run_impl"><code class="docutils literal notranslate"><span class="pre">SpikeTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#medsrtqc.qc.named_tests.StuckValueTest"><code class="docutils literal notranslate"><span class="pre">StuckValueTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#medsrtqc.qc.named_tests.StuckValueTest.run_impl"><code class="docutils literal notranslate"><span class="pre">StuckValueTest.run_impl()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nc.html">NetCDF IO</a></li>
@@ -233,6 +286,32 @@ they (1) have an ID, binary ID,and NVS URI and (2) the
 check. Most tests also modify the input
 <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code></a> (e.g., to set flags).</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.FrozenProfileTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">FrozenProfileTest</span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.FrozenProfileTest" title="Permalink to this definition"></a></dt>
+<dd><p>This test is used to detect a float that reproduces the same profile (with
+very small deviations) over and over again.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.FrozenProfileTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.FrozenProfileTest.run_impl" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.GlobalRangeTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">GlobalRangeTest</span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.GlobalRangeTest" title="Permalink to this definition"></a></dt>
+<dd><p>This test applies a gross filter on observed values for DOXY, TEMP_DOXY,
+CHLA and BBP.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.GlobalRangeTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.GlobalRangeTest.run_impl" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.qc.named_tests.PressureIncreasingTest">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">PressureIncreasingTest</span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.PressureIncreasingTest" title="Permalink to this definition"></a></dt>
 <dd><p>The pressure increasing test checks for monotonically increasing
@@ -272,6 +351,37 @@ names, binary IDs, and specific descriptions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="medsrtqc.qc.named_tests.QCTest.run_impl">
 <span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.QCTest.run_impl" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.SpikeTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">SpikeTest</span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.SpikeTest" title="Permalink to this definition"></a></dt>
+<dd><p>The difference between sequential measurements, where one measurement is
+significantly different from adjacent ones, is a spike in both size and
+gradient. For CHLA and BBP spikes contain information, mainly in case of
+positive spikes. This is the reason why we set up a test to discriminate
+negative spikes for these variables. For DOXY and TEMP_DOXY, negative and
+positive spikes are flagged.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.SpikeTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.SpikeTest.run_impl" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.StuckValueTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.qc.named_tests.</span></span><span class="sig-name descname"><span class="pre">StuckValueTest</span></span><a class="headerlink" href="#medsrtqc.qc.named_tests.StuckValueTest" title="Permalink to this definition"></a></dt>
+<dd><p>This test looks for all biogeochemical sensor outputs (i.e. ‘i’ and ‘b’
+parameter measurements transmitted by the float) in a vertical profile
+being identical.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="medsrtqc.qc.named_tests.StuckValueTest.run_impl">
+<span class="sig-name descname"><span class="pre">run_impl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.qc.named_tests.StuckValueTest.run_impl" title="Permalink to this definition"></a></dt>
 <dd><p>Run the test and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if it passed or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p>
 </dd></dl>
 
