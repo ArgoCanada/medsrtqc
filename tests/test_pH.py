@@ -20,9 +20,6 @@ class TestpHTest(unittest.TestCase):
     def test_basic(self):
         vms = read_vms_profiles(resource_path('bgc_vms.dat'))
         prof = vms[0]
-        # there isn't pH in this file so fake it
-        prof['PHPH'] = prof['B700']
-        prof['PHTO'] = prof['FLU1']
         prof.prepare()
 
         # reset the QC flags for CHLA
