@@ -1,6 +1,7 @@
 
 from medsrtqc.qc.chla import ChlaTest
 from medsrtqc.qc.bbp import bbpTest
+from medsrtqc.qc.ph import pHTest
 from medsrtqc.qc.operation import QCOperation
 
 class preTestCheck(QCOperation):
@@ -18,5 +19,7 @@ class preTestCheck(QCOperation):
             tests.append(ChlaTest())
         if 'BBP$' in self.profile.keys():
             tests.append(bbpTest())
+        if 'PHPH' in self.profile.keys():
+            tests.append(pHTest())
 
         self.tests = tests
