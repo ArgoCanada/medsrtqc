@@ -21,9 +21,7 @@ class TestPreCheckTest(unittest.TestCase):
 
         check = preTestCheck()
         tests = check.run(p, context=TestContext())
-        self.assertTrue(len(tests) == 2)
-
-        self.assertTrue('FLUA' in p.keys())
+        self.assertTrue(len(tests) == 3)
 
 if __name__ == '__main__':
     unittest.main()

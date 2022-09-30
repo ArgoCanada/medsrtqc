@@ -2,7 +2,6 @@
 import unittest
 import numpy as np
 
-from medsrtqc.core import Profile
 from medsrtqc.betasw import betasw
 from medsrtqc.resources import resource_path
 from medsrtqc.nc import read_nc_profile
@@ -10,7 +9,6 @@ from medsrtqc.qc.bbp import bbpTest
 from medsrtqc.qc.operation import QCOperationContext
 from medsrtqc.qc.util import ResetQCOperation
 from medsrtqc.qc.flag import Flag
-from medsrtqc.qc.history import QCx
 from medsrtqc.vms.read import read_vms_profiles
 
 # quiet context for testing
