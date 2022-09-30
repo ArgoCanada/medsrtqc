@@ -2,7 +2,6 @@
 from collections import OrderedDict
 from typing import BinaryIO
 
-from matplotlib.widgets import EllipseSelector
 from . import enc
 
 
