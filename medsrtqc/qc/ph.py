@@ -10,6 +10,7 @@ class pHTest(QCOperation):
         pH_total = self.profile['PHTO']
 
         # set flags to zero, there are no QC tests for pH yet
+        self.log('No RTQC tests for pH are currently defined, setting all flags to 0.')
         Flag.update_safely(pH_free.qc, Flag.NO_QC)
         Flag.update_safely(pH_total.qc, Flag.NO_QC)
 
