@@ -3,7 +3,7 @@ from .core_impl import VMSProfile
 from .profiles_enc import PrStnAndPrProfilesEncoding
 from .enc import ArrayOf
 
-def read_vms_profiles(src, ver=1):
+def read_vms_profiles(src, ver='vms'):
     """
     Read a binary VMS file into a ``list()`` of :class:`VMSProfile`
     objects.
@@ -38,7 +38,7 @@ def read_vms_profiles(src, ver=1):
     return [VMSProfile(item) for item in data]
 
 
-def write_vms_profiles(profiles, dest, ver=1):
+def write_vms_profiles(profiles, dest, ver='vms'):
     """
     Write a binary VMS file from a ``list()`` of :class:`VMSProfile`
     objects.

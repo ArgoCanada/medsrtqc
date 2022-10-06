@@ -3,12 +3,20 @@ from collections import OrderedDict
 from typing import BinaryIO
 
 from . import enc
-
+from . import enc_win
 
 class PrStnFxdEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/FXD structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+
+        if ver == 'vms':
+            val_encoding = enc.Real4()
+        elif ver == 'win':
+            val_encoding = enc_win.Float()
+        else: # pragma: no cover
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
+
         super().__init__(
             ('MKEY', enc.Character(8)),
             ('ONE_DEG_SQ', enc.Integer4()),
@@ -22,8 +30,8 @@ class PrStnFxdEncoding(enc.StructEncoding):
             ('STREAM_SOURCE', enc.Character(1)),
             ('U_FLAG', enc.Character(1)),
             ('STN_NUMBER', enc.Integer2()),
-            ('LATITUDE', enc.Real4()),
-            ('LONGITUDE', enc.Real4()),
+            ('LATITUDE', val_encoding),
+            ('LONGITUDE', val_encoding),
             ('Q_POS', enc.Character(1)),
             ('Q_DATE_TIME', enc.Character(1)),
             ('Q_RECORD', enc.Character(1)),
@@ -44,32 +52,42 @@ class PrStnFxdEncoding(enc.StructEncoding):
 class PrStnProfEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+
+        if ver == 'vms':
+            val_encoding = enc.Real4()
+        elif ver == 'win':
+            val_encoding = enc_win.Float()
+        else: # pragma: no cover
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
+
         super().__init__(
             ('NO_SEG', enc.Integer2()),
             ('PROF_TYPE', enc.Character(4)),
             ('DUP_FLAG', enc.Character(1)),
             ('DIGIT_CODE', enc.Character(1)),
             ('STANDARD', enc.Character(1)),
-            ('DEEP_DEPTH', enc.Real4())
+            ('DEEP_DEPTH', val_encoding)
         )
 
 
 class PrStnSurfaceEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURFACE structure"""
 
-    def __init__(self, ver=1) -> None:
-        if ver == 1: 
+    def __init__(self, ver='vms') -> None:
+        if ver == 'vms': 
             pcode_length = 4
-        elif ver == 2:
+            val_encoding = enc.Real4()
+        elif ver == 'win':
             pcode_length = 150
+            val_encoding = enc_win.Float()
         else: # pragma: no cover
-            raise ValueError(f'Invalid version number: {ver}')
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
 
 
         super().__init__(
             ('PCODE', enc.Character(pcode_length)),
-            ('PARM', enc.Real4()),
+            ('PARM', val_encoding),
             ('Q_PARM', enc.Character(1))
         )
 
@@ -77,15 +95,15 @@ class PrStnSurfaceEncoding(enc.StructEncoding):
 class PrStnSurfCodesEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/SURF_CODES structure"""
 
-    def __init__(self, ver=1) -> None:
-        if ver == 1:
+    def __init__(self, ver='vms') -> None:
+        if ver == 'vms':
             pcode_length = 4
             cparm_length = 10
-        elif ver == 2:
+        elif ver == 'win':
             pcode_length = 150
             cparm_length = 512
         else: # pragma: no cover
-            raise ValueError(f'Invalid version number: {ver}')
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
 
         super().__init__(
             ('PCODE', enc.Character(pcode_length)),
@@ -97,7 +115,14 @@ class PrStnSurfCodesEncoding(enc.StructEncoding):
 class PrStnHistoryEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/HISTORY structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+        if ver == 'vms':
+            val_encoding = enc.Real4()
+        elif ver == 'win':
+            val_encoding = enc_win.Float()
+        else: # pragma: no cover
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
+
         super().__init__(
             ('IDENT_CODE', enc.Character(2)),
             ('PRC_CODE', enc.Character(4)),
@@ -105,8 +130,8 @@ class PrStnHistoryEncoding(enc.StructEncoding):
             ('PRC_DATE', enc.Integer4()),
             ('ACT_CODE', enc.Character(2)),
             ('ACT_PARM', enc.Character(4)),
-            ('AUX_ID', enc.Real4()),
-            ('O_VALUE', enc.Real4())
+            ('AUX_ID', val_encoding),
+            ('O_VALUE', val_encoding)
         )
 
 
@@ -115,11 +140,11 @@ class PrStnEncoding(enc.StructEncoding):
 
     def __init__(self, ver=1) -> None:
         super().__init__(
-            ('FXD', PrStnFxdEncoding()),
-            ('PROF', enc.ArrayOf(PrStnProfEncoding(), max_length=1500)),
+            ('FXD', PrStnFxdEncoding(ver)),
+            ('PROF', enc.ArrayOf(PrStnProfEncoding(ver), max_length=1500)),
             ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(ver), max_length=20)),
             ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(ver), max_length=20)),
-            ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(), max_length=100))
+            ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(ver), max_length=100))
         )
 
     def decode(self, file: BinaryIO, value=None):

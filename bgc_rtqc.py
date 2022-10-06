@@ -6,7 +6,7 @@ import contextlib
 from medsrtqc.vms import read_vms_profiles, write_vms_profiles
 from medsrtqc.qc.check import preTestCheck
 
-with open(f'logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log') as log_file:
+with open(f'logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') as log_file:
     with contextlib.redirect_stderr(log_file):
 
         # read from command line
@@ -26,5 +26,5 @@ with open(f'logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log') as log_fi
         # export profiles with altered flags, CHLA_ADJUSTED likely populated
         output_file = input_file.replace('.dat', '_output.dat')
         f = open(output_file, 'wb')
-        write_vms_profiles(profs, f, ver=2)
+        write_vms_profiles(profs, f, ver='win')
         f.close()
