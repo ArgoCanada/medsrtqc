@@ -151,6 +151,8 @@ class ArrayOf(Encoding):
         if self._max_length is not None and len(value) > self._max_length:
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
+            print(value)
+            print(self._encoding)
             self._encoding.encode(file, item)
 
 
