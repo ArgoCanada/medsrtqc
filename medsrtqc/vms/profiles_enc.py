@@ -10,6 +10,7 @@ class PrStnAndPrProfilesEncoding(enc.StructEncoding):
     """Encoding for a common grouping of PR_STN + all PR_PROFILEs"""
 
     def __init__(self, ver) -> None:
+        self._ver = ver
         super().__init__(
             ('PR_STN', PrStnEncoding(ver)),
             ('PR_PROFILE', enc.ArrayOf(PrProfileEncoding(ver))),

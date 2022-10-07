@@ -1,7 +1,7 @@
 
 from .core_impl import VMSProfile
 from .profiles_enc import PrStnAndPrProfilesEncoding
-from .enc import ArrayOf
+from .enc import ArrayOf, LineEnding
 
 def read_vms_profiles(src, ver='vms'):
     """
@@ -66,7 +66,13 @@ def write_vms_profiles(profiles, dest, ver='vms'):
     if isinstance(dest, str):
         with open(dest, 'wb') as f:
             _file_encoding.encode(f, [item._data for item in profiles],)
+            if ver == 'win':
+                LineEnding().encode(f)
     elif hasattr(dest, 'write'):
         _file_encoding.encode(dest, [item._data for item in profiles],)
+        if ver == 'win':
+            LineEnding().encode(dest)
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")
+    
+    

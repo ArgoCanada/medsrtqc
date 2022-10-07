@@ -50,6 +50,7 @@ class PrProfileEncoding(enc.StructEncoding):
     """The encoding strategy for the PR_PROFILE structure"""
 
     def __init__(self, ver='vms') -> None:
+        self._ver = ver
         super().__init__(
             ('FXD', PrProfileFxdEncoding()),
             ('PROF', enc.ArrayOf(PrProfileProfEncoding(ver), max_length=1500))

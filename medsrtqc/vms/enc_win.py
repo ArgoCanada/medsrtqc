@@ -1,7 +1,7 @@
 
 from typing import BinaryIO
+from collections import OrderedDict
 from struct import pack, unpack
-
 
 class Encoding:  # pragma: no cover
     """A base class for binary encoding and decoding values"""
@@ -37,6 +37,19 @@ class Padding(Encoding):
     def encode(self, file: BinaryIO, value=None):
         file.write(b'\x00' * self._length)
 
+class LineEnding(Encoding):
+    """Explicitly encode carriage returns in structure definitions"""
+
+    def sizeof(self):
+        return 2
+
+    def decode(self, file: BinaryIO, value=None):
+        file.read(2)
+        return None
+    
+    def encode(self, file: BinaryIO, value=None):
+        file.write(b'\r\n')
+
 class Float(Encoding):
     """Double precision float value"""
 
@@ -61,3 +74,53 @@ class Float(Encoding):
         float_value_big_endian = unpack ('>f', pack('>l', float_value_big_endian - 2 ** 24))[0]
         
         return float_value_big_endian
+
+class StructEncoding(Encoding):
+    """A struct containing named values of other encodings"""
+
+    def __init__(self, *encodings) -> None:
+        self._encodings = OrderedDict()
+        n_pad = 0
+        n_eol = 0
+        for item in encodings:
+            if isinstance(item, Padding):
+                name = '___padding_' + str(n_pad)
+                encoding = item
+                n_pad += 1
+            elif isinstance(item, LineEnding):
+                name = '___lineending_' + str(n_eol)
+                encoding = item
+                n_eol += 1
+            else:
+                name, encoding = item
+
+            self._encodings[name] = encoding
+
+    def sizeof(self, value=None):
+        if value is None:
+            value = {key: None for key in self._encodings.keys()}
+
+        size = 0
+        for key in self._encodings.keys():
+            size += self._encodings[key].sizeof(value[key])
+        return size
+
+    def decode(self, file: BinaryIO, value=None):
+        if value is None:
+            value = OrderedDict()
+        for name, encoding in self._encodings.items():
+            if isinstance(encoding, Padding) or isinstance(encoding, LineEnding):
+                encoding.decode(file)
+            else:
+                value[name] = encoding.decode(file)
+        return value
+
+    def encode(self, file: BinaryIO, value):
+        _lineending = LineEnding()
+        for name, Encoding in self._encodings.items():
+            if name == 'PR_PROFILE':
+                _lineending.encode(file)
+            if name in value:
+                Encoding.encode(file, value[name])
+            else:
+                Encoding.encode(file)

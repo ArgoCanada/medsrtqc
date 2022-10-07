@@ -151,8 +151,6 @@ class ArrayOf(Encoding):
         if self._max_length is not None and len(value) > self._max_length:
             raise ValueError(f'len(value) greater than allowed max length ({self._max_length})')
         for item in value:
-            print(value)
-            print(self._encoding)
             self._encoding.encode(file, item)
 
 
@@ -198,6 +196,8 @@ class StructEncoding(Encoding):
 
     def encode(self, file: BinaryIO, value):
         for name, Encoding in self._encodings.items():
+            if name == 'PR_PROFILE' and Encoding._encoding._ver == 'win':
+                LineEnding().encode(file)
             if name in value:
                 Encoding.encode(file, value[name])
             else:
