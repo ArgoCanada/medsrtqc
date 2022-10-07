@@ -138,7 +138,7 @@ class PrStnHistoryEncoding(enc.StructEncoding):
 class PrStnEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
-    def __init__(self, ver=1) -> None:
+    def __init__(self, ver='vms') -> None:
         super().__init__(
             ('FXD', PrStnFxdEncoding(ver)),
             ('PROF', enc.ArrayOf(PrStnProfEncoding(ver), max_length=1500)),

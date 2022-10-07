@@ -12,7 +12,7 @@ class PrStnAndPrProfilesEncoding(enc.StructEncoding):
     def __init__(self, ver) -> None:
         super().__init__(
             ('PR_STN', PrStnEncoding(ver)),
-            ('PR_PROFILE', enc.ArrayOf(PrProfileEncoding())),
+            ('PR_PROFILE', enc.ArrayOf(PrProfileEncoding(ver))),
         )
 
     def decode(self, file: BinaryIO, value=None) -> OrderedDict:
@@ -23,6 +23,7 @@ class PrStnAndPrProfilesEncoding(enc.StructEncoding):
         self._encodings['PR_STN'].decode(file, value['PR_STN'])
 
         n_pr_profile = sum(p['NO_SEG'] for p in value['PR_STN']['PROF'])
+        print(value['PR_STN']['PROF'])
         value['PR_PROFILE'] = [None] * n_pr_profile
         self._encodings['PR_PROFILE'].decode(file, value['PR_PROFILE'])
 

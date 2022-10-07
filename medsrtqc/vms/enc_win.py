@@ -1,8 +1,6 @@
 
-from io import BytesIO
-from typing import BinaryIO, Iterable
-from struct import pack, unpack, calcsize
-from collections import OrderedDict
+from typing import BinaryIO
+from struct import pack, unpack
 
 
 class Encoding:  # pragma: no cover
@@ -43,7 +41,7 @@ class Float(Encoding):
     """Double precision float value"""
 
     def sizeof(self, value=None):
-        return 8
+        return 4
 
     def encode(self, file: BinaryIO, value):
 
@@ -56,7 +54,9 @@ class Float(Encoding):
 
     def decode(self, file: BinaryIO, value=None) -> float:
 
-        float_value_little_endian = unpack('f',file.read(4))[0]                
+        encoded = file.read(4)
+        # print(encoded)
+        float_value_little_endian = unpack('f', encoded)[0]                
         float_value_big_endian = unpack('>l', pack('>f', float_value_little_endian))[0]  
         # we need to force bit 24 to be a 1 before encoding as a mid-endian float
         float_value_big_endian = unpack ('>f', pack('>l', float_value_big_endian - 2 ** 24))[0]

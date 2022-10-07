@@ -65,8 +65,8 @@ def write_vms_profiles(profiles, dest, ver='vms'):
 
     if isinstance(dest, str):
         with open(dest, 'wb') as f:
-            _file_encoding.encode(f, [item._data for item in profiles])
+            _file_encoding.encode(f, [item._data for item in profiles],)
     elif hasattr(dest, 'write'):
-        _file_encoding.encode(dest, [item._data for item in profiles])
+        _file_encoding.encode(dest, [item._data for item in profiles],)
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")
