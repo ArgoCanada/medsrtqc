@@ -23,7 +23,6 @@ class PrStnAndPrProfilesEncoding(enc.StructEncoding):
         self._encodings['PR_STN'].decode(file, value['PR_STN'])
 
         n_pr_profile = sum(p['NO_SEG'] for p in value['PR_STN']['PROF'])
-        print(value['PR_STN']['PROF'])
         value['PR_PROFILE'] = [None] * n_pr_profile
         self._encodings['PR_PROFILE'].decode(file, value['PR_PROFILE'])
 

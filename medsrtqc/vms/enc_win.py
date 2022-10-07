@@ -55,7 +55,6 @@ class Float(Encoding):
     def decode(self, file: BinaryIO, value=None) -> float:
 
         encoded = file.read(4)
-        # print(encoded)
         float_value_little_endian = unpack('f', encoded)[0]                
         float_value_big_endian = unpack('>l', pack('>f', float_value_little_endian))[0]  
         # we need to force bit 24 to be a 1 before encoding as a mid-endian float

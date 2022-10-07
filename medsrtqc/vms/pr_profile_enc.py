@@ -63,7 +63,6 @@ class PrProfileEncoding(enc.StructEncoding):
         self._encodings['FXD'].decode(file, value['FXD'])
 
         n_prof = value['FXD']['NO_DEPTHS']
-        print(value['FXD'])
         value['PROF'] = [None] * n_prof
         self._encodings['PROF'].decode(file, value['PROF'])
 

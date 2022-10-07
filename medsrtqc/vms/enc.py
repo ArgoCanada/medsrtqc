@@ -97,7 +97,6 @@ class Character(Encoding):
         encoded = encoded.replace(b'\r\n', b'')
         diff = init_size - len(encoded)
         while diff > 0 and encoded != b'':
-            print(encoded)
             encoded += file.read(diff).replace(b'\r\n', b'')
             diff = init_size - len(encoded)
         return encoded.decode(self._encoding)
@@ -140,8 +139,6 @@ class ArrayOf(Encoding):
                     peek2 = file.read(1)
                     if peek2 == b'\n':
                         peek3 = file.read(1)
-                print(peek1)
-                print(peek2)
                 file.seek(current_loc)
         else:
             # if we know exactly how may to expect, read that
