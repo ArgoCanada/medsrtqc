@@ -195,14 +195,10 @@ class StructEncoding(Encoding):
         return value
 
     def encode(self, file: BinaryIO, value):
-        next_mkey = False
         for name, Encoding in self._encodings.items():
             if name == 'PR_PROFILE' and Encoding._encoding._ver == 'win':
                 LineEnding().encode(file)
-                next_mkey = True
-            elif name == 'MKEY' and next_mkey:
-                LineEnding().encode(file)
-                next_mkey = False
+                
             if name in value:
                 Encoding.encode(file, value[name])
             else:
