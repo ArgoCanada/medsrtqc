@@ -28,7 +28,7 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self):
+    def prepare(self, tests=[]):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
         data = self._data
@@ -42,8 +42,10 @@ class VMSProfile(Profile):
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
 
-        self.add_qcp_qcf()
-        self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
+        # don't add QCP/QCF if we are not going to perform any tests
+        if len(tests) > 0:
+            self.add_qcp_qcf()
+            self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])

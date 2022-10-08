@@ -11,20 +11,28 @@ with open(f'logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') as l
 
         # read from command line
         input_file = sys.argv[1]
-        profs = read_vms_profiles(input_file)
+        try:
+            profs = read_vms_profiles(input_file,  ver='win')
+        except:
+            try:
+                profs = read_vms_profiles(input_file, ver='vms')
+            except:
+                raise IOError('Could not read file with either VMS or Windows encoding')
 
         # run tests on appropriate bgc variables
         check = preTestCheck()
         for p in profs:
-            # add FLUA if appropriate, and QCP/QCF variables if they don't exist
-            p.prepare()
             # which tests to do based on variables in profile
             tests = check.run(p)
+            # add FLUA if appropriate, and QCP/QCF variables if they don't exist
+            p.prepare(tests)
             for t in tests:
                 t.run(p)
 
-        # export profiles with altered flags, CHLA_ADJUSTED likely populated
-        output_file = input_file.replace('.dat', '_output.dat').replace('vms', 'win')
-        f = open(output_file, 'wb')
-        write_vms_profiles(profs, f, ver='win')
-        f.close()
+        # only export a file if we actually did anything to it
+        if len(tests) > 0:
+            # export profiles with altered flags, CHLA_ADJUSTED likely populated
+            output_file = input_file.replace('.dat', '_output.dat').replace('vms', 'win')
+            f = open(output_file, 'wb')
+            write_vms_profiles(profs, f, ver='win')
+            f.close()
