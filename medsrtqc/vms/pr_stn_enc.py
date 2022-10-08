@@ -10,6 +10,8 @@ class PrStnFxdEncoding(enc.StructEncoding):
 
     def __init__(self, ver='vms') -> None:
 
+        self._ver = ver
+
         if ver == 'vms':
             val_encoding = enc.Real4()
         elif ver == 'win':

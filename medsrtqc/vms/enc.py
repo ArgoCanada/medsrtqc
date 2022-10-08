@@ -198,8 +198,9 @@ class StructEncoding(Encoding):
         for name, Encoding in self._encodings.items():
             if name == 'PR_PROFILE' and Encoding._encoding._ver == 'win':
                 LineEnding().encode(file)
-            elif name == 'MKEY' and value[name][-2:] == '00':
-                LineEnding().encode(file)
+            elif name == 'FXD' and value[name]['MKEY'][-2:] == '00':
+                if Encoding._ver == 'win':
+                    LineEnding().encode(file)
 
             if name in value:
                 Encoding.encode(file, value[name])
