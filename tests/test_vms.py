@@ -208,7 +208,8 @@ class TestVMSRead(unittest.TestCase):
             # now test with longer encoding
             written_content = BytesIO()
             read.write_vms_profiles(profiles, written_content, ver='win')
-            self.assertGreater(written_content.getvalue(), content)
+            written_content.read()
+            self.assertGreater(written_content.tell(), f.tell())
 
             fd, tmp = tempfile.mkstemp()
             try:
