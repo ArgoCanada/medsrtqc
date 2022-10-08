@@ -37,7 +37,7 @@ def qc_array(qc):
     # hex to numeric
     tests = read_qc_hex(qc)
     if len(tests) != 0:
-        test_indices = [i-1 for i in tests]
+        test_indices = [test_index(t) for t in tests]
         QC_array[test_indices] = 1
 
     return QC_array

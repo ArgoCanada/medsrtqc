@@ -27,7 +27,7 @@ class bbpTest(QCOperation):
         values_outside_range = (bbp.value < lower_lim) | (bbp.value > 0.1)
         Flag.update_safely(bbp.qc, Flag.PROBABLY_BAD, values_outside_range)
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
-        all_passed = all_passed and any(values_outside_range)
+        all_passed = all_passed and not any(values_outside_range)
 
         # BBP spike test
         self.log('Performing negative spike test')
@@ -35,7 +35,7 @@ class bbpTest(QCOperation):
         res = bbp.value - median_bbp
         spike_values = res < 2*np.percentile(res, 10)
         Flag.update_safely(bbp.qc, Flag.BAD, spike_values)
-        all_passed = all_passed and any(spike_values)
+        all_passed = all_passed and not any(spike_values)
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
 
         # update QCP/QCF
