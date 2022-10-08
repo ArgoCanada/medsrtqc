@@ -24,7 +24,7 @@ with open(f'logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') as l
                 t.run(p)
 
         # export profiles with altered flags, CHLA_ADJUSTED likely populated
-        output_file = input_file.replace('.dat', '_output.dat')
+        output_file = input_file.replace('.dat', '_output.dat').replace('vms', 'win')
         f = open(output_file, 'wb')
         write_vms_profiles(profs, f, ver='win')
         f.close()
