@@ -35,7 +35,7 @@ class VMSProfile(Profile):
         # save the wmo and cycle
         self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
         for d in data['PR_STN']['SURFACE']:
-            if d['PCODE'] == 'PFN$':
+            if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
         
