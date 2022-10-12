@@ -144,8 +144,8 @@ class PrStnEncoding(enc.StructEncoding):
         super().__init__(
             ('FXD', PrStnFxdEncoding(ver)),
             ('PROF', enc.ArrayOf(PrStnProfEncoding(ver), max_length=1500)),
-            ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(ver), max_length=20)),
-            ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(ver), max_length=20)),
+            ('SURFACE', enc.ArrayOf(PrStnSurfaceEncoding(ver), max_length=None)),
+            ('SURF_CODES', enc.ArrayOf(PrStnSurfCodesEncoding(ver), max_length=None)),
             ('HISTORY', enc.ArrayOf(PrStnHistoryEncoding(ver), max_length=100))
         )
 
