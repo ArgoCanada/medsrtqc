@@ -36,7 +36,7 @@ with open(f'bgc_logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') 
         # only export a file if we actually did anything to it
         if len(tests) > 0:
             # export profiles with altered flags, CHLA_ADJUSTED likely populated
-            output_file = input_file.replace('.dat', '_output.dat')
+            output_file = input_file.replace('.', '_output.')
             f = open(output_file, 'wb')
             write_vms_profiles(profs, f, ver=ver)
             f.close()

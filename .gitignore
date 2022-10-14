@@ -10,3 +10,5 @@ docs/README.rst
 docs/README_files
 *.log
 *.zip
+data/
+ref_scripts/
