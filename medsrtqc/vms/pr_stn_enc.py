@@ -11,6 +11,7 @@ class PrStnFxdEncoding(enc.StructEncoding):
     def __init__(self, ver='vms') -> None:
 
         self._ver = ver
+        self._fxd = 'PrStn'
 
         if ver == 'vms':
             val_encoding = enc.Real4()
@@ -141,6 +142,9 @@ class PrStnEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN structure"""
 
     def __init__(self, ver='vms') -> None:
+
+        self._ver = ver
+        
         super().__init__(
             ('FXD', PrStnFxdEncoding(ver)),
             ('PROF', enc.ArrayOf(PrStnProfEncoding(ver), max_length=1500)),

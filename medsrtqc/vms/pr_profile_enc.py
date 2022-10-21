@@ -8,7 +8,11 @@ from . import enc_win
 class PrProfileFxdEncoding(enc.StructEncoding):
     """The encoding strategy for a PR_PROFILE/FXD structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+
+        self._ver = ver
+        self._fxd = 'PrProfile'
+
         super().__init__(
             ('MKEY', enc.Character(8)),
             ('ONE_DEG_SQ', enc.Integer4()),
@@ -33,8 +37,10 @@ class PrProfileProfEncoding(enc.StructEncoding):
 
         if ver == 'vms':
             val_encoding = enc.Real4()
+            self._ver = ver
         elif ver == 'win':
             val_encoding = enc_win.Float()
+            self._ver = ver
         else: # pragma: no cover
             raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
 
@@ -52,7 +58,7 @@ class PrProfileEncoding(enc.StructEncoding):
     def __init__(self, ver='vms') -> None:
         self._ver = ver
         super().__init__(
-            ('FXD', PrProfileFxdEncoding()),
+            ('FXD', PrProfileFxdEncoding(ver)),
             ('PROF', enc.ArrayOf(PrProfileProfEncoding(ver), max_length=1500))
         )
 
