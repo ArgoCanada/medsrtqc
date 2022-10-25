@@ -241,9 +241,10 @@ class TestVMSRead(unittest.TestCase):
         test_file = resource_path('arvor_bgc_win.dat')
         profiles = read.read_vms_profiles(test_file, ver='win')
 
+        size_calc = read._file_encoding.sizeof([item._data for item in profiles])
         with open(test_file, 'rb') as f:
             content = f.read()
-            self.assertEqual(size_calc, len(content))
+            self.assertLess(size_calc, len(content))
             written_content = BytesIO()
             read.write_vms_profiles(profiles, written_content, ver='win')
             self.assertEqual(written_content.getvalue(), content)
@@ -253,12 +254,11 @@ class TestVMSRead(unittest.TestCase):
                 with open(tmp, 'wb') as fw:
                     read.write_vms_profiles(profiles, tmp, ver='win')
                 with open(tmp, 'rb') as fw:
-                    self.assertEqual(fw.read(), content, ver='win')
+                    self.assertEqual(fw.read(), content)
             finally:
                 os.close(fd)
                 os.unlink(tmp)
 
 
 if __name__ == '__main__':
-    
     unittest.main()
