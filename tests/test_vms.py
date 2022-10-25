@@ -238,7 +238,7 @@ class TestVMSRead(unittest.TestCase):
                 os.close(fd)
                 os.unlink(tmp)
         
-        test_file = 'test-data/arvor_bgc_win.dat'
+        test_file = resource_path('arvor_bgc_win.dat')
         profiles = read.read_vms_profiles(test_file, ver='win')
 
         size_calc = read._file_encoding.sizeof([item._data for item in profiles])
