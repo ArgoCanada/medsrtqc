@@ -58,9 +58,9 @@ def write_vms_profiles(profiles, dest, ver='vms'):
     _file_encoding = ArrayOf(PrStnAndPrProfilesEncoding(ver))
 
     for i, item in enumerate(profiles):
-        if not isinstance(item, VMSProfile):
+        if not isinstance(item, VMSProfile): # pragma: no cover
             msg = 'All items in `profiles` must be a VMSProfile objects.'
-            msg = f'profiles[{i}] is not a VMSProfile object'
+            msg += f' profiles[{i}] is not a VMSProfile object'
             raise TypeError(msg)
 
     if isinstance(dest, str):

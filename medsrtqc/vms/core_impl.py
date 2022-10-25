@@ -107,7 +107,7 @@ class VMSProfile(Profile):
     def __setitem__(self, k, v):
         # check dimensions against current
         current_value = self[k]
-        if len(v) != len(current_value):
+        if len(v) != len(current_value): # pragma: no cover
             msg = f"Expected trace for '{k}' with size {len(current_value)} but got {len(v)}"
             raise ValueError(msg)
 
