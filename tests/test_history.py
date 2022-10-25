@@ -16,14 +16,14 @@ class TestHistory(unittest.TestCase):
         qcpf = hist.QCx.qc_tests(hexval, fail)
 
         hist.QCx.update_safely(qcpf, 8, 'pass')
-        self.assertEqual(qcpf[0, 7] == 1)
+        self.assertEqual(qcpf[0, 7], 1)
 
         hist.QCx.update_safely(qcpf, 2, 'fail')
-        self.assertEqual(qcpf[1, 3] == 1)
+        self.assertEqual(qcpf[1, 3], 1)
 
         hist.QCx.update_safely(qcpf, 4, 'fail')
-        self.assertEqual(qcpf[0, 3] == 0)
-        self.assertEqual(qcpf[1, 3] == 1)
+        self.assertEqual(qcpf[0, 3], 0)
+        self.assertEqual(qcpf[1, 3], 1)
 
 if __name__ == '__main__':
     unittest.main()
