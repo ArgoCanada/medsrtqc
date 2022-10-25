@@ -3,7 +3,7 @@ from collections import OrderedDict
 import numpy as np
 
 def read_qc_hex(hex_code):
-    if len(hex_code.strip()) == 0:
+    if len(hex_code.strip()) == 0: # pragma: no cover
         hex_code = hex(0)
     num = int(hex_code, 16)
     # list to save test number in
@@ -20,7 +20,7 @@ def read_qc_hex(hex_code):
             num -= qc_binary_id
             tests.append(i)
     
-    if num != 0:
+    if num != 0: # pragma: no cover
         raise ValueError('Invalid input, decoding QC tests left a non-zero remainder')
 
     return tests[::-1]
