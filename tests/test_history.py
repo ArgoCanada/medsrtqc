@@ -24,3 +24,6 @@ class TestHistory(unittest.TestCase):
         hist.QCx.update_safely(qcpf, 4, 'fail')
         self.assertEqual(qcpf[0, 3] == 0)
         self.assertEqual(qcpf[1, 3] == 1)
+
+if __name__ == '__main__':
+    unittest.main()
