@@ -62,6 +62,19 @@ class Padding(Encoding):
     def encode(self, file: BinaryIO, value=None):
         file.write(b'\x00' * self._length)
 
+class LineEnding(Encoding):
+    """Explicitly encode carriage returns in structure definitions"""
+
+    def sizeof(self):
+        return 2
+
+    def decode(self, file: BinaryIO, value=None):
+        file.read(2)
+        return None
+    
+    def encode(self, file: BinaryIO, value=None):
+        file.write(b'\r\n')
+
 
 class Character(Encoding):
     """
@@ -80,6 +93,12 @@ class Character(Encoding):
 
     def decode(self, file: BytesIO, value=None) -> str:
         encoded = file.read(self._length).rstrip(self._pad)
+        init_size = len(encoded)
+        encoded = encoded.replace(b'\r\n', b'')
+        diff = init_size - len(encoded)
+        while diff > 0 and encoded != b'':
+            encoded += file.read(diff).replace(b'\r\n', b'')
+            diff = init_size - len(encoded)
         return encoded.decode(self._encoding)
 
     def encode(self, file: BytesIO, value):
@@ -111,10 +130,15 @@ class ArrayOf(Encoding):
         if value is None:
             value = []
             peek1 = b'\x00'
-            while len(peek1) > 0:
+            peek3 = b'\x00'
+            while len(peek1) > 0 and len(peek3) > 0:
                 value.append(self._encoding.decode(file))
                 current_loc = file.tell()
                 peek1 = file.read(1)
+                if peek1 == b'\r':
+                    peek2 = file.read(1)
+                    if peek2 == b'\n':
+                        peek3 = file.read(1)
                 file.seek(current_loc)
         else:
             # if we know exactly how may to expect, read that
@@ -136,11 +160,16 @@ class StructEncoding(Encoding):
     def __init__(self, *encodings) -> None:
         self._encodings = OrderedDict()
         n_pad = 0
+        n_eol = 0
         for item in encodings:
             if isinstance(item, Padding):
                 name = '___padding_' + str(n_pad)
                 encoding = item
                 n_pad += 1
+            elif isinstance(item, LineEnding):
+                name = '___lineending_' + str(n_eol)
+                encoding = item
+                n_eol += 1
             else:
                 name, encoding = item
 
@@ -159,7 +188,7 @@ class StructEncoding(Encoding):
         if value is None:
             value = OrderedDict()
         for name, encoding in self._encodings.items():
-            if isinstance(encoding, Padding):
+            if isinstance(encoding, Padding) or isinstance(encoding, LineEnding):
                 encoding.decode(file)
             else:
                 value[name] = encoding.decode(file)
@@ -167,6 +196,17 @@ class StructEncoding(Encoding):
 
     def encode(self, file: BinaryIO, value):
         for name, Encoding in self._encodings.items():
+            
+            if name == 'PR_PROFILE':
+                if Encoding._encoding._ver == 'win':
+                    LineEnding().encode(file)
+            elif (name == 'PR_STN') and (value[name]['FXD']['MKEY'][-3] != '1'):
+                if Encoding._ver == 'win':
+                    LineEnding().encode(file)
+            elif (name == 'FXD') and (value[name]['MKEY'][-2:] != '01'):
+                if (Encoding._fxd == 'PrProfile') and (Encoding._ver == 'win'):
+                    LineEnding().encode(file)
+
             if name in value:
                 Encoding.encode(file, value[name])
             else:

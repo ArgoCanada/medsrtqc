@@ -34,7 +34,7 @@ class ChlaTest(QCOperation):
         Flag.update_safely(chla.qc, Flag.BAD, values_outside_range)
         Flag.update_safely(adjusted.qc, Flag.BAD, values_outside_range)
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
-        all_passed = all_passed and any(values_outside_range)
+        all_passed = all_passed and not any(values_outside_range)
 
         # dark count test
         self.log('Checking for previous DARK_CHLA')
@@ -117,7 +117,7 @@ class ChlaTest(QCOperation):
 
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
         Flag.update_safely(adjusted.qc, Flag.BAD, spike_values)
-        all_passed = all_passed and any(spike_values)
+        all_passed = all_passed and not any(spike_values)
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
         
         # CHLA NPQ correction

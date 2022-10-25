@@ -8,6 +8,7 @@ import numpy as np
 
 from medsrtqc.resources import resource_path
 import medsrtqc.vms.enc as enc
+import medsrtqc.vms.enc_win as enc_win
 import medsrtqc.vms.read as read
 from medsrtqc.core import Trace
 from medsrtqc.vms.core_impl import VMSProfile
@@ -22,6 +23,14 @@ class TestEncoding(unittest.TestCase):
         f.encode(file, None)
         self.assertEqual(file.getvalue(), b'\x00\x00\x00')
         self.assertEqual(f.decode(BytesIO(b'\x00\x00\x00')), None)
+    
+    def test_lineending(self):
+        f = enc.LineEnding()
+        self.assertEqual(f.sizeof(), 2)
+        file = BytesIO()
+        f.encode(file, None)
+        self.assertEqual(file.getvalue(), b'\r\n')
+        self.assertEqual(f.decode(BytesIO(b'\r\n')), None)
 
     def test_character(self):
         f = enc.Character(5)
@@ -92,6 +101,14 @@ class TestEncoding(unittest.TestCase):
         f.encode(file, 99.9999008178711)
         self.assertEqual(file.getvalue(), b'\xc7C\xf3\xff')
         self.assertEqual(f.decode(BytesIO(b'\xc7C\xf3\xff')), 99.9999008178711)
+
+    def test_float(self):
+        f = enc_win.Float()
+        self.assertEqual(f.sizeof(), 4)
+        file = BytesIO()
+        f.encode(file, 99.9999008178711)
+        self.assertEqual(file.getvalue(), b'\xf3\xff\xc7C')
+        self.assertEqual(f.decode(BytesIO(b'\xf3\xff\xc7C')), 99.9999008178711)
 
 
 class TestVMSRead(unittest.TestCase):
@@ -207,13 +224,35 @@ class TestVMSRead(unittest.TestCase):
             self.assertEqual(written_content.getvalue(), content)
             # now test with longer encoding
             written_content = BytesIO()
-            read.write_vms_profiles(profiles, written_content, ver=2)
-            self.assertLess(written_content.getvalue(), content)
+            read.write_vms_profiles(profiles, written_content, ver='win')
+            written_content.read()
+            self.assertGreater(written_content.tell(), f.tell())
 
             fd, tmp = tempfile.mkstemp()
             try:
                 with open(tmp, 'wb') as fw:
                     read.write_vms_profiles(profiles, tmp)
+                with open(tmp, 'rb') as fw:
+                    self.assertEqual(fw.read(), content)
+            finally:
+                os.close(fd)
+                os.unlink(tmp)
+        
+        test_file = 'test-data/arvor_bgc_win.dat'
+        profiles = read.read_vms_profiles(test_file, ver='win')
+
+        size_calc = read._file_encoding.sizeof([item._data for item in profiles])
+        with open(test_file, 'rb') as f:
+            content = f.read()
+            self.assertLess(size_calc, len(content))
+            written_content = BytesIO()
+            read.write_vms_profiles(profiles, written_content, ver='win')
+            self.assertEqual(written_content.getvalue(), content)
+
+            fd, tmp = tempfile.mkstemp()
+            try:
+                with open(tmp, 'wb') as fw:
+                    read.write_vms_profiles(profiles, tmp, ver='win')
                 with open(tmp, 'rb') as fw:
                     self.assertEqual(fw.read(), content)
             finally:

@@ -28,22 +28,24 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self):
+    def prepare(self, tests=[None]):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
         data = self._data
         # save the wmo and cycle
         self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
         for d in data['PR_STN']['SURFACE']:
-            if d['PCODE'] == 'PFN$':
+            if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
 
-        self.add_qcp_qcf()
-        self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
+        # don't add QCP/QCF if we are not going to perform any tests
+        if len(tests) > 0:
+            self.add_qcp_qcf()
+            self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])

@@ -1,13 +1,18 @@
 
 from collections import OrderedDict
 from typing import BinaryIO
-from . import enc
 
+from . import enc
+from . import enc_win
 
 class PrProfileFxdEncoding(enc.StructEncoding):
     """The encoding strategy for a PR_PROFILE/FXD structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+
+        self._ver = ver
+        self._fxd = 'PrProfile'
+
         super().__init__(
             ('MKEY', enc.Character(8)),
             ('ONE_DEG_SQ', enc.Integer4()),
@@ -28,11 +33,21 @@ class PrProfileFxdEncoding(enc.StructEncoding):
 class PrProfileProfEncoding(enc.StructEncoding):
     """The encoding strategy for the PR_PROFILE/PROF structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+
+        if ver == 'vms':
+            val_encoding = enc.Real4()
+            self._ver = ver
+        elif ver == 'win':
+            val_encoding = enc_win.Float()
+            self._ver = ver
+        else: # pragma: no cover
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
+
         super().__init__(
-            ('DEPTH_PRESS', enc.Real4()),
+            ('DEPTH_PRESS', val_encoding),
             ('DP_FLAG', enc.Character(1)),
-            ('PARM', enc.Real4()),
+            ('PARM', val_encoding),
             ('Q_PARM', enc.Character(1))
         )
 
@@ -40,10 +55,11 @@ class PrProfileProfEncoding(enc.StructEncoding):
 class PrProfileEncoding(enc.StructEncoding):
     """The encoding strategy for the PR_PROFILE structure"""
 
-    def __init__(self) -> None:
+    def __init__(self, ver='vms') -> None:
+        self._ver = ver
         super().__init__(
-            ('FXD', PrProfileFxdEncoding()),
-            ('PROF', enc.ArrayOf(PrProfileProfEncoding(), max_length=1500))
+            ('FXD', PrProfileFxdEncoding(ver)),
+            ('PROF', enc.ArrayOf(PrProfileProfEncoding(ver), max_length=1500))
         )
 
     def decode(self, file: BinaryIO, value=None):

@@ -1,9 +1,9 @@
 
 from .core_impl import VMSProfile
 from .profiles_enc import PrStnAndPrProfilesEncoding
-from .enc import ArrayOf
+from .enc import ArrayOf, LineEnding
 
-def read_vms_profiles(src, ver=1):
+def read_vms_profiles(src, ver='vms'):
     """
     Read a binary VMS file into a ``list()`` of :class:`VMSProfile`
     objects.
@@ -38,7 +38,7 @@ def read_vms_profiles(src, ver=1):
     return [VMSProfile(item) for item in data]
 
 
-def write_vms_profiles(profiles, dest, ver=1):
+def write_vms_profiles(profiles, dest, ver='vms'):
     """
     Write a binary VMS file from a ``list()`` of :class:`VMSProfile`
     objects.
@@ -65,8 +65,14 @@ def write_vms_profiles(profiles, dest, ver=1):
 
     if isinstance(dest, str):
         with open(dest, 'wb') as f:
-            _file_encoding.encode(f, [item._data for item in profiles])
+            _file_encoding.encode(f, [item._data for item in profiles],)
+            if ver == 'win':
+                LineEnding().encode(f)
     elif hasattr(dest, 'write'):
-        _file_encoding.encode(dest, [item._data for item in profiles])
+        _file_encoding.encode(dest, [item._data for item in profiles],)
+        if ver == 'win':
+            LineEnding().encode(dest)
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")
+    
+    
