@@ -33,7 +33,8 @@ class VMSProfile(Profile):
         # but also means it will need to be called before performing QC
         data = self._data
         # save the wmo and cycle
-        self.wmo = int(data['PR_STN']['FXD']['CR_NUMBER'].replace('Q',''))
+        wmo_q = data['PR_STN']['FXD']['CR_NUMBER'].replace('Q','')
+        self.wmo = int(wmo_q) if len(wmo_q) == 7 else int(wmo_q[:-2])
         for d in data['PR_STN']['SURFACE']:
             if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
