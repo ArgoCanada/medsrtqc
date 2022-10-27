@@ -34,7 +34,7 @@ with open(f'bgc_logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') 
                 t.run(p)
 
         # only export a file if we actually did anything to it
-        if len(tests) > 0:
+        if len(all_tests) > 0:
             # export profiles with altered flags, CHLA_ADJUSTED likely populated
             output_file = input_file.replace('.', '_output.')
             f = open(output_file, 'wb')
