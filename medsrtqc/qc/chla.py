@@ -200,7 +200,7 @@ class ChlaTest(QCOperation):
             cyc = np.array(cyc)
             ldc = np.array(ldc)
 
-            ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc)))[0][0]
+            ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[wmo == self.profile.wmo])))[0][0]
 
             return ldc[ix]
 
