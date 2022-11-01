@@ -66,12 +66,31 @@ def write_vms_profiles(profiles, dest, ver='vms'):
     if isinstance(dest, str):
         with open(dest, 'wb') as f:
             _file_encoding.encode(f, [item._data for item in profiles],)
-            if ver == 'win':
-                LineEnding().encode(f)
+        if ver == 'win':
+            line_end = False
+            with open(dest, 'rb') as f:
+                f.seek(-2, 2)
+                if f.read() != b'\r\n':
+                    line_end = True
+            
+            if line_end:
+                with open(dest, 'ab') as f:
+                    LineEnding().encode(f)
+
     elif hasattr(dest, 'write'):
         _file_encoding.encode(dest, [item._data for item in profiles],)
         if ver == 'win':
-            LineEnding().encode(dest)
+            dest.close()
+            fn = dest.name
+            line_end = False
+            with open(fn, 'rb') as f:
+                f.seek(-2, 2)
+                if f.read() != b'\r\n':
+                    line_end = True
+            
+            if line_end:
+                with open(fn, 'ab') as f:
+                    LineEnding().encode(f)
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")
     

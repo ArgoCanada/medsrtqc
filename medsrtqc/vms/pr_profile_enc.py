@@ -35,6 +35,9 @@ class PrProfileProfEncoding(enc.StructEncoding):
 
     def __init__(self, ver='vms') -> None:
 
+        self._ver = ver
+        self._prof = 'PrProfile'
+
         if ver == 'vms':
             val_encoding = enc.Real4()
             self._ver = ver
