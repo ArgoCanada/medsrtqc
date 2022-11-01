@@ -202,13 +202,15 @@ class ChlaTest(QCOperation):
 
             if self.profile.wmo not in wmo:
                 self.log(f'No LAST_DARK_CHLA found for WMO {self.profile.wmo}. Writing manufacturer value to cycle 0 and continuing.')
-                self.save_last_dark_chla(int(coeff[f'{self.profile.wmo}']['DARK_CHLA']))
+                self.save_last_dark_chla(int(coeff[f'{self.profile.wmo}']['DARK_CHLA']), cycle=0)
                 return coeff[f'{self.profile.wmo}']['DARK_CHLA']
             else:
-                ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[wmo == self.profile.wmo])))[0][0]
+                ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[(wmo == self.profile.wmo) & (cyc <= self.profile.cycle_number)])))[0][0]
                 return ldc[ix]
 
-    def save_last_dark_chla(self, v):
+    def save_last_dark_chla(self, v, cycle=None):
+
+        cycle = self.profile.cycle_number if cycle is None else cycle
 
         with open(resource_path('last_dark_chla.csv'), 'a') as fid:
-            fid.write(f'{self.profile.wmo:d},{self.profile.cycle_number:d},{v:d}\n')
+            fid.write(f'{self.profile.wmo:d},{cycle:d},{v:d}\n')
