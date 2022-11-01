@@ -200,9 +200,13 @@ class ChlaTest(QCOperation):
             cyc = np.array(cyc)
             ldc = np.array(ldc)
 
-            ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[wmo == self.profile.wmo])))[0][0]
-
-            return ldc[ix]
+            if self.profile.wmo not in wmo:
+                self.log(f'No LAST_DARK_CHLA found for WMO {self.profile.wmo}. Writing manufacturer value to cycle 0 and continuing.')
+                self.save_last_dark_chla(int(coeff[f'{self.profile.wmo}']['DARK_CHLA']))
+                return coeff[f'{self.profile.wmo}']['DARK_CHLA']
+            else:
+                ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[wmo == self.profile.wmo])))[0][0]
+                return ldc[ix]
 
     def save_last_dark_chla(self, v):
 
