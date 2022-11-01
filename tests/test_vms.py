@@ -226,8 +226,11 @@ class TestVMSRead(unittest.TestCase):
             fd, tmp = tempfile.mkstemp()
             written_content = open(tmp, 'wb')
             read.write_vms_profiles(profiles, written_content, ver='win')
+            written_content.close()
+            written_content = open(tmp, 'rb')
             written_content.read()
             self.assertGreater(written_content.tell(), f.tell())
+            written_content.close()
             os.close(fd)
             os.unlink(tmp)
 
@@ -248,9 +251,15 @@ class TestVMSRead(unittest.TestCase):
         with open(test_file, 'rb') as f:
             content = f.read()
             self.assertLess(size_calc, len(content))
-            written_content = BytesIO()
+            fd, tmp = tempfile.mkstemp()
+            written_content = open(tmp, 'wb')
             read.write_vms_profiles(profiles, written_content, ver='win')
-            self.assertEqual(written_content.getvalue(), content)
+            written_content.close()
+            written_content = open(tmp, 'rb')
+            self.assertEqual(written_content.read(), content)
+            written_content.close()
+            os.close(fd)
+            os.unlink(tmp)
 
             fd, tmp = tempfile.mkstemp()
             try:
