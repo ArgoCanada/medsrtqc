@@ -223,10 +223,13 @@ class TestVMSRead(unittest.TestCase):
             read.write_vms_profiles(profiles, written_content)
             self.assertEqual(written_content.getvalue(), content)
             # now test with longer encoding
-            written_content = BytesIO()
+            fd, tmp = tempfile.mkstemp()
+            written_content = open(tmp, 'wb')
             read.write_vms_profiles(profiles, written_content, ver='win')
             written_content.read()
             self.assertGreater(written_content.tell(), f.tell())
+            os.close(fd)
+            os.unlink(tmp)
 
             fd, tmp = tempfile.mkstemp()
             try:
