@@ -20,8 +20,18 @@ include:
     A core and BGC Argo NetCDF file for use testing BGC variables.
 """
 
+import sys
 import os
 
+def config_path(path):
+
+    cwd = os.getcwd()
+    parent, child = os.path.split(cwd)
+    base = parent if child == 'lib' else cwd
+    abs_path = os.path.join(base, 'config', path)
+    if not os.path.exists(abs_path):
+        raise FileNotFoundError(f"'{path}' is not a resource within the {os.path.dirname(abs_path)} directory.")
+    return abs_path
 
 def resource_path(path):
     """
@@ -35,7 +45,12 @@ def resource_path(path):
     >>> resource_path('BINARY_VMS.DAT')
     """
 
-    abs_path = os.path.join(os.path.dirname(__file__), path)
+    try:
+        abs_path = config_path(path)
+    except FileNotFoundError as exception:
+        sys.stderr.write(exception + ' Checking resources...\n')
+        abs_path = os.path.join(os.path.dirname(__file__), path)
+    
     if not os.path.exists(abs_path):
         raise FileNotFoundError(f"'{path}' is not a resource within the medsrtqc.resources module.")
     return abs_path
