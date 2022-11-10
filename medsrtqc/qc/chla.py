@@ -192,9 +192,10 @@ class ChlaTest(QCOperation):
             cyc = []
             ldc = []
             for line in fid:
-                wmo.append(int(line.split(',')[0].strip()))
-                cyc.append(int(line.split(',')[1].strip()))
-                ldc.append(int(line.split(',')[2].strip()))
+                line_list = [int(s.strip()) for s in line.split(',')]
+                wmo.append(line_list[0])
+                cyc.append(line_list[1])
+                ldc.append(line_list[2])
 
             wmo = np.array(wmo)
             cyc = np.array(cyc)
