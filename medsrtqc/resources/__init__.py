@@ -48,7 +48,7 @@ def resource_path(path):
     try:
         abs_path = config_path(path)
     except FileNotFoundError as exception:
-        sys.stderr.write(exception + ' Checking resources...\n')
+        sys.stderr.write(str(exception) + ' Checking resources...\n')
         abs_path = os.path.join(os.path.dirname(__file__), path)
     
     if not os.path.exists(abs_path):
