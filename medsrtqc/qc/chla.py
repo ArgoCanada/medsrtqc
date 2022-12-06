@@ -159,12 +159,11 @@ class ChlaTest(QCOperation):
         conservative_temp = gsw.CT_from_t(abs_salinity, temp.value, pres.value)
         density = gsw.sigma0(abs_salinity, conservative_temp)
 
-        mixed_layer_start = (np.diff(density) > 0.03) & (pres.value[:-1] > 10)
+        mixed_layer_start = (np.abs(np.diff(density)) > 0.03) & (pres.value[1:] > 10)
         if not np.any(mixed_layer_start): # pragma: no cover
             self.error("Can't determine mixed layer depth (no density changes > 0.03 below 10 dbar)")
 
-        mixed_layer_start_index = np.where(mixed_layer_start)[0][0]
-        mixed_layer_depth = pres.value[mixed_layer_start_index]
+        mixed_layer_depth = np.nanmin(pres.value[1:][mixed_layer_start])
         self.log(f'...mixed layer depth found at {mixed_layer_depth} dbar')
 
         return mixed_layer_depth
