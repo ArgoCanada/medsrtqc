@@ -43,8 +43,10 @@ class pHTest(QCOperation):
         # pH specific tests
         pres = self.profile['PRES']
         temp = self.profile['TEMP']
-        Flag.update_safely(pH_total.qc, Flag.BAD, temp.qc == 4)
-        Flag.update_safely(pH_total.qc, Flag.BAD, pres.qc == 4)
+        temp_syn_qc = [temp.qc[np.abs(temp.pres - p) == np.min(np.abs(temp.pres - p))] for p in pH_total.pres]
+        Flag.update_safely(pH_total.qc, Flag.BAD, temp_syn_qc == 4)
+        pres_syn_qc = [pres.qc[np.abs(pres.value - p) == np.min(np.abs(pres.value - p))] for p in pH_total.pres]
+        Flag.update_safely(pH_total.qc, Flag.BAD, pres_syn_qc == 4)
         # technically another test is pH_total.qc = 3 if psal.qc = 4 but
         # pH_total.qc is already 3 by default - will matter for adjusted mode?
 
@@ -55,7 +57,7 @@ class pHTest(QCOperation):
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
-        x = self.profile['FLU1'].value
+        x = self.profile['PHTO'].value
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)

@@ -30,4 +30,6 @@ class TestpHTest(unittest.TestCase):
         test = pHTest()
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['PHPH'].qc == Flag.NO_QC))
-        self.assertTrue(np.all(prof['PHTO'].qc == Flag.NO_QC))
+
+if __name__ == '__main__':
+    unittest.main()
