@@ -16,7 +16,7 @@ class pHTest(QCOperation):
         self.update_trace('PHPH', pH_free)
 
         # set flags of pH in situ to 3 by default
-        Flag.update_safely(pH_free.qc, Flag.PROBABLY_BAD)
+        Flag.update_safely(pH_total.qc, Flag.PROBABLY_BAD)
 
         # global range test
         self.log('Applying global range test to PH_IN_SITU_TOTAL')
@@ -53,6 +53,7 @@ class pHTest(QCOperation):
         # currently no number in bgc manual for these tests? manual from Tanya has 56 or 59?
         # QCx.update_safely(self.profile.qc_tests, 56, not stuck_value)
         
+        self.update_trace('PHPH', pH_free)
         self.update_trace('PHTO', pH_total)
 
     def running_median(self, n):
