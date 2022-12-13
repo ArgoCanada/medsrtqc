@@ -39,6 +39,17 @@ class pHTest(QCOperation):
             self.log('stuck values found, setting all profile flags to 4')
             Flag.update_safely(pH_total.qc, Flag.BAD)
         QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
+
+        # pH specific tests
+        pres = self.profile['PRES']
+        temp = self.profile['TEMP']
+        Flag.update_safely(pH_total.qc, Flag.BAD, temp.qc == 4)
+        Flag.update_safely(pH_total.qc, Flag.BAD, pres.qc == 4)
+        # technically another test is pH_total.qc = 3 if psal.qc = 4 but
+        # pH_total.qc is already 3 by default - will matter for adjusted mode?
+
+        # currently no number in bgc manual for these tests? manual from Tanya has 56 or 59?
+        # QCx.update_safely(self.profile.qc_tests, 56, not stuck_value)
         
         self.update_trace('PHTO', pH_total)
 
