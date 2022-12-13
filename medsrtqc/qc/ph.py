@@ -20,7 +20,7 @@ class pHTest(QCOperation):
 
         # global range test
         self.log('Applying global range test to PH_IN_SITU_TOTAL')
-        values_outside_range = (pH_total.value < -0.1) | (pH_total.value > 50.0)
+        values_outside_range = (pH_total.value < 7.0) | (pH_total.value > 8.3)
         Flag.update_safely(pH_total.qc, Flag.BAD, values_outside_range)
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
 
