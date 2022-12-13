@@ -110,7 +110,7 @@ class ChlaTest(QCOperation):
         )
 
         # CHLA spike test
-        self.log('Performing negative spike test')
+        self.log('Performing negative spike test on CHLA')
         median_chla = self.running_median(5)
         res = chla.value - median_chla
         spike_values = res < 2*np.percentile(res, 10)
@@ -119,6 +119,15 @@ class ChlaTest(QCOperation):
         Flag.update_safely(adjusted.qc, Flag.BAD, spike_values)
         all_passed = all_passed and not any(spike_values)
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
+
+        # stuck value test
+        self.log('Performing stuck value test on CHLA')
+        stuck_value = all(chla.value == chla.value[0])
+        if stuck_value: # pragma: no cover
+            self.log('stuck values found, setting all profile flags to 4 for both CHLA and CHLA_ADJUSTED')
+            Flag.update_safely(chla.qc, Flag.BAD)
+            Flag.update_safely(adjusted.qc, Flag.BAD)
+        QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
         
         # CHLA NPQ correction
         self.log('Performing Non-Photochemical Quenching (NPQ) test')
@@ -159,12 +168,11 @@ class ChlaTest(QCOperation):
         conservative_temp = gsw.CT_from_t(abs_salinity, temp.value, pres.value)
         density = gsw.sigma0(abs_salinity, conservative_temp)
 
-        mixed_layer_start = (np.diff(density) > 0.03) & (pres.value[:-1] > 10)
+        mixed_layer_start = (np.abs(np.diff(density)) > 0.03) & (pres.value[1:] > 10)
         if not np.any(mixed_layer_start): # pragma: no cover
             self.error("Can't determine mixed layer depth (no density changes > 0.03 below 10 dbar)")
 
-        mixed_layer_start_index = np.where(mixed_layer_start)[0][0]
-        mixed_layer_depth = pres.value[mixed_layer_start_index]
+        mixed_layer_depth = np.nanmin(pres.value[1:][mixed_layer_start])
         self.log(f'...mixed layer depth found at {mixed_layer_depth} dbar')
 
         return mixed_layer_depth
