@@ -38,6 +38,14 @@ class bbpTest(QCOperation):
         all_passed = all_passed and not any(spike_values)
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
 
+        # stuck value test
+        self.log('Performing stuck value test on total pH')
+        stuck_value = all(bbp.value == bbp.value[0])
+        if stuck_value: # pragma: no cover
+            self.log('stuck values found, setting all profile flags to 4')
+            Flag.update_safely(bbp.qc, Flag.BAD)
+        QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
+
         # update QCP/QCF
         QCx.update_safely(self.profile.qc_tests, 62, all_passed)
 
