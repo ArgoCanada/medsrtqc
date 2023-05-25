@@ -14,6 +14,7 @@ class TestPlot(unittest.TestCase):
     def test_plot(self):
         trace = Trace([1, 2, 4], adjusted=[2, 3, 5])
         profile = Profile({'PARAM': trace, 'PARAM2': trace})
+        print(type(plot(trace)).__name__)
         self.assertEqual(type(plot(trace)).__name__, 'AxesSubplot')
         self.assertIsInstance(plot(profile), tuple)
         with self.assertRaises(TypeError):
@@ -34,6 +35,7 @@ class TestPlot(unittest.TestCase):
             adjusted=[2, 3, 5],
             adjusted_error=[0.5, 0.4, 0.3]
         )
+        print(type(plot(trace)).__name__)
         self.assertEqual(
             type(plot_trace(trace, trace_attrs=('value', 'adjusted', 'adjusted_error'))).__name__,
             'AxesSubplot'
