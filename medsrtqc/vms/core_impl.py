@@ -170,22 +170,28 @@ class VMSProfile(Profile):
 
         data_copy = deepcopy(self._data)
 
+        n = 0
+        for pr_profile in self._data['PR_PROFILE']:
+            if pr_profile['FXD']['PROF_TYPE'] == k:
+                n += 1
+
         adjusted_trace = None
         i = 0
         for pr_profile in self._data['PR_PROFILE']:
             i += 1
             # iterate MKEY if it comes after FLUA insertion
-            if adjusted_trace is not None:
-                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
+            if adjusted_trace is not None and pr_profile['FXD']['PROF_TYPE'] != k:
+                new_mkey = str(int(pr_profile['FXD']['MKEY'])+n).rjust(8, '0')
                 pr_profile['FXD']['MKEY'] = new_mkey
-                data_copy['PR_PROFILE'][i] = pr_profile
+                data_copy['PR_PROFILE'][i+n-1] = pr_profile
             # add the new variable
             if pr_profile['FXD']['PROF_TYPE'] == k:
+                print('TWO', i, pr_profile['FXD']['PROF_TYPE'], pr_profile['FXD']['MKEY'])
                 adjusted_trace = deepcopy(pr_profile)
                 adjusted_trace['FXD']['PROF_TYPE'] = nk
-                new_mkey = str(int(pr_profile['FXD']['MKEY'])+1).rjust(8, '0')
+                new_mkey = str(int(pr_profile['FXD']['MKEY'])+n).rjust(8, '0')
                 adjusted_trace['FXD']['MKEY'] = new_mkey
-                data_copy['PR_PROFILE'].insert(i, adjusted_trace)
+                data_copy['PR_PROFILE'].insert(i+n-1, adjusted_trace)
         
         if not adjusted_trace: #pragma: no cover
             raise ValueError(f"No such trace for f{k}")
