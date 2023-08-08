@@ -18,7 +18,7 @@ class bbpTest(QCOperation):
 
         # missing data test
         bins = [0, 50, 156, 261, 367, 472, 578, 683, 789, 894, 1000]
-        hist = np.histogram(bbp.pres, bins=bins)
+        hist, bins = np.histogram(bbp.pres, bins=bins)
         new_flag = Flag.PROBABLY_BAD if sum(hist == 0) > 1 else Flag.GOOD
         new_flag = Flag.BAD if sum(hist != 0) == 1 else new_flag
         new_flag = Flag.MISSING if all(hist == 0) else new_flag
