@@ -43,6 +43,17 @@ class bbpTest(QCOperation):
         all_passed = all_passed and not many_high_residuals
         Flag.update_safely(bbp.qc, new_flag)
 
+        # negative bbp test
+        shallow_and_negative = (bbp.pres < 5) & (bbp.value < 0)
+        Flag.update_safely(bbp.qc, Flag.BAD, where=shallow_and_negative)
+        deep_and_negative = (bbp.pres > 5) & (bbp.value < 0)
+        pct_negative = 100*sum(deep_and_negative)/len(deep_and_negative)
+        many_negative = pct_negative > 10
+        new_flag = Flag.PROBABLY_BAD if any(deep_and_negative) else Flag.GOOD
+        new_flag = Flag.BAD if many_negative else new_flag
+        all_passed = all_passed and not any(deep_and_negative)
+        Flag.update_safely(bbp.qc, new_flag)
+
 
 
 
