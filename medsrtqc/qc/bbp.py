@@ -10,7 +10,38 @@ class bbpTest(QCOperation):
     def run_impl(self):
         bbp = self.profile['BBP$']
         all_passed = True
-        
+
+        self.log('Setting previously unset flags for BBP to GOOD')
+        Flag.update_safely(bbp.qc, to=Flag.GOOD)
+
+        # dall'olmo paper tests
+
+        # missing data test
+        bins = [0, 50, 156, 261, 367, 472, 578, 683, 789, 894, 1000]
+        hist = np.histogram(bbp.pres, bins=bins)
+        new_flag = Flag.PROBABLY_BAD if sum(hist == 0) > 1 else Flag.GOOD
+        new_flag = Flag.BAD if sum(hist != 0) == 1 else new_flag
+        new_flag = Flag.MISSING if all(hist == 0) else new_flag
+        all_passed = all_passed and not any(hist == 0)
+        Flag.update_safely(bbp.qc, new_flag)
+
+        # high deep value test
+        median_bbp = self.running_median(5)
+        high_deep_value = (sum(bbp.pres > 700) > 5) & (np.median(median_bbp[bbp.pres > 700]) > 0.0005)
+        new_flag = Flag.PROBABLY_BAD if high_deep_value else Flag.GOOD
+        all_passed = all_passed and not high_deep_value
+        Flag.update_safely(bbp.qc, new_flag)
+
+        # noisy profile test
+
+
+
+
+
+
+
+        # old tests
+
         if 'B700' in self.profile.keys():
             lower_lim = -0.000025
         elif 'B532' in self.profile.keys(): # pragma: no cover
@@ -18,9 +49,6 @@ class bbpTest(QCOperation):
         else: # pragma: no cover
             self.log(f'No valid wavelength information found, setting lower limit of range check to -0.000025')
             lower_lim = -0.000025
-
-        self.log('Setting previously unset flags for BBP to GOOD')
-        Flag.update_safely(bbp.qc, to=Flag.GOOD)
 
         # global range test
         self.log('Applying global range test to BBP')
@@ -39,7 +67,7 @@ class bbpTest(QCOperation):
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
 
         # stuck value test
-        self.log('Performing stuck value test on total pH')
+        self.log('Performing stuck value test on bbp')
         stuck_value = all(bbp.value == bbp.value[0])
         if stuck_value: # pragma: no cover
             self.log('stuck values found, setting all profile flags to 4')
