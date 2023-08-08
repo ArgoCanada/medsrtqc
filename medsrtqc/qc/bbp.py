@@ -33,7 +33,15 @@ class bbpTest(QCOperation):
         Flag.update_safely(bbp.qc, new_flag)
 
         # noisy profile test
-
+        deep_ix = bbp.pres > 100
+        residual = bbp.value - median_bbp
+        high_residuals = residual > 0.0005
+        high_residuals = high_residuals[deep_ix]
+        pct_residuals = 100*sum(high_residuals)/len(high_residuals)
+        many_high_residuals = pct_residuals > 10
+        new_flag = Flag.PROBABLY_BAD if many_high_residuals else Flag.GOOD
+        all_passed = all_passed and not many_high_residuals
+        Flag.update_safely(bbp.qc, new_flag)
 
 
 
