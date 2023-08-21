@@ -39,6 +39,11 @@ class VMSProfile(Profile):
             if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
+
+        for d in data['PR_STN']['SURFACE_CODES']:
+            if d['PCODE'] == 'PDR$':
+                self.direction = d['CPARM']
+                break
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')

@@ -54,12 +54,21 @@ class bbpTest(QCOperation):
         all_passed = all_passed and not any(deep_and_negative)
         Flag.update_safely(bbp.qc, new_flag)
 
-
-
-
-
-
-        # old tests
+        # parking hook test
+        ascending = self.profile.direction == 'A'
+        if ascending:
+            pres = bbp.pres
+            pres[np.abs(pres) > 6000] = np.nan
+            pres = np.sort(pres)
+            deepest_diff = pres[-1] - pres[-2]
+            if deepest_diff < 100:
+                ix = (bbp.pres < (pres[-1] - 20)) & (bbp.pres > (pres[-1] - 50))
+                baseline = np.median(bbp.value[ix]) + 0.0002
+                deep_above_baseline = (bbp.pres > (pres[-1] - 50)) & (bbp.value > baseline)
+                all_passed = all_passed and not any(deep_above_baseline)
+                Flag.update_safely(bbp.qc, Flag.BAD, where=deep_above_baseline)
+                
+        # old tests - still run or no?
 
         if 'B700' in self.profile.keys():
             lower_lim = -0.000025
