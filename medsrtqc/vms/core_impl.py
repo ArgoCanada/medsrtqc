@@ -40,10 +40,7 @@ class VMSProfile(Profile):
                 self.cycle_number = int(d['PARM'])
                 break
 
-        for d in data['PR_STN']['SURFACE_CODES']:
-            if d['PCODE'] == 'PDR$':
-                self.direction = d['CPARM']
-                break
+        self.direction = self.get_surf_code('PDR$')
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
