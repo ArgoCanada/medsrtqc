@@ -17,6 +17,7 @@ import numpy as np
 from netCDF4 import Dataset, chartostring
 from .core import Profile, Trace
 from .vms.read import check_vms, translate_vms
+from .qc.history import QCx
 
 
 class NetCDFProfile(Profile):
@@ -42,6 +43,12 @@ class NetCDFProfile(Profile):
 
         self.direction = self._datasets[0]['DIRECTION'][:][0].decode()
 
+    def prepare(self, tests=[]):
+
+        # don't add QCP/QCF if we are not going to perform any tests
+        if len(tests) > 0:
+            self.qc_tests = QCx.qc_tests(self.read_history_qc('QCP$'), self.read_history_qc('QCF$'))
+
     def close(self):
         """
         Write changes to underlying data (if any) to disk. Requires
@@ -50,6 +57,34 @@ class NetCDFProfile(Profile):
         for dataset in self._datasets:
             dataset.close()
 
+    def read_history_qc(self, v):
+        data = self._datasets
+        for d in data:
+            # find qcp
+            for i, hist in enumerate(d['HISTORY_ACTION'][:]):
+                for p, h in enumerate(hist):
+                    if read_ncstr(h) == v:
+                        return read_ncstr(d['HISTORY_QCTEST'][:][i,p,:])
+    
+    def update_qcx(self):
+
+        if not hasattr(self, 'qc_tests'):
+            raise LookupError('Profile has no attribute qc_tests, call NetCDFProfile().prepare() to add it')
+        
+        dataset = self._datasets[0]
+        for i, hist in enumerate(dataset['HISTORY_ACTION'][:]):
+            for p, h in enumerate(hist):
+                if read_ncstr(h) == 'QCP$':
+                    try:
+                        dataset['HISTORY_QCTEST'][i, p, :] = QCx.array_to_hex(self.qc_tests[0,:])
+                    except RuntimeError:
+                        Warning('netCDF will not be edited - opened in read-only mode - open using read_nc_profile(fn, mode="r+" to edit nc file')
+                elif read_ncstr(h) == 'QCF$':
+                    try:
+                        dataset['HISTORY_QCTEST'][i, p, :] = QCx.array_to_hex(self.qc_tests[1,:])
+                    except RuntimeError:
+                        Warning('netCDF will not be edited - opened in read-only mode - open using read_nc_profile(fn, mode="r+" to edit nc file')
+        
     def _locate_variables(self, dataset_id, all_params=None):
         dataset = self._datasets[dataset_id]
         param_array = chartostring(dataset['PARAMETER'][:])
@@ -85,6 +120,8 @@ class NetCDFProfile(Profile):
             raise ValueError(f"Error creating Trace for '{k}'") from e
 
     def __setitem__(self, k, v):
+        k = translate_vms(k) if check_vms(k) else k
+        
         var_names = self._var_names(k)
 
         # check shapes against current
@@ -100,7 +137,10 @@ class NetCDFProfile(Profile):
         for attr, var in var_names.items():
             if var not in dataset.variables:
                 continue
-            dataset[var][i_prof, range(len(v))] = getattr(v, attr)
+            try:
+                dataset[var][i_prof, range(len(v))] = getattr(v, attr)
+            except RuntimeError:
+                Warning('netCDF will not be edited - opened in read-only mode - open using read_nc_profile(fn, mode="r+" to edit nc file')
 
     def _calculate_trace_attrs(self, dataset, i_prof, var_names):
         """
@@ -196,3 +236,7 @@ def read_nc_profile(*src, mode='r'):
     """
 
     return NetCDFProfile(*[load(s, mode=mode) for s in src])
+
+def read_ncstr(s):
+    lst = [l.decode() for l in s.data]
+    return ''.join(lst).strip()
