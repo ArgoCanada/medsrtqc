@@ -16,6 +16,7 @@ import reprlib
 import numpy as np
 from netCDF4 import Dataset, chartostring
 from .core import Profile, Trace
+from .vms.read import check_vms, translate_vms
 
 
 class NetCDFProfile(Profile):
@@ -38,6 +39,8 @@ class NetCDFProfile(Profile):
         self._variables = None
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
+
+        self.direction = self._datasets[0]['DIRECTION'][:][0].decode()
 
     def close(self):
         """
@@ -70,6 +73,8 @@ class NetCDFProfile(Profile):
             return ()
 
     def __getitem__(self, k) -> Trace:
+        k = translate_vms(k) if check_vms(k) else k
+
         dataset_id, i_prof = self._variables[k]
         var_names = self._var_names(k)
         var_values = self._calculate_trace_attrs(self._datasets[dataset_id], i_prof, var_names)
