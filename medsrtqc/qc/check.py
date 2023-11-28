@@ -15,11 +15,11 @@ class preTestCheck(QCOperation):
     def list_tests(self):
 
         tests = list()
-        if 'FLU1' in self.profile.keys():
+        if 'FLU1' in self.profile.keys() or 'CHLA' in self.profile.keys():
             tests.append(ChlaTest())
-        if 'BBP$' in self.profile.keys():
+        if 'BBP$' in self.profile.keys() or 'BBP700' in self.profile.keys():
             tests.append(bbpTest())
-        if 'PHPH' in self.profile.keys():
+        if 'PHPH' in self.profile.keys() or 'PH_IN_SITU' in self.profile.keys():
             tests.append(pHTest())
 
         self.tests = tests
