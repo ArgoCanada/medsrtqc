@@ -27,12 +27,12 @@ def read_qc_hex(hex_code):
 
 def test_index(test):
 
-    test_numbers = list(range(1, 24)) + list(range(57, 64))
+    test_numbers = list(range(1, 26)) + list(range(57, 64))
     return test_numbers.index(test)
 
 def qc_array(qc):
 
-    QC_array = np.zeros((30,), dtype=int)
+    QC_array = np.zeros((32,), dtype=int)
 
     # hex to numeric
     tests = read_qc_hex(qc)
@@ -57,7 +57,7 @@ class QCx:
 
     @staticmethod
     def qc_tests(qcp, qcf):
-        output_array = np.zeros((2, 30), dtype=int)
+        output_array = np.zeros((2, 32), dtype=int)
         output_array[0,:] = qc_array(qcp)
         output_array[1,:] = qc_array(qcf)
 
@@ -85,7 +85,7 @@ class QCx:
 
     @staticmethod
     def array_to_hex(qcx):
-        test_numbers = list(range(1, 24)) + list(range(57, 64))
+        test_numbers = list(range(1, 26)) + list(range(57, 64))
         num = 0
 
         for q, t in zip(qcx, test_numbers):
@@ -117,7 +117,9 @@ class QCx:
         '20. Questionable Argos position test',
         '21. Near-surface unpumped CTD salinity test',
         '22. Near-surface mixed air/water test',
-        '23. Real-time Quality Control Flag Scheme for float data deeper than 2000 dbar',
+        '23. RTQC flag scheme for Deep SBE CTD data > 2000 dbar',
+        '24. RTQC flag scheme for RBRargo3|2K CTD data (< 2000 dbar)',
+        '25. MEDD test',
         '57. DOXY specific test',
         '58. CDOM specific test',
         '59. NITRATE specific test',
