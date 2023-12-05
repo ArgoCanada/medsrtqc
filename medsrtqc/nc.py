@@ -41,7 +41,7 @@ class NetCDFProfile(Profile):
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
-        self.direction = self._datasets[0]['DIRECTION'][:][0].decode()
+        self.direction = self._datasets[0]['DIRECTION'][:][0].decode() if len(self._datasets) > 0 else None
 
     def prepare(self, tests=[]):
 
