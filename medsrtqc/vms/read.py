@@ -94,4 +94,26 @@ def write_vms_profiles(profiles, dest, ver='vms'):
     else:
         raise TypeError("Can't interpret `dest` as a file or file-like object")
     
-    
+def check_vms(k):
+
+    vms_list = [
+        'VREF','PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','B700','BBP$',
+        'C1PH','C2PH','DOXY','PPOX','OTMP'
+    ]
+
+    return k in vms_list
+
+def translate_vms(k):
+    keys = [
+        'PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','B700','BBP$',
+        'C1PH','C2PH','DOXY','PPOX','OTMP'
+    ]
+    vals = [
+        'PH_IN_SITU_FREE', 'PH_IN_SITU_TOTAL', 'FLUORESCENCE_CDOM',
+        'CDOM', 'CHLA', 'FLUORESCENCE_CHLA', 'BETA_BACKSCATTERING', 'BBP700',
+        'C1PHASE_DOXY','C2PHASE_DOXY','DOXY','PPOX_DOXY','TEMP_DOXY'
+    ]
+
+    dc = {key:val for key, val in zip(keys, vals)}
+
+    return dc[k]

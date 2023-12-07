@@ -20,16 +20,20 @@ class TestBbpTest(unittest.TestCase):
 
     def test_basic(self):
         vms = read_vms_profiles(resource_path('bgc_vms.dat'))
+        test = bbpTest()
         prof = vms[0]
-        prof.prepare()
+        prof.prepare(tests=[test])
 
-        # reset the QC flags for CHLA
+        # reset the QC flags for BBP
         ResetQCOperation().run(prof)
         self.assertTrue(np.all(prof['BBP$'].qc == Flag.NO_QC))
 
-        test = bbpTest()
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['BBP$'].qc == Flag.GOOD))
+
+        nc = read_nc_profile(resource_path('BD6903197_026.nc'))
+        nc.prepare(tests=[test])
+        test.run(nc)
 
     def test_betasw(self):
 

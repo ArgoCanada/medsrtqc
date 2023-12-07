@@ -199,11 +199,11 @@ class StructEncoding(Encoding):
             
             if name == 'PR_PROFILE':
                 if Encoding._encoding._ver == 'win':
-                    print('\\r\\n')
+                    # print('\\r\\n')
                     LineEnding().encode(file)
 
-            if name not in ['DEPTH_PRESS', 'DP_FLAG', 'PARM', 'Q_PARM']:
-                print(name, Encoding)
+            # if name not in ['DEPTH_PRESS', 'DP_FLAG', 'PARM', 'Q_PARM']:
+                # print(name, Encoding)
 
             if name in value:
                 Encoding.encode(file, value[name])
@@ -212,7 +212,7 @@ class StructEncoding(Encoding):
 
             if name == 'PROF':
                 if Encoding._encoding._prof == 'PrProfile' and Encoding._encoding._ver == 'win':
-                    print('\\r\\n')
+                    # print('\\r\\n')
                     LineEnding().encode(file)
 
 

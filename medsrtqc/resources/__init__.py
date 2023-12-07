@@ -48,9 +48,8 @@ def resource_path(path):
     try:
         abs_path = config_path(path)
     except FileNotFoundError as exception:
-        sys.stderr.write(str(exception) + ' Checking resources...\n')
         abs_path = os.path.join(os.path.dirname(__file__), path)
     
     if not os.path.exists(abs_path):
-        raise FileNotFoundError(f"'{path}' is not a resource within the medsrtqc.resources module.")
+        raise FileNotFoundError(f"'{path}' is not a resource within the medsrtqc.resources or config module.")
     return abs_path

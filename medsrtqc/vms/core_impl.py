@@ -28,7 +28,7 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self, tests=[None]):
+    def prepare(self, tests=[]):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
         data = self._data
@@ -39,6 +39,8 @@ class VMSProfile(Profile):
             if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
+
+        self.direction = self.get_surf_code('PDR$')
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
