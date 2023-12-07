@@ -31,7 +31,7 @@ class TestBbpTest(unittest.TestCase):
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['BBP$'].qc == Flag.GOOD))
 
-        nc = read_nc_profile(resource_path('BR6904117_085.nc'))
+        nc = read_nc_profile(resource_path('BD6903197_026.nc'))
         nc.prepare(tests=[test])
         test.run(nc)
 

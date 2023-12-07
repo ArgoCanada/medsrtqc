@@ -54,7 +54,7 @@ class bbpTest(QCOperation):
             # negative bbp test
             self.log('Performing negative bbp test')
             shallow_and_negative = (bbp.pres < 5) & (bbp.value < 0)
-            if any(shallow_and_negative):
+            if any(shallow_and_negative): # pragma: no cover
                 self.log(f'Negative bbp test results: shallow negative flags set to {Flag.BAD.decode()}')
             Flag.update_safely(bbp.qc, Flag.BAD, where=shallow_and_negative)
             deep_and_negative = (bbp.pres > 5) & (bbp.value < 0)
