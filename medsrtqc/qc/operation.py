@@ -10,6 +10,7 @@ to implement a production QC workflow.
 
 import sys
 from ..core import Profile
+from ..nc import NetCDFProfile
 
 class QCOperationError(Exception):
     """
@@ -55,7 +56,9 @@ class QCOperationContext:
         Print a log message for a given :class:`Profile`.
         The default method prints the message to ``sys.stderr``.
         """
-        print(f"[{repr(profile)}] {message}", file=sys.stderr)
+        profile_type = 'medsrtqc.nc.NetCDFProfile' if type(profile) == NetCDFProfile else 'medsrtqc.vms.VMSProfile'
+
+        print(f"[{profile_type} log] {message}", file=sys.stderr)
 
     def error(self, profile, message):
         """
