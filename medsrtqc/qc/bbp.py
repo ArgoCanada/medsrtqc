@@ -27,7 +27,7 @@ class bbpTest(QCOperation):
             new_flag = Flag.MISSING if all(hist == 0) else new_flag
             all_passed = all_passed and not any(hist == 0)
             Flag.update_safely(bbp.qc, new_flag)
-            self.log(f'Missing data test results: flags set to {new_flag}')
+            self.log(f'Missing data test results: flags set to {new_flag.decode()}')
 
             # high deep value test
             self.log('Performing high deep value')
@@ -36,7 +36,7 @@ class bbpTest(QCOperation):
             new_flag = Flag.PROBABLY_BAD if high_deep_value else Flag.GOOD
             all_passed = all_passed and not high_deep_value
             Flag.update_safely(bbp.qc, new_flag)
-            self.log(f'High deep value test results: flags set to {new_flag}')
+            self.log(f'High deep value test results: flags set to {new_flag.decode()}')
 
             # noisy profile test
             self.log('Performing noisy profile test')
@@ -49,13 +49,13 @@ class bbpTest(QCOperation):
             new_flag = Flag.PROBABLY_BAD if many_high_residuals else Flag.GOOD
             all_passed = all_passed and not many_high_residuals
             Flag.update_safely(bbp.qc, new_flag)
-            self.log(f'Noisy profile test results: flags set to {new_flag}')
+            self.log(f'Noisy profile test results: flags set to {new_flag.decode()}')
 
             # negative bbp test
             self.log('Performing negative bbp test')
             shallow_and_negative = (bbp.pres < 5) & (bbp.value < 0)
             if any(shallow_and_negative):
-                self.log(f'Negative bbp test results: shallow negative flags set to {Flag.BAD}')
+                self.log(f'Negative bbp test results: shallow negative flags set to {Flag.BAD.decode()}')
             Flag.update_safely(bbp.qc, Flag.BAD, where=shallow_and_negative)
             deep_and_negative = (bbp.pres > 5) & (bbp.value < 0)
             pct_negative = 100*sum(deep_and_negative)/len(deep_and_negative)
@@ -64,7 +64,7 @@ class bbpTest(QCOperation):
             new_flag = Flag.BAD if many_negative else new_flag
             all_passed = all_passed and not any(deep_and_negative)
             Flag.update_safely(bbp.qc, new_flag)
-            self.log(f'Negative bbp test result: flags set to {new_flag}')
+            self.log(f'Negative bbp test result: flags set to {new_flag.decode()}')
 
             # parking hook test
             ascending = self.profile.direction == 'A'
@@ -87,9 +87,9 @@ class bbpTest(QCOperation):
                     
         # old tests - still run or no?
 
-        if 'B700' in self.profile.keys():
+        if 'B700' in self.profile.keys() or 'BBP700' in self.profile.keys():
             lower_lim = -0.000025
-        elif 'B532' in self.profile.keys(): # pragma: no cover
+        elif 'B532' in self.profile.keys() or 'BBP532' in self.profile.keys(): # pragma: no cover
             lower_lim = -0.000005
         else: # pragma: no cover
             self.log(f'No valid wavelength information found, setting lower limit of range check to -0.000025')
