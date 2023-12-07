@@ -68,7 +68,7 @@ class NetCDFProfile(Profile):
     
     def update_qcx(self):
 
-        if not hasattr(self, 'qc_tests'):
+        if not hasattr(self, 'qc_tests'): # pragma: no cover
             raise LookupError('Profile has no attribute qc_tests, call NetCDFProfile().prepare() to add it')
         
         dataset = self._datasets[0]
