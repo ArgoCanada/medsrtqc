@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NetCDF IO &mdash; MEDS Realtime QC  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -82,7 +84,7 @@
            <div itemprop="articleBody">
              
   <section id="module-medsrtqc.nc">
-<span id="netcdf-io"></span><h1>NetCDF IO<a class="headerlink" href="#module-medsrtqc.nc" title="Permalink to this heading"></a></h1>
+<span id="netcdf-io"></span><h1>NetCDF IO<a class="headerlink" href="#module-medsrtqc.nc" title="Link to this heading"></a></h1>
 <p>The NetCDF implementation of the <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.core.Profile</span></code></a> gives developers
 and users access to more than 2 million profiles available on the Argo
 GDAC for testing purposes. You can also run production QC tests on NetCDF
@@ -90,7 +92,7 @@ files if generating them in advance simplifies the workflow. Most users
 will only ever use <a class="reference internal" href="#medsrtqc.nc.read_nc_profile" title="medsrtqc.nc.read_nc_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_nc_profile()</span></code></a>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.nc.read_nc_profile">
-<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">read_nc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.read_nc_profile" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">read_nc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.read_nc_profile" title="Link to this definition"></a></dt>
 <dd><p>Load a <code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.Profile</span></code> backed by a NetCDF file. For details
 on the underlying data structure, see <a class="reference internal" href="#medsrtqc.nc.NetCDFProfile" title="medsrtqc.nc.NetCDFProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFProfile</span></code></a>.</p>
 <dl class="field-list simple">
@@ -111,7 +113,7 @@ This is useful for combining BGC and core files.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="medsrtqc.nc.load">
-<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.load" title="Link to this definition"></a></dt>
 <dd><p>Load a <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> from a filename, url, bytes, or existing
 <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>. This is applied to anywhere a NetCDF file must
 be specified.</p>
@@ -127,7 +129,7 @@ be specified.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="medsrtqc.nc.NetCDFProfile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">NetCDFProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.NetCDFProfile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">medsrtqc.nc.</span></span><span class="sig-name descname"><span class="pre">NetCDFProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#medsrtqc.nc.NetCDFProfile" title="Link to this definition"></a></dt>
 <dd><p>A <a class="reference internal" href="core.html#medsrtqc.core.Profile" title="medsrtqc.core.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">medsrtqc.core.Profile</span></code></a> implementation backed by a
 <code class="docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> representation of an Argo profile NetCDF file.
 The NetCDF files should be single-cycle NetCDFs; however, you can

@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>medsrtqc &mdash; MEDS Realtime QC  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -76,18 +78,18 @@
            <div itemprop="articleBody">
              
   <section id="medsrtqc">
-<h1>medsrtqc<a class="headerlink" href="#medsrtqc" title="Permalink to this heading"></a></h1>
+<h1>medsrtqc<a class="headerlink" href="#medsrtqc" title="Link to this heading"></a></h1>
 <p><a class="reference external" href="https://github.com/ArgoCanada/medsrtqc/actions/workflows/check.yaml"><img alt="Check" src="https://github.com/ArgoCanada/medsrtqc/actions/workflows/check.yaml/badge.svg" /></a> <a class="reference external" href="https://codecov.io/gh/ArgoCanada/medsrtqc?branch=master"><img alt="Codecov test coverage" src="https://codecov.io/gh/ArgoCanada/medsrtqc/branch/master/graph/badge.svg" /></a></p>
 <p>A possible container for MEDS real-time quality control code.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>You can install the <code class="docutils literal notranslate"><span class="pre">medsrtqc</span></code> package using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/ArgoCanada/medsrtqc.git
 </pre></div>
 </div>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <p>QC code in <code class="docutils literal notranslate"><span class="pre">medsrtqc</span></code> is built on the <code class="docutils literal notranslate"><span class="pre">Trace</span></code> and <code class="docutils literal notranslate"><span class="pre">Profile</span></code>
 classes. A <code class="docutils literal notranslate"><span class="pre">Profile</span></code> is roughly what you would get from a single-cycle
 Argo NetCDF file. The <code class="docutils literal notranslate"><span class="pre">Profile</span></code> can be subclassed to abstract away the
@@ -123,7 +125,7 @@ historical and/or logistical reasons.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Trace</span><span class="p">(</span>
     <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="mf">1.5622</span><span class="p">,</span> <span class="mf">1.533</span><span class="p">,</span> <span class="mf">1.533</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="mf">0.3577</span><span class="p">,</span> <span class="mf">0.365</span><span class="p">,</span> <span class="mf">0.3504</span><span class="p">],</span>
-    <span class="n">qc</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
+    <span class="n">qc</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">],</span>
     <span class="n">adjusted</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7665</span><span class="p">,</span> <span class="mf">0.7665</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="mf">0.17885</span><span class="p">,</span> <span class="mf">0.1825</span><span class="p">,</span> <span class="mf">0.1752</span><span class="p">],</span>
     <span class="n">adjusted_qc</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
     <span class="n">adjusted_error</span><span class="o">=</span><span class="p">[</span><span class="n">masked</span><span class="p">,</span> <span class="n">masked</span><span class="p">,</span> <span class="n">masked</span><span class="p">,</span> <span class="p">[</span><span class="mi">1267</span> <span class="n">values</span><span class="p">],</span> <span class="n">masked</span><span class="p">,</span> <span class="n">masked</span><span class="p">,</span> <span class="n">masked</span><span class="p">],</span>
@@ -167,7 +169,7 @@ unit test data with known statistical properties:</p>
 </div>
 </section>
 <section id="qc-a-vms-dat-file">
-<h2>QC A VMS .DAT file<a class="headerlink" href="#qc-a-vms-dat-file" title="Permalink to this heading"></a></h2>
+<h2>QC A VMS .DAT file<a class="headerlink" href="#qc-a-vms-dat-file" title="Link to this heading"></a></h2>
 <p>This doesn’t quote work (it looks like the pressure QC flags aren’t
 updating) but it’s close!</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">medsrtqc.vms</span> <span class="kn">import</span> <span class="n">read_vms_profiles</span><span class="p">,</span> <span class="n">write_vms_profiles</span>
@@ -196,21 +198,15 @@ updating) but it’s close!</p>
 <span class="c1"># write_vms_profiles(profs, &#39;output_file.DAT&#39;)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;BINARY_VMS.DAT&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">resource</span> <span class="n">within</span> <span class="n">the</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">runner</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">medsrtqc</span><span class="o">/</span><span class="n">medsrtqc</span><span class="o">/</span><span class="n">config</span> <span class="n">directory</span><span class="o">.</span> <span class="n">Checking</span> <span class="n">resources</span><span class="o">...</span>
-</pre></div>
-</div>
-<img alt="_images/README_9_1.png" src="_images/README_9_1.png" />
+<img alt="_images/README_9_0.png" src="_images/README_9_0.png" />
 </section>
 <section id="qc-a-netcdf-file">
-<h2>QC a NetCDF file<a class="headerlink" href="#qc-a-netcdf-file" title="Permalink to this heading"></a></h2>
+<h2>QC a NetCDF file<a class="headerlink" href="#qc-a-netcdf-file" title="Link to this heading"></a></h2>
 <p>This should work but I haven’t tested properly yet.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prof</span> <span class="o">=</span> <span class="n">read_nc_profile</span><span class="p">(</span><span class="n">resource_path</span><span class="p">(</span><span class="s1">&#39;R6904117_085.nc&#39;</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r+&#39;</span><span class="p">)</span>
 <span class="n">test</span> <span class="o">=</span> <span class="n">PressureIncreasingTest</span><span class="p">()</span>
 <span class="n">test</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
 <span class="c1"># prof.close() if you want to write changes to disk</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;R6904117_085.nc&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">resource</span> <span class="n">within</span> <span class="n">the</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">runner</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">medsrtqc</span><span class="o">/</span><span class="n">medsrtqc</span><span class="o">/</span><span class="n">config</span> <span class="n">directory</span><span class="o">.</span> <span class="n">Checking</span> <span class="n">resources</span><span class="o">...</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">True</span>
@@ -256,7 +252,7 @@ updating) but it’s close!</p>
 </div>
 </section>
 <section id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h2>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
