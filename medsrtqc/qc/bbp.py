@@ -83,7 +83,7 @@ class bbpTest(QCOperation):
                         deep_above_baseline = (bbp.pres > (pres[-1] - 50)) & (bbp.value > baseline)
                         all_passed = all_passed and not any(deep_above_baseline)
                         Flag.update_safely(bbp.qc, Flag.BAD, where=deep_above_baseline)
-                        self.log(f'Parking hook test results: {sum(deep_above_baseline)} points set to {b"4"}')
+                        self.log(f'Parking hook test results: {sum(deep_above_baseline)} points set to 4')
                     
         # old tests - still run or no?
 
