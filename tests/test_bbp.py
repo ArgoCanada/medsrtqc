@@ -24,12 +24,16 @@ class TestBbpTest(unittest.TestCase):
         prof = vms[0]
         prof.prepare(tests=[test])
 
-        # reset the QC flags for CHLA
+        # reset the QC flags for BBP
         ResetQCOperation().run(prof)
         self.assertTrue(np.all(prof['BBP$'].qc == Flag.NO_QC))
 
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['BBP$'].qc == Flag.GOOD))
+
+        nc = read_nc_profile(resource_path('BR6904117_085.nc'))
+        nc.prepare(tests=[test])
+        test.run(nc)
 
     def test_betasw(self):
 
