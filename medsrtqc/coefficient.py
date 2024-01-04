@@ -72,6 +72,7 @@ def read_coef_file():
             'f6': -4.7726e-22}
     """
     with open(resource_path('doxy_bgc_calibration_coef.csv')) as fid:
+    # with open(resource_path('C:\\Users\\trana\\pyDev projects\\config\\doxy_bgc_calibration_coef.csv')) as fid:
         fid.readline()
         coeff = dict()
         for line in fid:

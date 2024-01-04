@@ -27,9 +27,9 @@ with open(f'bgc_logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') 
         for p in profs:
             # which tests to do based on variables in profile
             tests = check.run(p)
-            all_tests.append(tests)
             # add FLUA if appropriate, and QCP/QCF variables if they don't exist
-            p.prepare(tests)
+            tests = p.prepare(tests)
+            all_tests.append(tests)
             for t in tests:
                 t.run(p)
 

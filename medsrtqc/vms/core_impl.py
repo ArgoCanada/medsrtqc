@@ -39,11 +39,18 @@ class VMSProfile(Profile):
             if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
                 self.cycle_number = int(d['PARM'])
                 break
+        for d in data['PR_STN']['SURF_CODES']:
+            if d['PCODE'] == 'PDR$' or d['PCODE'] == 'PARM_SURF.PDR$':
+                self.cycle_phase = d['CPARM']
+                break
 
         self.direction = self.get_surf_code('PDR$')
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
+
+        if self.cycle_phase == 'SD' and len(tests) > 0:
+            tests = []
 
         # don't add QCP/QCF if we are not going to perform any tests
         if len(tests) > 0:
