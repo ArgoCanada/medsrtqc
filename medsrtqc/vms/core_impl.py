@@ -9,6 +9,7 @@ from numpy.ma.core import zeros
 
 from medsrtqc.qc.history import QCx
 from medsrtqc.core import Trace, Profile
+from medsrtqc.resources import resource_path
 
 
 class VMSProfile(Profile):
@@ -35,27 +36,25 @@ class VMSProfile(Profile):
         # save the wmo and cycle
         wmo_q = data['PR_STN']['FXD']['CR_NUMBER'].replace('Q','')
         self.wmo = int(wmo_q) if len(wmo_q) == 7 else int(wmo_q[:-2])
-        for d in data['PR_STN']['SURFACE']:
-            if d['PCODE'] == 'PFN$' or d['PCODE'] == 'PARM_SURFACE.PFN$':
-                self.cycle_number = int(d['PARM'])
-                break
-        for d in data['PR_STN']['SURF_CODES']:
-            if d['PCODE'] == 'PDR$' or d['PCODE'] == 'PARM_SURF.PDR$':
-                self.cycle_phase = d['CPARM']
-                break
 
-        self.direction = self.get_surf_code('PDR$')
+        self.cycle_number = self.get_surface(['PFN$', 'PARM_SURFACE.PFN$'])
+        self.direction = self.get_surf_code(['PDR$', 'PARM_SURF.PDR$'])
+        self.parking_pres = self.get_park_depth()
+
+        print(self.parking_pres)
         
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
 
-        if self.cycle_phase == 'SD' and len(tests) > 0:
+        if self.direction == 'SD' and len(tests) > 0:
             tests = []
 
         # don't add QCP/QCF if we are not going to perform any tests
         if len(tests) > 0:
             self.add_qcp_qcf()
             self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
+        
+        return tests
 
     def _update_by_param_from_data(self):
         pr_stn_prof = deepcopy(self._data['PR_STN']['PROF'])
@@ -240,9 +239,25 @@ class VMSProfile(Profile):
     
     def get_surf_code(self, v):
 
+        v = [v] if type(v) is not list else v
+        
+        surf_code = None
         for d in self._data['PR_STN']['SURF_CODES']:
-            if d['PCODE'] == v:
-                return d['CPARM']
+            if d['PCODE'] in v:
+                surf_code = d['CPARM']
+                break
+        return surf_code
+
+    def get_surface(self, v):
+
+        v = [v] if type(v) is not list else v
+
+        surface = None
+        for d in self._data['PR_STN']['SURFACE']:
+            if d['PCODE'] in v:
+                surface = int(d['PARM'])
+                break
+        return surface
 
     def update_qcx(self):
 
@@ -260,3 +275,16 @@ class VMSProfile(Profile):
         self._data = data_copy
         # ...and recalculate the _by_param attribute
         self._update_by_param_from_data()
+
+    def get_park_depth(self):
+        parking_depth = 1000
+        with open(resource_path('park_depth.csv')) as fid:
+            # read header
+            fid.readline()
+            for line in fid:
+                park_wmo, park_cycle, park_depth = line.split(',')
+                if self.wmo == int(park_wmo) and self.cycle_number >= int(park_cycle):
+                    parking_depth = int(park_depth)
+        
+        return parking_depth
+
