@@ -42,6 +42,8 @@ class NetCDFProfile(Profile):
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
+    def prepare(self, tests=[]):
+
         self.direction = None
         self.direction = [d['DIRECTION'][:][0].decode() for d in self._datasets] if len(self._datasets) > 1 else self._datasets[0]['DIRECTION'][:][0].decode()
         self.wmo = self.read_platform_number()
@@ -50,8 +52,6 @@ class NetCDFProfile(Profile):
         self.wmo = self.wmo[0] if len(self.wmo) == 1 else self.wmo
         self.cycle_number = self.cycle_number[0] if len(self.cycle_number) == 1 else self.cycle_number
         self.parking_pres = self.parking_pres[0] if len(self.parking_pres) == 1 else self.parking_pres
-
-    def prepare(self, tests=[]):
 
         # don't add QCP/QCF if we are not going to perform any tests
         if len(tests) > 0:
