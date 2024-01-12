@@ -42,11 +42,13 @@ class NetCDFProfile(Profile):
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
-        self.direction = self._datasets[0]['DIRECTION'][:][0].decode() if len(self._datasets) > 0 else None
+        self.direction = None
+        self.direction = [d['DIRECTION'][:][0].decode() for d in self._datasets] if len(self.datasets) > 1 else self._datasets[0]['DIRECTION'][:][0].decode()
+        self.wmo = self.read_platform_number()
+        self.cycle_number = [d['CYCLE_NUMBER'][:][0] for d in self._datasets] if len(self.datasets) > 1 else self._datasets[0]['CYCLE_NUMBER'][:][0]
+        self.parking_pres = self.get_park_depth()
 
     def prepare(self, tests=[]):
-
-        self.parking_pres = self.get_park_depth()
 
         # don't add QCP/QCF if we are not going to perform any tests
         if len(tests) > 0:
@@ -193,18 +195,29 @@ class NetCDFProfile(Profile):
         }
     
     def get_park_depth(self):
-        parking_depth = 1000
-        with open(resource_path('park_depth.csv')) as fid:
-            # read header
-            fid.readline()
-            for line in fid:
-                park_wmo, park_cycle, park_depth = line.split(',')
-                if self.wmo == int(park_wmo) and self.cycle_number >= int(park_cycle):
-                    parking_depth = int(park_depth)
+        parking_depth = len(self.wmo)*[1000]
+        for i, wmo, cyc in zip(range(len(wmo)), self.wmo, self.cycle_number):
+            with open(resource_path('park_depth.csv')) as fid:
+                # read header
+                fid.readline()
+                for line in fid:
+                    park_wmo, park_cycle, park_depth = line.split(',')
+                    if wmo == int(park_wmo) and cyc >= int(park_cycle):
+                        parking_depth[1] = int(park_depth)
         
         return parking_depth
+    
+    def read_platform_number(self):
+        wmo = len(self._datasets)*[None]
+        for i,d in enumerate(self._datasets):
+            arr = d['PLATFORM_NUMBER'][:]
+            arr = arr.data if hasattr(arr, 'mask') else arr
+            decode_str = np.array([f.decode('utf-8') for f in arr])
+            out = ''.join(decode_str).strip()
+            wmo[i] = out
 
-
+        wmo = wmo[0] if len(wmo) == 1 else wmo
+        return wmo
 
 def load(src, mode='r'):
     """
