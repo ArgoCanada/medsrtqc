@@ -47,6 +47,8 @@ class NetCDFProfile(Profile):
         self.wmo = self.read_platform_number()
         self.cycle_number = [d['CYCLE_NUMBER'][:][0] for d in self._datasets] if len(self._datasets) > 1 else self._datasets[0]['CYCLE_NUMBER'][:][0]
         self.parking_pres = self.get_park_depth()
+        self.wmo = self.wmo[0] if len(self.wmo) == 1 else self.wmo
+        self.parking_pres = self.parking_pres[0] if len(self.parking_pres) == 1 else self.parking_pres
 
     def prepare(self, tests=[]):
 
@@ -216,7 +218,6 @@ class NetCDFProfile(Profile):
             out = ''.join(decode_str).strip()
             wmo[i] = out
 
-        wmo = wmo[0] if len(wmo) == 1 else wmo
         return wmo
 
 def load(src, mode='r'):
