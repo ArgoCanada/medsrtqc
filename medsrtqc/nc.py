@@ -43,9 +43,9 @@ class NetCDFProfile(Profile):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
         self.direction = None
-        self.direction = [d['DIRECTION'][:][0].decode() for d in self._datasets] if len(self.datasets) > 1 else self._datasets[0]['DIRECTION'][:][0].decode()
+        self.direction = [d['DIRECTION'][:][0].decode() for d in self._datasets] if len(self._datasets) > 1 else self._datasets[0]['DIRECTION'][:][0].decode()
         self.wmo = self.read_platform_number()
-        self.cycle_number = [d['CYCLE_NUMBER'][:][0] for d in self._datasets] if len(self.datasets) > 1 else self._datasets[0]['CYCLE_NUMBER'][:][0]
+        self.cycle_number = [d['CYCLE_NUMBER'][:][0] for d in self._datasets] if len(self._datasets) > 1 else self._datasets[0]['CYCLE_NUMBER'][:][0]
         self.parking_pres = self.get_park_depth()
 
     def prepare(self, tests=[]):
