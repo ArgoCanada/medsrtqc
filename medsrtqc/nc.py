@@ -196,14 +196,14 @@ class NetCDFProfile(Profile):
     
     def get_park_depth(self):
         parking_depth = len(self.wmo)*[1000]
-        for i, wmo, cyc in zip(range(len(wmo)), self.wmo, self.cycle_number):
+        for i, wmo, cyc in zip(range(len(self.wmo)), self.wmo, self.cycle_number):
             with open(resource_path('park_depth.csv')) as fid:
                 # read header
                 fid.readline()
                 for line in fid:
                     park_wmo, park_cycle, park_depth = line.split(',')
                     if wmo == int(park_wmo) and cyc >= int(park_cycle):
-                        parking_depth[1] = int(park_depth)
+                        parking_depth[i] = int(park_depth)
         
         return parking_depth
     
