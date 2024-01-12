@@ -18,6 +18,7 @@ from netCDF4 import Dataset, chartostring
 from .core import Profile, Trace
 from .vms.read import check_vms, translate_vms
 from .qc.history import QCx
+from .resources import resource_path
 
 
 class NetCDFProfile(Profile):
@@ -44,6 +45,8 @@ class NetCDFProfile(Profile):
         self.direction = self._datasets[0]['DIRECTION'][:][0].decode() if len(self._datasets) > 0 else None
 
     def prepare(self, tests=[]):
+
+        self.parking_pres = self.get_park_depth()
 
         # don't add QCP/QCF if we are not going to perform any tests
         if len(tests) > 0:
@@ -188,6 +191,18 @@ class NetCDFProfile(Profile):
             'pres': 'PRES',
             'mtime': 'MTIME'
         }
+    
+    def get_park_depth(self):
+        parking_depth = 1000
+        with open(resource_path('park_depth.csv')) as fid:
+            # read header
+            fid.readline()
+            for line in fid:
+                park_wmo, park_cycle, park_depth = line.split(',')
+                if self.wmo == int(park_wmo) and self.cycle_number >= int(park_cycle):
+                    parking_depth = int(park_depth)
+        
+        return parking_depth
 
 
 
