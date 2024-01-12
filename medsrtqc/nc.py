@@ -210,7 +210,7 @@ class NetCDFProfile(Profile):
     def read_platform_number(self):
         wmo = len(self._datasets)*[None]
         for i,d in enumerate(self._datasets):
-            arr = d['PLATFORM_NUMBER'][:]
+            arr = d['PLATFORM_NUMBER'][:][0,:]
             arr = arr.data if hasattr(arr, 'mask') else arr
             decode_str = np.array([f.decode('utf-8') for f in arr])
             out = ''.join(decode_str).strip()
