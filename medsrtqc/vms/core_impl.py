@@ -41,8 +41,6 @@ class VMSProfile(Profile):
         self.direction = self.get_surf_code(['PDR$', 'PARM_SURF.PDR$'])
         self.parking_pres = self.get_park_depth()
 
-        print(self.parking_pres)
-        
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
 
