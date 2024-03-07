@@ -1,4 +1,5 @@
 
+import copy
 import numpy as np
 
 from medsrtqc.qc.operation import QCOperation
@@ -65,7 +66,7 @@ class bbpTest(QCOperation):
         # parking hook test
         ascending = self.profile.direction == 'A'
         if ascending:
-            pres = bbp.pres
+            pres = copy.deepcopy(bbp.pres)
             pres[np.abs(pres) > 6000] = np.nan
             pres = np.sort(pres)
             deepest_diff = pres[-1] - pres[-2]
