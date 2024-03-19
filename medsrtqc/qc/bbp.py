@@ -120,6 +120,8 @@ class bbpTest(QCOperation):
 
         # update trace
         self.update_trace('BBP$', bbp)
+        # adjusted is a 1:1 copy of backscatter
+        self.update_trace('BBPA', bbp)
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')

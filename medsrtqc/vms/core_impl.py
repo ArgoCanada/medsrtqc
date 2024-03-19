@@ -43,6 +43,9 @@ class VMSProfile(Profile):
 
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
+        
+        if 'BBP$' in self.keys() and 'BBPA' not in self.keys():
+            self.add_new_pr_profile('BBP$', 'BBPA')
 
         if self.direction == 'SD' and len(tests) > 0:
             tests = []
