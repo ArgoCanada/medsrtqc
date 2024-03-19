@@ -98,7 +98,7 @@ def check_vms(k):
 
     vms_list = [
         'VREF','PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','B700','BBP$',
-        'C1PH','C2PH','DOXY','PPOX','OTMP'
+        'BBPA', 'C1PH','C2PH','DOXY','PPOX','OTMP'
     ]
 
     return k in vms_list
