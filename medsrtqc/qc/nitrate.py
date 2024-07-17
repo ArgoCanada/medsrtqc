@@ -12,7 +12,7 @@ class nitrateTest(QCOperation):
         nitrate = self.profile['NIT$']
         all_passed = True
 
-        self.log('Setting previously unset flags for BBP to PROBABLY_BAD')
+        self.log('Setting previously unset flags for NITRATE to PROBABLY_BAD')
         Flag.update_safely(nitrate.qc, to=Flag.PROBABLY_BAD)
 
         # global range test
@@ -30,6 +30,14 @@ class nitrateTest(QCOperation):
         Flag.update_safely(nitrate.qc, Flag.BAD, high_res)
         QCx.update_safely(self.profile.qc_tests, 9, not any(high_res))
         all_passed = all_passed and not any(high_res)
+
+        # stuck value test
+        self.log('Performing stuck value test on NITRATE')
+        stuck_value = all(nitrate.value == nitrate.value[0])
+        if stuck_value: # pragma: no cover
+            self.log('stuck values found, setting all profile flags to 4')
+            Flag.update_safely(nitrate.qc, Flag.BAD)
+        QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
