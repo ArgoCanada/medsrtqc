@@ -21,3 +21,22 @@ class nitrateTest(QCOperation):
         Flag.update_safely(nitrate.qc, Flag.BAD, values_outside_range)
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
         all_passed = all_passed and not any(values_outside_range)
+
+        # spike test
+        self.log('Applying spike test to NITRATE')
+        median_nit = self.running_median(5)
+        res = nitrate.value - median_nit
+        high_res = res > 5
+        Flag.update_safely(nitrate.qc, Flag.BAD, high_res)
+        QCx.update_safely(self.profile.qc_tests, 9, not any(high_res))
+        all_passed = all_passed and not any(high_res)
+
+    def running_median(self, n):
+        self.log(f'Calculating running median over window size {n}')
+        x = self.profile['NIT$'].value
+        ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
+        b = [row[row > 0] for row in x[ix]]
+        k = int(n/2)
+        med = [np.median(c) for c in b]
+        med = np.array(k*[np.nan] + med + k*[np.nan])
+        return med
