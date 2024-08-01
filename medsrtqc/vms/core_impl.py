@@ -39,6 +39,7 @@ class VMSProfile(Profile):
 
         self.cycle_number = self.get_surface(['PFN$', 'PARM_SURFACE.PFN$'])
         self.direction = self.get_surf_code(['PDR$', 'PARM_SURF.PDR$'])
+        self.longitude, self.latitude = self.get_coords()
         self.parking_pres = self.get_park_depth()
 
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
@@ -259,6 +260,9 @@ class VMSProfile(Profile):
                 surface = int(d['PARM'])
                 break
         return surface
+    
+    def get_coords(self):
+        return (self._data['PR_STN']['FXD']['LONGITUDE'], self._data['PR_STN']['FXD']['LATITUDE'])
 
     def update_qcx(self):
 

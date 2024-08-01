@@ -12,6 +12,10 @@ from medsrtqc.coefficient import coeff
 class ChlaTest(QCOperation):
 
     def run_impl(self):
+
+        # whether or not to use geo lookup table for slope - False until allowed by ADMT - CG August 1, 2024
+        GEO_SLOPE = False
+
         self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
@@ -102,9 +106,11 @@ class ChlaTest(QCOperation):
 
         self.save_last_dark_chla(int(last_dark_chla))
 
+        slope = self.get_rt_slope() if GEO_SLOPE else 2
+
         adjusted = Trace(
             pres=adjusted.pres, 
-            value=self.convert(dark_prime_chla, scale_chla)/2, # Roesler et al. 2017 factor of 2 global bias
+            value=self.convert(dark_prime_chla, scale_chla)/slope, # Roesler et al. 2017 factor of 2 global bias or LUT value
             qc=adjusted.qc,
             mtime=adjusted.mtime
         )
@@ -223,3 +229,13 @@ class ChlaTest(QCOperation):
 
         with open(resource_path('last_dark_chla.csv'), 'a') as fid:
             fid.write(f'{self.profile.wmo:d},{cycle:d},{v:d}\n')
+    
+    def get_rt_slope(self):
+
+        lon = self.longitude
+        lat = self.latitude
+
+        import pandas as pd # I don't know if this will work on BATMAN
+        slope = pd.read_csv(resource_path('SLOPE_RT_2024.txt'), sep=' ')
+        index = ((slope.lon - lon)**2 + (slope.lat - lat)**2).idxmin()
+        return slope.loc[index].slope
