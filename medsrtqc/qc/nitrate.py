@@ -39,6 +39,9 @@ class nitrateTest(QCOperation):
             Flag.update_safely(nitrate.qc, Flag.BAD)
         QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
 
+        # nitrate specific tests
+        
+
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
         x = self.profile['NIT$'].value
