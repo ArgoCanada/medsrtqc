@@ -47,7 +47,6 @@ class nitrateTest(QCOperation):
         # sensor saturation value
         # sensor_saturated = self.profile['NO3S'] == 2**16-1
         # Flag.update_safely(nitrate.qc, Flag.PROBABLY_BAD, sensor_saturated)
-        # QCx.update_safely(self.profile.qc_tests, 59, not any(sensor_saturated))
         # all_passed = all_passed and not any(sensor_saturated)
 
         # absorbance at 240nm
@@ -55,8 +54,15 @@ class nitrateTest(QCOperation):
         # RMSE of fit residuals
         high_residual = self.profile['NO3R'].value >= 0.003
         Flag.update_safely(nitrate.qc, Flag.BAD, high_residual)
-        QCx.update_safely(self.profile.qc_tests, 59, not any(high_residual))
         all_passed = all_passed and not any(high_residual)
+
+        # update QCP/QCF
+        QCx.update_safely(self.profile.qc_tests, 59, all_passed)
+
+        # update the CHLA trace
+        self.update_trace('NTR2', nitrate)
+
+        return nitrate
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
