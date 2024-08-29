@@ -9,7 +9,8 @@ from medsrtqc.qc.history import QCx
 class nitrateTest(QCOperation):
 
     def run_impl(self):
-        nitrate = self.profile['NIT$']
+        molar = self.profile['NO3V']
+        nitrate = self.profile['NTR2']
         all_passed = True
 
         self.log('Setting previously unset flags for NITRATE to PROBABLY_BAD')
@@ -40,7 +41,23 @@ class nitrateTest(QCOperation):
         QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
 
         # nitrate specific tests
-        
+        temp = self.profile['TEMP']
+        temp_syn_qc = [temp.qc[np.abs(temp.pres - p) == np.min(np.abs(temp.pres - p))] for p in nitrate.pres]
+        Flag.update_safely(nitrate.qc, Flag.BAD, temp_syn_qc == 4)
+
+        # sensor saturation value
+        # sensor_saturated = self.profile['NO3S'] == 2**16-1
+        # Flag.update_safely(nitrate.qc, Flag.PROBABLY_BAD, sensor_saturated)
+        # QCx.update_safely(self.profile.qc_tests, 59, not any(sensor_saturated))
+        # all_passed = all_passed and not any(sensor_saturated)
+
+        # absorbance at 240nm
+
+        # RMSE of fit residuals
+        high_residual = self.profile['NO3R'] >= 0.003
+        Flag.update_safely(nitrate.qc, Flag.BAD, high_residual)
+        QCx.update_safely(self.profile.qc_tests, 59, not any(high_residual))
+        all_passed = all_passed and not any(high_residual)
 
     def running_median(self, n):
         self.log(f'Calculating running median over window size {n}')
