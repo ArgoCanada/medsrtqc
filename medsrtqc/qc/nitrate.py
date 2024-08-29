@@ -9,7 +9,6 @@ from medsrtqc.qc.history import QCx
 class nitrateTest(QCOperation):
 
     def run_impl(self):
-        molar = self.profile['NO3V']
         nitrate = self.profile['NTR2']
         all_passed = True
 
