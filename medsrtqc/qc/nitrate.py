@@ -53,7 +53,7 @@ class nitrateTest(QCOperation):
         # absorbance at 240nm
 
         # RMSE of fit residuals
-        high_residual = self.profile['NO3R'] >= 0.003
+        high_residual = self.profile['NO3R'].values >= 0.003
         Flag.update_safely(nitrate.qc, Flag.BAD, high_residual)
         QCx.update_safely(self.profile.qc_tests, 59, not any(high_residual))
         all_passed = all_passed and not any(high_residual)
