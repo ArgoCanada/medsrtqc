@@ -20,11 +20,11 @@ class TestNitrateTest(unittest.TestCase):
     def test_basic(self):
         vms = read_vms_profiles(resource_path('arvor_bgc_win_qc_output_mass.dat'), ver='win')
         test = nitrateTest()
-        prof = vms[0]
+        prof = vms[3]
         prof.prepare(tests=[test])
 
         test.run(prof, context=TestContext())
-        self.assertTrue(np.all(prof['NTR2$'].qc == Flag.PROBABLY_BAD))
+        self.assertTrue(np.all(prof['NTR2'].qc == Flag.PROBABLY_BAD))
 
         nc = read_nc_profile(resource_path('BD6903197_026.nc'))
         nc.prepare(tests=[test])
