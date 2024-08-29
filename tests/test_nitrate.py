@@ -15,10 +15,10 @@ class TestContext(QCOperationContext):
     def log(self, *args, **kwargs):
         pass
 
-class TestBbpTest(unittest.TestCase):
+class TestNitrateTest(unittest.TestCase):
 
     def test_basic(self):
-        vms = read_vms_profiles(resource_path('arvor_bgc_win_qc_output_mass.dat'))
+        vms = read_vms_profiles(resource_path('arvor_bgc_win_qc_output_mass.dat'), ver='win')
         test = nitrateTest()
         prof = vms[0]
         prof.prepare(tests=[test])
