@@ -24,7 +24,7 @@ class TestNitrateTest(unittest.TestCase):
         prof.prepare(tests=[test])
 
         test.run(prof, context=TestContext())
-        self.assertTrue(np.all(prof['NIT$'].qc == Flag.PROBABLY_BAD))
+        self.assertTrue(np.all(prof['NTR2$'].qc == Flag.PROBABLY_BAD))
 
         nc = read_nc_profile(resource_path('BD6903197_026.nc'))
         nc.prepare(tests=[test])
