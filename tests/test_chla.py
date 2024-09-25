@@ -34,9 +34,10 @@ class TestChlaTest(unittest.TestCase):
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['FLU1'].qc != Flag.NO_QC))
 
-        nc = read_nc_profile(resource_path('BD6903197_026.nc'))
-        nc.prepare(tests=[test])
-        test.run(nc)
+        # doesn't work because no T/S for MLD in B files
+        # nc = read_nc_profile(resource_path('BD6903197_026.nc'))
+        # nc.prepare(tests=[test])
+        # test.run(nc)
 
     def test_bad_counts(self):
 
