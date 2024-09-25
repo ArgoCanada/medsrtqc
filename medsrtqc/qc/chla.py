@@ -9,7 +9,7 @@ from medsrtqc.qc.flag import Flag
 from medsrtqc.qc.history import QCx
 from medsrtqc.coefficient import coeff
 
-class ChlaTest(QCOperation):
+class chlaTest(QCOperation):
 
     def run_impl(self):
 
