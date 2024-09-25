@@ -25,7 +25,7 @@ class TestNitrateTest(unittest.TestCase):
 
         # reset the QC flags for Nitrate
         ResetQCOperation().run(prof)
-        self.assertTrue(np.all(prof['NIT2'].qc == Flag.NO_QC))
+        self.assertTrue(np.all(prof['NTR2'].qc == Flag.NO_QC))
 
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['NTR2'].qc == Flag.PROBABLY_BAD))
