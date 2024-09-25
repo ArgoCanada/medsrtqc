@@ -34,6 +34,10 @@ class TestChlaTest(unittest.TestCase):
         test.run(prof, context=TestContext())
         self.assertTrue(np.all(prof['FLU1'].qc != Flag.NO_QC))
 
+        nc = read_nc_profile(resource_path('BD6903197_026.nc'))
+        nc.prepare(tests=[test])
+        test.run(nc)
+
     def test_bad_counts(self):
 
         vms = read_vms_profiles(resource_path('bgc_vms.dat'))

@@ -98,6 +98,8 @@ class NetCDFProfile(Profile):
         param_array = chartostring(dataset['PARAMETER'][:])
         n_prof = len(dataset.dimensions['N_PROF'])
 
+        adj_list = ['CHLA', 'BBP700', 'DOXY']
+
         if all_params is None:
             all_params = {}
 
@@ -106,6 +108,8 @@ class NetCDFProfile(Profile):
                 item_trim = str(item).strip()
                 if item_trim and item_trim not in all_params:
                     all_params[item_trim] = (dataset_id, i_prof)
+                    if item_trim in adj_list and f'{item_trim}_ADJUSTED' not in all_params:
+                        all_params[f'{item_trim}_ADJUSTED'] = (dataset_id, i_prof)
 
         return all_params
 
