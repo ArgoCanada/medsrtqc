@@ -110,9 +110,10 @@ def translate_vms(k):
     ]
     vals = [
         'PH_IN_SITU_FREE', 'PH_IN_SITU_TOTAL', 'FLUORESCENCE_CDOM',
-        'CDOM', 'CHLA', 'FLUORESCENCE_CHLA', 'CHLA_ADJUSTED', 'BETA_BACKSCATTERING', 'BBP700',
-        'BBP700_ADJUSTED','C1PHASE_DOXY','C2PHASE_DOXY','DOXY','PPOX_DOXY',
-        'TEMP_DOXY','MOLAR_NITRATE','NITRATE'
+        'CDOM', 'CHLA', 'FLUORESCENCE_CHLA', 'CHLA_ADJUSTED', 
+        'BETA_BACKSCATTERING', 'BBP700', 'BBP700_ADJUSTED','C1PHASE_DOXY',
+        'C2PHASE_DOXY','DOXY','PPOX_DOXY', 'TEMP_DOXY','MOLAR_NITRATE',
+        'NITRATE'
     ]
 
     dc = {key:val for key, val in zip(keys, vals)}
