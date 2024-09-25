@@ -105,7 +105,7 @@ def check_vms(k):
 
 def translate_vms(k):
     keys = [
-        'PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','B700','BBP$',
+        'PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','FLUA','B700','BBP$',
         'BBPA','C1PH','C2PH','DOXY','PPOX','OTMP','NO3V','NTR2',
     ]
     vals = [
