@@ -91,3 +91,25 @@ def read_coef_file():
     return coeff
 
 coeff = read_coef_file()
+
+def read_doxy_gain():
+    '''
+    Read oxygen gains from 'doxy_gains.csv' to apply real-time adjustment
+    to dissolved oxygen data.
+    '''
+
+    with open(resource_path('doxy_gains.csv')) as fid:
+        fid.readline()
+        gains = dict()
+        for line in fid:
+            wmo = line.split(',')[0]
+            line = ','.join(line.split(',')[1:])
+            gain = float(line.split(',')[0])
+            line = ','.join(line.split(',')[1:])
+            date = line.split(',')[0]
+
+            gains[wmo] = dict(gain=gain, date=date)
+
+        return gains
+    
+gains = read_doxy_gain()
