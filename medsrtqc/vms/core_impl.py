@@ -48,6 +48,9 @@ class VMSProfile(Profile):
         if 'BBP$' in self.keys() and 'BBPA' not in self.keys():
             self.add_new_pr_profile('BBP$', 'BBPA')
 
+        if 'DOXY' in self.keys() and 'DOXA' not in self.keys():
+            self.add_new_pr_profile('DOXY', 'DOXA')
+
         if self.direction == 'SD' and len(tests) > 0:
             tests = []
 

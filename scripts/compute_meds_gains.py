@@ -1,4 +1,6 @@
 
+import argopy
+
 from pathlib import Path
 import pandas as pd
 
@@ -6,20 +8,20 @@ import bgcArgoDMQC as bgc
 
 data_path = Path('/Users/GordonC/Documents/data/Argo/dac/meds/')
 
+index = argopy.ArgoIndex(index_file='bgc-b').load().to_dataframe()
+index = index.loc[(index.dac == 'meds') & (index.parameters.str.contains('DOXY'))]
+
 with open(Path('../medsrtqc/resources/doxy_gains.csv'), 'w') as fid:
 
     fid.write('wmo,gain,date\n')
 
     for flt in data_path.glob('*'):
-        sprof_file = list(flt.glob('*sprof*.nc'))[0]
-        if sprof_file.exists():
+        sprof_file = list(flt.glob('*sprof*.nc'))
+        if len(sprof_file) > 0:
             wmo = int(flt.name)
-            try:
+            if wmo in index.wmo.values:
                 sprof = bgc.sprof(wmo)
-            except KeyError:
-                print(f'Error loading float {wmo}')
-            gains = sprof.calc_gains(ref='WOA')
+                if sprof.track.shape[0] > 1:
+                    gains = sprof.calc_gains(ref='WOA')
 
-            fid.write(f'{wmo},{sprof.gain},{pd.Timestamp('now').strftime('%Y-%m-%d')}\n')
-
-            
+                    fid.write(f'{wmo},{sprof.gain},{pd.Timestamp('now').strftime('%Y-%m-%d')}\n')
