@@ -1,4 +1,5 @@
 
+import pandas as pd
 import numpy as np
 import gsw
 
@@ -14,7 +15,7 @@ class chlaTest(QCOperation):
     def run_impl(self):
 
         # whether or not to use geo lookup table for slope - False until allowed by ADMT - CG August 1, 2024
-        GEO_SLOPE = False
+        GEO_SLOPE = True
 
         self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
@@ -40,20 +41,6 @@ class chlaTest(QCOperation):
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
         all_passed = all_passed and not any(values_outside_range)
 
-        # dark count test
-        self.log('Checking for previous DARK_CHLA')
-        # get previous dark count here
-        last_dark_chla = self.read_last_dark_chla()
-
-        self.log('Testing if factory calibration matches last good dark count')
-        # test 1
-        if dark_chla != last_dark_chla:
-            self.log('LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD')
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-            all_passed = False
-        else: # pragma: no cover
-            self.log('LAST_DARK_CHLA and DARK_CHLA match, leaving CHLA_QC flags as GOOD')
-
         # the mixed layer depth calculation can fail
         mixed_layer_depth = None
         flag_mld = True
@@ -66,47 +53,11 @@ class chlaTest(QCOperation):
         if mixed_layer_depth is not None:
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
         
-        # constants for mixed layer test
-        delta_depth = 200
-        delta_dark = 50
-
-        # maximum pressure reached on this profile
-        max_pres = np.nanmax(chla.pres)
-
-        # I find the QC manual unclear on what to do here, should check with perhaps Catherine Schmechtig on how to process w/ no MLD
-        if flag_mld: # pragma: no cover
-        # test 2
-            self.log('No mixed layer found, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
-        elif max_pres < mixed_layer_depth + delta_depth + delta_dark:
-            self.log('Max pressure is insufficiently deep, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
-        else:
-            dark_prime_chla = np.nanmedian(fluo.value[fluo.pres > (max_pres - delta_dark)])
-    
-        # test 3
-        if np.abs(dark_prime_chla - dark_chla) > 0.2*dark_chla:
-            self.log('DARK_PRIME_CHLA is more than 20%% different than last good calibration, reverting to LAST_DARK_CHLA and setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to PROBABLY_BAD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_BAD)
-            all_passed = False
-        else:
-            # test 4
-            if dark_prime_chla != last_dark_chla:
-                self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
-                last_dark_chla = dark_prime_chla
-                Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-                Flag.update_safely(adjusted.qc, to=Flag.GOOD)
-                all_passed = False
-
-        self.save_last_dark_chla(int(last_dark_chla))
+        # write new test based on s3.2.1 of CHLA QC manual
+        dark_prime_chla = 2
 
         slope = self.get_rt_slope() if GEO_SLOPE else 2
+        print(f'physiological ratio! {slope}')
 
         adjusted = Trace(
             pres=adjusted.pres, 
@@ -198,44 +149,27 @@ class chlaTest(QCOperation):
         med = np.array(k*[np.nan] + med + k*[np.nan])
         return med
 
-    def read_last_dark_chla(self):
+    def read_physio_meta(self):
 
-        with open(resource_path('last_dark_chla.csv'), 'r') as fid:
-            fid.readline()
-            wmo = []
-            cyc = []
-            ldc = []
-            for line in fid:
-                line_list = [int(s.strip()) for s in line.split(',')]
-                wmo.append(line_list[0])
-                cyc.append(line_list[1])
-                ldc.append(line_list[2])
-
-            wmo = np.array(wmo)
-            cyc = np.array(cyc)
-            ldc = np.array(ldc)
-
-            if self.profile.wmo not in wmo:
-                self.log(f'No LAST_DARK_CHLA found for WMO {self.profile.wmo}. Writing manufacturer value to cycle 0 and continuing.')
-                self.save_last_dark_chla(int(coeff[f'{self.profile.wmo}']['DARK_CHLA']), cycle=0)
-                return coeff[f'{self.profile.wmo}']['DARK_CHLA']
-            else:
-                ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[(wmo == self.profile.wmo) & (cyc <= self.profile.cycle_number)])))[0][0]
-                return ldc[ix]
-
-    def save_last_dark_chla(self, v, cycle=None):
-
-        cycle = self.profile.cycle_number if cycle is None else cycle
-
-        with open(resource_path('last_dark_chla.csv'), 'a') as fid:
-            fid.write(f'{self.profile.wmo:d},{cycle:d},{v:d}\n')
+        fn = resource_path('fluo_to_chl_physiological_ratio_LUT.csv')
+        with open(fn) as fid:
+            meta = {line.split(':')[0]:line.split(':')[1] for line in [fid.readline() for i in range(27)]}
+        
+        return meta
     
     def get_rt_slope(self):
 
-        lon = self.longitude
-        lat = self.latitude
+        lon = self.profile.longitude
+        lat = self.profile.latitude
 
-        import pandas as pd # I don't know if this will work on BATMAN
-        slope = pd.read_csv(resource_path('SLOPE_RT_2024.txt'), sep=' ')
-        index = ((slope.lon - lon)**2 + (slope.lat - lat)**2).idxmin()
-        return slope.loc[index].slope
+        slope = pd.read_csv(resource_path('fluo_to_chl_physiological_ratio_LUT.csv'), skiprows=27)
+        index = ((slope.longitude - lon)**2 + (slope.latitude - lat)**2).idxmin()
+        return slope.loc[index].fluorescence_chlorophyll_ratio
+    
+    def record_chla_nc_data(self):
+
+        fn = resource_path('CHLA_netCDF_info.csv')
+        with open(fn, 'a') as fid:
+            fid.write()
+
+            

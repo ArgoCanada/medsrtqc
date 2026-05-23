@@ -98,7 +98,7 @@ def read_doxy_gain():
     to dissolved oxygen data.
     '''
 
-    with open(resource_path('doxy_gains.csv')) as fid:
+    with open(resource_path('median_doxy_gains_woa23.csv')) as fid:
         fid.readline()
         gains = dict()
         for line in fid:
