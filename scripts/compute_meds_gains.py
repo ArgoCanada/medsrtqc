@@ -25,4 +25,4 @@ with open(Path('../medsrtqc/resources/median_doxy_gains_woa23.csv'), 'w') as fid
                 if sprof.track.shape[0] > 1:
                     gains = sprof.calc_gains(ref='WOA')
 
-                    fid.write(f'{wmo},{np.nanmedian(gains)},{pd.Timestamp('now').strftime('%Y-%m-%d')}\n')
+                    fid.write(f'{wmo},{np.nanmedian(gains)},{pd.Timestamp("now").strftime("%Y-%m-%d")}\n')
