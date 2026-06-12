@@ -24,7 +24,7 @@ class chlaTest(QCOperation):
         self.chla_info = self.get_chla_info()
 
         dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
-        factory_scale = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
+        scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
 
         self.log('Setting previously unset flags for CHLA to GOOD')
         Flag.update_safely(chla.qc, to=Flag.GOOD)
@@ -53,9 +53,9 @@ class chlaTest(QCOperation):
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
         
         # check if float_dark_chla is available yet
-        if self.chla_info.float_dark_chla.notna().any():
+        if self.chla_info.FLOAT_DARK_CHLA.notna().any():
             self.log_float_dark_chla = True
-            float_dark_chla = self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna()].iloc[-1]
+            float_dark_chla = self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].iloc[-1]
             if self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].unique().shape[0] > 1:
                 raise ValueError('Multiple FLOAT_DARK_CHLA found - only one value should be present')
         else:
@@ -81,15 +81,15 @@ class chlaTest(QCOperation):
             if idark_chla is None and prelim_dark_chla is None:
                 dark_prime_chla = dark_chla
                 # fluo adjusted should be updated too, but no variable for that
-                Flag.update_safely(adjusted, Flag.PROBABLY_GOOD)
+                Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
             elif idark_chla is not None and prelim_dark_chla is None:
                 dark_prime_chla = idark_chla
                 # fluo adjusted should be updated too, but no variable for that
-                Flag.update_safely(adjusted, Flag.PROBABLY_GOOD)
+                Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
             elif idark_chla is None and prelim_dark_chla is not None:
                 dark_prime_chla = prelim_dark_chla.median()
                 # fluo adjusted should be updated too, but no variable for that
-                Flag.update_safely(adjusted, Flag.PROBABLY_GOOD)
+                Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
             elif idark_chla is not None and prelim_dark_chla is not None:
                 prelim_dark_chla = pd.concat([prelim_dark_chla, pd.Series(idark_chla)])
                 if prelim_dark_chla.notna().sum() >= 5:
@@ -98,40 +98,40 @@ class chlaTest(QCOperation):
                 else:
                     # fluo adjusted should be updated too, but no variable for that
                     dark_prime_chla = prelim_dark_chla.median()
-                    Flag.update_safely(adjusted, Flag.PROBABLY_GOOD)
+                    Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
 
         if float_dark_chla is not None:
             near_factory_value = np.abs(float_dark_chla - dark_chla) < 0.25*dark_chla
             all_passed = all_passed and near_factory_value
             if near_factory_value:
                 float_dark_chla_qc = 1
-                Flag.update_safely(adjusted, Flag.GOOD)
+                Flag.update_safely(adjusted.qc, Flag.GOOD)
                 self.log(f'float_dark_chla value ({float_dark_chla}) within reasonable range of factory dark value ({dark_chla}), setting QC=1')
             else:
                 float_dark_chla_qc = 3
                 self.log(f'float_dark_chla value ({float_dark_chla}) outside of reasonable range of factory dark value ({dark_chla}), setting QC=3')
-                Flag.update_safely(adjusted, Flag.PROBABLY_BAD)
+                Flag.update_safely(adjusted.qc, Flag.PROBABLY_BAD)
 
-        scale_chla = self.get_rt_slope()
-        if np.isnan(scale_chla):
+        physio_ratio = self.get_rt_slope()
+        if np.isnan(physio_ratio):
             self.log('Invalid position and/or slope, checking for previous value')
             self.log_chla = False
             if self.chla_info is not None:
-                if self.chla_info.PHYSIOLOGICAL_RATIO.notna().any():
-                    sub = self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.CYCLE)]
-                    scale_chla = sub.loc[sub.CYCLE == sub.CYCLE.max(), 'PHYSIOLOGICAL_RATIO']
-                    self.log(f'Using last valid physiological scale factor from cycle {sub.CYCLE.max()}: {scale_chla}')
+                if self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.profile.cycle_number), 'PHYIOLOGICA_RATIO'].notna().any():
+                    sub = self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.profile.cycle_number)]
+                    physio_ratio = sub.loc[sub.CYCLE == sub.CYCLE.max(), 'PHYSIOLOGICAL_RATIO']
+                    self.log(f'Using last valid physiological scale factor from cycle {sub.CYCLE.max()}: {physio_ratio}')
                     self.sci_calib_flag = 'previous'
             else:
                 self.log('No previous valid value found, falling back to 2 from Roesler et al. 2017')
                 self.sci_calib_flag = 'roesler'
+        else:
+            self.log(f'Physiological scale found near position ({self.profile.longitude:.2f}, {self.profile.latitude:.2f}): {physio_ratio}')
             
-        print(f'physiological ratio! {scale_chla}')
-
         dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
         adjusted = Trace(
             pres=adjusted.pres, 
-            value=self.convert(dark_count_adjusted, factory_scale)/scale_chla,
+            value=self.convert(dark_count_adjusted, scale_chla)/physio_ratio,
             qc=adjusted.qc,
             mtime=adjusted.mtime
         )
@@ -169,9 +169,25 @@ class chlaTest(QCOperation):
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
                 Flag.update_safely(adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
                 all_passed = False
+                chla_npq = chla.adjusted[depthNPQ_ix]
+                zmax_fluo = depthNPQ
+            else:
+                chla_npq = None
+                zmax_fluo = None
         
         # update QCP/QCF
         QCx.update_safely(self.profile.qc_tests, 63, all_passed)
+
+        self.scientific_calib_coefficient = {
+            'CHLA_NPQ':chla_npq,
+            'ZMaxFluo':zmax_fluo,
+            'PRELIM_DARK_CHLA':[],
+            'FLOAT_DARK_CHLA':float_dark_chla,
+            'SCALE_CHLA':scale_chla,
+            'PHYSIO_RATIO':physio_ratio,
+        }
+
+        self.write_chla_log()
 
         # update the CHLA trace
         self.update_trace('FLU1', chla)
@@ -223,7 +239,7 @@ class chlaTest(QCOperation):
 
         fn = resource_path('fluo_to_chl_physiological_ratio_LUT.csv')
         with open(fn) as fid:
-            meta = {line.split(':')[0]:line.split(':')[1] for line in [fid.readline() for i in range(27)]}
+            meta = {line.split(':')[0]:line.split(':')[1].strip().strip('"') for line in [fid.readline() for i in range(26)]}
         
         return meta
     
@@ -232,7 +248,7 @@ class chlaTest(QCOperation):
         lon = self.profile.longitude
         lat = self.profile.latitude
 
-        if np.isnan(lon) or np.inan(lat):
+        if np.isnan(lon) or np.isnan(lat):
             self.log('No valid position found, returning nan')
             return np.nan
         else:
@@ -240,11 +256,11 @@ class chlaTest(QCOperation):
             index = ((slope.longitude - lon)**2 + (slope.latitude - lat)**2).idxmin()
             return slope.loc[index].fluorescence_chlorophyll_ratio
     
-    def record_chla_nc_data(self):
+    def write_chla_log(self):
 
         fn = resource_path('CHLA_netCDF_info.csv')
-        with open(fn, 'a') as fid:
-            fid.write()
+        # with open(fn, 'a') as fid:
+            # fid.write()
 
     def get_chla_info(self):
 
@@ -252,7 +268,7 @@ class chlaTest(QCOperation):
         df = pd.read_csv(fn)
 
         if df.WMO.isin([self.profile.wmo]).any():
-            df.set_index(['WMO', 'CYCLE'])
+            df = df.set_index(['WMO', 'CYCLE'])
             return df.loc[self.profile.wmo]
         else:
             self.log(f'No previous entries for float {self.profile.wmo} in {fn}.')
