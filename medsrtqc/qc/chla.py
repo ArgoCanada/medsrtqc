@@ -53,20 +53,22 @@ class chlaTest(QCOperation):
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
         
         # check if float_dark_chla is available yet
-        if self.chla_info.FLOAT_DARK_CHLA.notna().any():
-            self.log_float_dark_chla = True
+        if self.chla_info is not None and self.chla_info.FLOAT_DARK_CHLA.notna().any():
             float_dark_chla = self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].iloc[-1]
             if self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].unique().shape[0] > 1:
                 raise ValueError('Multiple FLOAT_DARK_CHLA found - only one value should be present')
+            prelim_dark_chla = self.chla_info.PRELIM_DARK_CHLA
+            idark_chla = None
         else:
             float_dark_chla = None
+            float_dark_chla_qc = None
             
             # minimum depth test
             deeper_than_950 = any(chla.pres > 950)
 
             # determine idark_chla
             if deeper_than_950:
-                idark_chla = np.nanmin(self.running_median(fluo.values[fluo.pres > 5], 5))
+                idark_chla = np.nanmin(self.running_median(fluo.value[fluo.pres > 5], 5))
             else:
                 idark_chla = None
             idark_chla = None if np.isnan(idark_chla) else idark_chla
@@ -129,6 +131,7 @@ class chlaTest(QCOperation):
             self.log(f'Physiological scale found near position ({self.profile.longitude:.2f}, {self.profile.latitude:.2f}): {physio_ratio}')
             
         dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
+        dark_prime_chla = dark_prime_chla if float_dark_chla is None else None
         adjusted = Trace(
             pres=adjusted.pres, 
             value=self.convert(dark_count_adjusted, scale_chla)/physio_ratio,
@@ -138,7 +141,7 @@ class chlaTest(QCOperation):
 
         # CHLA spike test
         self.log('Performing negative spike test on CHLA')
-        median_chla = self.running_median(chla, 5)
+        median_chla = self.running_median(chla.value, 5)
         res = chla.value - median_chla
         spike_values = res < 2*np.percentile(res, 10)
 
@@ -158,31 +161,34 @@ class chlaTest(QCOperation):
         
         # CHLA NPQ correction
         self.log('Performing Non-Photochemical Quenching (NPQ) test')
+        chla_npq = None
+        zmax_fluo = None
         if not flag_mld:
             positive_spikes = res > 2*np.percentile(res, 90)
             depthNPQ_ix = np.where(median_chla[~positive_spikes] == np.nanmax(median_chla[~positive_spikes]))[0][0]
             depthNPQ = chla.pres[depthNPQ_ix]
             if depthNPQ < 0.9*mixed_layer_depth:
                 self.log(f'Adjusting surface values (P < {depthNPQ}dbar) to CHLA({depthNPQ}) = {chla.value[depthNPQ_ix]}mg/m3')
-                chla.adjusted[:depthNPQ_ix] = chla.adjusted[depthNPQ_ix]
+                adjusted.value[:depthNPQ_ix] = chla.value[depthNPQ_ix]
                 self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
                 Flag.update_safely(adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
                 all_passed = False
-                chla_npq = chla.adjusted[depthNPQ_ix]
+                chla_npq = chla.value[depthNPQ_ix]
                 zmax_fluo = depthNPQ
-            else:
-                chla_npq = None
-                zmax_fluo = None
         
         # update QCP/QCF
         QCx.update_safely(self.profile.qc_tests, 63, all_passed)
 
+        print(prelim_dark_chla)
+
         self.scientific_calib_coefficient = {
             'CHLA_NPQ':chla_npq,
             'ZMaxFluo':zmax_fluo,
-            'PRELIM_DARK_CHLA':[],
-            'FLOAT_DARK_CHLA':float_dark_chla,
+            'PRELIM_DARK_CHLA':prelim_dark_chla.loc[prelim_dark_chla.notna()].astype(int).tolist() if prelim_dark_chla is not None else prelim_dark_chla,
+            'iDARK_CHLA':int(idark_chla) if idark_chla is not None else idark_chla,
+            'FLOAT_DARK_CHLA':int(float_dark_chla) if float_dark_chla is not None else float_dark_chla,
+            'FLOAT_DARK_CHLA_QC':int(float_dark_chla_qc) if float_dark_chla_qc is not None else float_dark_chla_qc,
             'SCALE_CHLA':scale_chla,
             'PHYSIO_RATIO':physio_ratio,
         }
@@ -225,9 +231,8 @@ class chlaTest(QCOperation):
 
         return (fluo.value - dark) * scale
 
-    def running_median(self, param, n):
+    def running_median(self, x, n):
         self.log(f'Calculating running median over window size {n}')
-        x = param.value
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
@@ -258,14 +263,34 @@ class chlaTest(QCOperation):
     
     def write_chla_log(self):
 
+        sci_calib_coeff = ''
+        for key, item in self.scientific_calib_coefficient.items():
+            if item is not None and key != 'iDARK_CHLA':
+                if key in ['CHLA_NPQ', 'SCALE_CHLA', 'PHYSIO_RATIO']:
+                    sci_calib_coeff += f'{key}={item:.4f}, '
+                elif key == 'ZMaxFluo':
+                    sci_calib_coeff += f'{key}={item:.1f}, '
+                else:
+                    sci_calib_coeff += f'{key}={item}, '
+
+        sci_calib_coeff = sci_calib_coeff[:-2]
+
+        for key, item in self.scientific_calib_coefficient.items():
+            if item is None:
+                self.scientific_calib_coefficient[key] = ''
+
         fn = resource_path('CHLA_netCDF_info.csv')
-        # with open(fn, 'a') as fid:
-            # fid.write()
+        with open(fn, 'a') as fid:
+            fid.write(f'{self.profile.wmo},{self.profile.cycle_number},{self.profile.direction},')
+            fid.write(f'{self.scientific_calib_coefficient['iDARK_CHLA']},{self.scientific_calib_coefficient['FLOAT_DARK_CHLA']},')
+            fid.write(f'{self.scientific_calib_coefficient['FLOAT_DARK_CHLA_QC']},{self.scientific_calib_coefficient['PHYSIO_RATIO']},')
+            fid.write(f'"{sci_calib_coeff}"\n')
 
     def get_chla_info(self):
 
         fn = resource_path('CHLA_netCDF_info.csv')
         df = pd.read_csv(fn)
+        df = df.loc[df.DIRECTION == 'A']
 
         if df.WMO.isin([self.profile.wmo]).any():
             df = df.set_index(['WMO', 'CYCLE'])
