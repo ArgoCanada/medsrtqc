@@ -54,10 +54,13 @@ class chlaTest(QCOperation):
         
         # check if float_dark_chla is available yet
         if self.chla_info.float_dark_chla.notna().any():
+            self.log_float_dark_chla = True
             float_dark_chla = self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna()].iloc[-1]
             if self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].unique().shape[0] > 1:
                 raise ValueError('Multiple FLOAT_DARK_CHLA found - only one value should be present')
         else:
+            float_dark_chla = None
+            
             # minimum depth test
             deeper_than_950 = any(chla.pres > 950)
 
@@ -94,7 +97,7 @@ class chlaTest(QCOperation):
                     float_dark_chla = dark_prime_chla
                 else:
                     # fluo adjusted should be updated too, but no variable for that
-                    float_dark_chla = None
+                    dark_prime_chla = prelim_dark_chla.median()
                     Flag.update_safely(adjusted, Flag.PROBABLY_GOOD)
 
         if float_dark_chla is not None:
@@ -103,24 +106,32 @@ class chlaTest(QCOperation):
             if near_factory_value:
                 float_dark_chla_qc = 1
                 Flag.update_safely(adjusted, Flag.GOOD)
+                self.log(f'float_dark_chla value ({float_dark_chla}) within reasonable range of factory dark value ({dark_chla}), setting QC=1')
             else:
                 float_dark_chla_qc = 3
+                self.log(f'float_dark_chla value ({float_dark_chla}) outside of reasonable range of factory dark value ({dark_chla}), setting QC=3')
                 Flag.update_safely(adjusted, Flag.PROBABLY_BAD)
 
         scale_chla = self.get_rt_slope()
         if np.isnan(scale_chla):
             self.log('Invalid position and/or slope, checking for previous value')
+            self.log_chla = False
             if self.chla_info is not None:
-                if self.chla_info.scale_chla.notna().any():
-                    scale_chla = 0
+                if self.chla_info.PHYSIOLOGICAL_RATIO.notna().any():
+                    sub = self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.CYCLE)]
+                    scale_chla = sub.loc[sub.CYCLE == sub.CYCLE.max(), 'PHYSIOLOGICAL_RATIO']
+                    self.log(f'Using last valid physiological scale factor from cycle {sub.CYCLE.max()}: {scale_chla}')
+                    self.sci_calib_flag = 'previous'
             else:
-                self.log('')
+                self.log('No previous valid value found, falling back to 2 from Roesler et al. 2017')
+                self.sci_calib_flag = 'roesler'
             
         print(f'physiological ratio! {scale_chla}')
 
+        dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
         adjusted = Trace(
             pres=adjusted.pres, 
-            value=self.convert(2, factory_scale)/scale_chla, # LUT value
+            value=self.convert(dark_count_adjusted, factory_scale)/scale_chla,
             qc=adjusted.qc,
             mtime=adjusted.mtime
         )
