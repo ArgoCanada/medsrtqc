@@ -86,6 +86,7 @@ class chlaTest(QCOperation):
                 Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
             elif idark_chla is not None and prelim_dark_chla is None:
                 dark_prime_chla = idark_chla
+                prelim_dark_chla = pd.Series([idark_chla])
                 # fluo adjusted should be updated too, but no variable for that
                 Flag.update_safely(adjusted.qc, Flag.PROBABLY_GOOD)
             elif idark_chla is None and prelim_dark_chla is not None:
@@ -115,13 +116,15 @@ class chlaTest(QCOperation):
                 Flag.update_safely(adjusted.qc, Flag.PROBABLY_BAD)
 
         physio_ratio = self.get_rt_slope()
+        self.sci_calib_flag = 'physio'
         if np.isnan(physio_ratio):
             self.log('Invalid position and/or slope, checking for previous value')
             self.log_chla = False
+            physio_ratio = None
             if self.chla_info is not None:
-                if self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.profile.cycle_number), 'PHYIOLOGICA_RATIO'].notna().any():
+                if self.chla_info.loc[:self.profile.cycle_number, 'PHYSIOLOGICAL_RATIO'].notna().any():
                     sub = self.chla_info.loc[(self.chla_info.PHYSIOLOGICAL_RATIO.notna()) & (self.chla_info.CYCLE < self.profile.cycle_number)]
-                    physio_ratio = sub.loc[sub.CYCLE == sub.CYCLE.max(), 'PHYSIOLOGICAL_RATIO']
+                    physio_ratio = sub.loc[sub.index.max(), 'PHYSIOLOGICAL_RATIO']
                     self.log(f'Using last valid physiological scale factor from cycle {sub.CYCLE.max()}: {physio_ratio}')
                     self.sci_calib_flag = 'previous'
             else:
@@ -132,9 +135,11 @@ class chlaTest(QCOperation):
             
         dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
         dark_prime_chla = dark_prime_chla if float_dark_chla is None else None
+        adj_scale = physio_ratio if physio_ratio is not None else 2
+        print(self.sci_calib_flag, adj_scale)
         adjusted = Trace(
             pres=adjusted.pres, 
-            value=self.convert(dark_count_adjusted, scale_chla)/physio_ratio,
+            value=self.convert(dark_count_adjusted, scale_chla)/adj_scale,
             qc=adjusted.qc,
             mtime=adjusted.mtime
         )
@@ -282,8 +287,8 @@ class chlaTest(QCOperation):
         fn = resource_path('CHLA_netCDF_info.csv')
         with open(fn, 'a') as fid:
             fid.write(f'{self.profile.wmo},{self.profile.cycle_number},{self.profile.direction},')
-            fid.write(f'{self.scientific_calib_coefficient['iDARK_CHLA']},{self.scientific_calib_coefficient['FLOAT_DARK_CHLA']},')
-            fid.write(f'{self.scientific_calib_coefficient['FLOAT_DARK_CHLA_QC']},{self.scientific_calib_coefficient['PHYSIO_RATIO']},')
+            fid.write(f'{self.scientific_calib_coefficient["iDARK_CHLA"]},{self.scientific_calib_coefficient["FLOAT_DARK_CHLA"]},')
+            fid.write(f'{self.scientific_calib_coefficient["FLOAT_DARK_CHLA_QC"]},{self.scientific_calib_coefficient["PHYSIO_RATIO"]},')
             fid.write(f'"{sci_calib_coeff}"\n')
 
     def get_chla_info(self):
