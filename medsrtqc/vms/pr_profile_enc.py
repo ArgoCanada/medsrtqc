@@ -12,6 +12,14 @@ class PrProfileFxdEncoding(enc.StructEncoding):
 
         self._ver = ver
         self._fxd = 'PrProfile'
+        if ver == 'vms': 
+            prof_type_length = 4            
+        elif ver == 'win':
+            prof_type_length = 30
+            
+        else: # pragma: no cover
+            raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
+
 
         super().__init__(
             ('MKEY', enc.Character(8)),
@@ -23,7 +31,7 @@ class PrProfileFxdEncoding(enc.StructEncoding):
             ('OBS_TIME', enc.Character(4)),
             ('DATA_TYPE', enc.Character(2)),
             ('IUMSGNO', enc.Integer4()),
-            ('PROF_TYPE', enc.Character(4)),
+            ('PROF_TYPE', enc.Character(prof_type_length)),
             ('PROFILE_SEG', enc.Character(2)),
             ('NO_DEPTHS', enc.Integer2()),
             ('D_P_CODE', enc.Character(1))

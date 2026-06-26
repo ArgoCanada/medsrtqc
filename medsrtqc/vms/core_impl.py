@@ -263,9 +263,14 @@ class VMSProfile(Profile):
                 surface = int(d['PARM'])
                 break
         return surface
-    
+
     def get_coords(self):
-        return (self._data['PR_STN']['FXD']['LONGITUDE'], self._data['PR_STN']['FXD']['LATITUDE'])
+        lon = self._data['PR_STN']['FXD']['LONGITUDE']
+        if lon > 0:
+            warn('Inverting positive longitude (E) to be negative (W)')
+            lon = -lon
+        lat = self._data['PR_STN']['FXD']['LATITUDE']
+        return lon, lat
 
     def update_qcx(self):
 
