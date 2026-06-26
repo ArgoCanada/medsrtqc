@@ -1,12 +1,12 @@
 
 import sys
-from datetime import datetime
+import datetime
 import contextlib
 
 from medsrtqc.vms import read_vms_profiles, write_vms_profiles
 from medsrtqc.qc.check import preTestCheck
 
-with open(f'bgc_logs/{datetime.utcnow().strftime("%Y%m%d_%H%M")}_log.log', 'w') as log_file:
+with open(f'bgc_logs/{datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M")}_log.log', 'w') as log_file:
     with contextlib.redirect_stderr(log_file):
 
         # read from command line
