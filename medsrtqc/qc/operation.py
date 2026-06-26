@@ -10,7 +10,11 @@ to implement a production QC workflow.
 
 import sys
 from ..core import Profile
-from ..nc import NetCDFProfile
+try:
+    from ..nc import NetCDFProfile
+    raise ImportError()
+except:
+    NetCDFProfile = None
 
 class QCOperationError(Exception):
     """
