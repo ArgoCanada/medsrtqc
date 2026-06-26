@@ -34,3 +34,7 @@ The `SCIENTIFIC_CALIB_COEFFICIENT` field will change every profile depending on 
 An example:
 
 - `SCIENTIFIC_CALIB_COEFFICIENT`: "PRELIM_DARK_CHLA=[55, 54, 55], SCALE_CHLA=0.0072, PHYSIO_RATIO=0.9502"
+
+### Questions
+
+- In a PROVOR CTS5 file I found positive longitudes that should be positive I believe. For now I have made a rule to flip any positive longitudes which is ok for now since we do not have any BGC floats in positive longitude regions, but this is not a permanent solution. How to proceed?
