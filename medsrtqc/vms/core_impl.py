@@ -1,6 +1,7 @@
 
 from warnings import warn
 from typing import Iterable
+from collections import OrderedDict
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +11,7 @@ from numpy.ma.core import zeros
 from medsrtqc.qc.history import QCx
 from medsrtqc.core import Trace, Profile
 from medsrtqc.resources import resource_path
+from medsrtqc.qc.util import ResetQCOperation
 
 
 class VMSProfile(Profile):
@@ -24,12 +26,13 @@ class VMSProfile(Profile):
         super().__init__()
         # copy data to avoid side effects to or from the caller
         self._data = deepcopy(data)
+        self._profile_type = 'vms'
 
         # do some pre-processing to make fetching data easier
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self, tests=[]):
+    def prepare(self, tests=[], reset=True):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
         data = self._data
@@ -44,6 +47,8 @@ class VMSProfile(Profile):
 
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
+        if 'FLU1' in self.keys() and 'FLU2' not in self.keys():
+            self.add_new_pr_profile('FLU3', 'FLU2')
         
         if 'BBP$' in self.keys() and 'BBPA' not in self.keys():
             self.add_new_pr_profile('BBP$', 'BBPA')
@@ -58,6 +63,10 @@ class VMSProfile(Profile):
         if len(tests) > 0:
             self.add_qcp_qcf()
             self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
+
+        if reset:
+            print('Resetting all flags for reprocessing - use reset=False if not desired')
+            ResetQCOperation().run(self)
         
         return tests
 
@@ -237,6 +246,22 @@ class VMSProfile(Profile):
         
         data_copy['PR_STN']['FXD']['SPARMS'] = len(data_copy['PR_STN']['SURF_CODES'])
         
+        # everything worked, so update the underlying data
+        self._data = data_copy
+        # ...and recalculate the _by_param attribute
+        self._update_by_param_from_data()
+
+    def write_surf_code(self, v, p):
+        data_copy = deepcopy(self._data)
+
+        data_copy['PR_STN']['SURF_CODES'].append(
+            OrderedDict(
+                PCODE=v,
+                CPARM=p,
+                Q_PARM='0'
+            )
+        )
+
         # everything worked, so update the underlying data
         self._data = data_copy
         # ...and recalculate the _by_param attribute
