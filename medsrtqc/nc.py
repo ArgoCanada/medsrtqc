@@ -11,6 +11,7 @@ from typing import Iterable
 import urllib.request
 import io
 import os
+from pathlib import Path
 import shutil
 import reprlib
 import numpy as np
@@ -39,6 +40,7 @@ class NetCDFProfile(Profile):
         super().__init__()
         self._datasets = list(dataset)
         self._variables = None
+        self._profile_type = 'nc'
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
@@ -236,7 +238,7 @@ def load(src, mode='r'):
     :param mode: Use ``'r+'`` to allow updates.
     """
 
-    if not isinstance(src, (Dataset, bytes, str)):
+    if not isinstance(src, (Dataset, bytes, str, Path)):
         raise TypeError('`src` must be a filename, url, bytes, or netCDF4.Dataset object')
 
     if isinstance(src, Dataset):
@@ -245,6 +247,8 @@ def load(src, mode='r'):
         return Dataset(src, mode=mode)
     elif isinstance(src, bytes):
         return Dataset('in-mem-file', mode=mode, memory=src)
+    elif isinstance(src, Path) and src.exists():
+        return Dataset(src, mode=mode)
     elif src.startswith('http://') or src.startswith('https://') or src.startswith('ftp://'):
         buf = io.BytesIO()
         with urllib.request.urlopen(src) as f:
