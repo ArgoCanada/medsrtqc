@@ -36,7 +36,7 @@ def resource_path(path):
 
     try:
         abs_path = meds_path(path)
-    except FileNotFoundError as exception:
+    except (KeyError, FileNotFoundError) as exception:
         abs_path = os.path.join(os.path.dirname(__file__), path)
 
         if not os.path.exists(abs_path):
