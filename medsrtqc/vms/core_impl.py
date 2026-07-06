@@ -47,8 +47,6 @@ class VMSProfile(Profile):
 
         if 'FLU1' in self.keys() and 'FLUA' not in self.keys():
             self.add_new_pr_profile('FLU1', 'FLUA')
-        if 'FLU1' in self.keys() and 'FLU2' not in self.keys():
-            self.add_new_pr_profile('FLU3', 'FLU2')
         
         if 'BBP$' in self.keys() and 'BBPA' not in self.keys():
             self.add_new_pr_profile('BBP$', 'BBPA')
