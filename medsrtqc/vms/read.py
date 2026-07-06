@@ -97,23 +97,23 @@ def write_vms_profiles(profiles, dest, ver='vms'):
 def check_vms(k):
 
     vms_list = [
-        'VREF','PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','FLUA','B700','BBP$', 
-        'BBPA','C1PH','C2PH','DOXY','PPOX','OTMP','NO3S','NO3R','NO3V','NTR2',
+        'VREF','PHPH','PHTO','CDO$','CDOM','FLU3','FLU2','FLU1','FLUA','B700','BBP$', 
+        'BBPA','C1PH','C2PH','DOXY','DOXA','PPOX','OTMP','NO3S','NO3R','NO3V','NTR2',
     ]
 
     return k in vms_list
 
 def translate_vms(k):
     keys = [
-        'PHPH','PHTO','CDO$','CDOM','FLU3','FLU1','FLUA','B700','BBP$',
-        'BBPA','C1PH','C2PH','DOXY','PPOX','OTMP','NO3V','NTR2',
+        'PHPH','PHTO','CDO$','CDOM','FLU1','FLU2','FLU3','FLUA','B700','BBP$',
+        'BBPA','C1PH','C2PH','DOXY','DOXA','PPOX','OTMP','NO3V','NTR2',
     ]
     vals = [
         'PH_IN_SITU_FREE', 'PH_IN_SITU_TOTAL', 'FLUORESCENCE_CDOM',
-        'CDOM', 'CHLA', 'FLUORESCENCE_CHLA', 'CHLA_ADJUSTED', 
-        'BETA_BACKSCATTERING', 'BBP700', 'BBP700_ADJUSTED','C1PHASE_DOXY',
-        'C2PHASE_DOXY','DOXY','PPOX_DOXY', 'TEMP_DOXY','MOLAR_NITRATE',
-        'NITRATE'
+        'CDOM', 'CHLA', 'FLUORESCENCE_CHLA_ADJUSTED', 'FLUORESCENCE_CHLA', 
+        'CHLA_ADJUSTED', 'BETA_BACKSCATTERING', 'BBP700', 'BBP700_ADJUSTED',
+        'C1PHASE_DOXY', 'C2PHASE_DOXY','DOXY', 'DOXY_ADJUSTED', 'PPOX_DOXY', 
+        'TEMP_DOXY','MOLAR_NITRATE', 'NITRATE'
     ]
 
     dc = {key:val for key, val in zip(keys, vals)}
