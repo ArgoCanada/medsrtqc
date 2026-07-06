@@ -16,7 +16,6 @@ class chlaTest(QCOperation):
 
     def run_impl(self):
 
-        self.profile['FLU1'].adjusted.mask = False
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
         chla_adjusted = self.profile['FLUA']
@@ -134,7 +133,6 @@ class chlaTest(QCOperation):
         dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
         dark_prime_chla = dark_prime_chla if float_dark_chla is None else None
         adj_scale = physio_ratio if physio_ratio is not None else 2
-        print(self.sci_calib_flag, adj_scale)
 
         chla_adjusted = Trace(
             pres=chla_adjusted.pres, 
@@ -293,7 +291,9 @@ class chlaTest(QCOperation):
         sci_calib_coeff = sci_calib_coeff[:-2]
         prelim_dark_coeff = f"PRELIM_DARK_CHLA={self.scientific_calib_coefficient['PRELIM_DARK_CHLA']}"
 
-        self.write_sci_calib('coeff', sci_calib_coeff)
+        self.log('Writing coefficients to CHLA_COEF and FLUO_COEF SURF_CODEs')
+        self.write_sci_calib('CHLA_COEF', sci_calib_coeff)
+        self.write_sci_calib('FLUO_COEF', prelim_dark_coeff)
 
         for key, item in self.scientific_calib_coefficient.items():
             if item is None:
@@ -322,17 +322,8 @@ class chlaTest(QCOperation):
     def write_sci_calib(self, field, value):
 
         if self.profile._profile_type == 'vms':
-            
-            name = {
-                'comment':'CHLA_COMM',
-                'equation':'CHLA_EQN',
-                'coeff':'CHLA_COEF',
-            }
-
-            self.profile.write_surf_code(name[field], value)
-
+            self.profile.write_surf_code(field, value)
         elif self.profile._profile_type == 'nc':
             warn('NetCDF SCIENTIFIC_CALIB writing not built yet, doing nothing.')
-
         else:
             raise ValueError(f'Unrecognized profile type {self._profile_type}.')

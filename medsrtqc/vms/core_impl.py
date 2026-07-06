@@ -32,7 +32,7 @@ class VMSProfile(Profile):
         self._by_param = None
         self._update_by_param_from_data()
 
-    def prepare(self, tests=[], reset=True):
+    def prepare(self, tests=[], reset=False):
         # this function so that read_vms_profiles() does not add information
         # but also means it will need to be called before performing QC
         data = self._data
@@ -63,7 +63,7 @@ class VMSProfile(Profile):
             self.qc_tests = QCx.qc_tests(self.get_surf_code('QCP$'), self.get_surf_code('QCF$'))
 
         if reset:
-            print('Resetting all flags for reprocessing - use reset=False if not desired')
+            warn('Resetting all flags for reprocessing - use reset=False if not desired')
             ResetQCOperation().run(self)
         
         return tests
