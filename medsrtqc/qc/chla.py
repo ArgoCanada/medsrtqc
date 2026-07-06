@@ -1,4 +1,7 @@
 
+from warnings import warn
+
+import pandas as pd
 import numpy as np
 import gsw
 
@@ -9,15 +12,17 @@ from medsrtqc.qc.flag import Flag
 from medsrtqc.qc.history import QCx
 from medsrtqc.coefficient import coeff
 
-class ChlaTest(QCOperation):
+class chlaTest(QCOperation):
 
     def run_impl(self):
-        self.profile['FLU1'].adjusted.mask = False
+
         chla = self.profile['FLU1']
         fluo = self.profile['FLU3']
-        adjusted = self.profile['FLUA']
+        chla_adjusted = self.profile['FLUA']
 
         all_passed = True
+
+        self.chla_info = self.get_chla_info()
 
         dark_chla = coeff[f'{self.profile.wmo}']['DARK_CHLA']
         scale_chla = coeff[f'{self.profile.wmo}']['SCALE_CHLA']
@@ -26,29 +31,15 @@ class ChlaTest(QCOperation):
         Flag.update_safely(chla.qc, to=Flag.GOOD)
 
         self.log('Setting previously unset flags for CHLA_ADJUSTED to GOOD')
-        Flag.update_safely(adjusted.qc, to=Flag.GOOD)
+        Flag.update_safely(chla_adjusted.qc, to=Flag.GOOD)
 
         # global range test
         self.log('Applying global range test to CHLA')
         values_outside_range = (chla.value < -0.1) | (chla.value > 50.0)
         Flag.update_safely(chla.qc, Flag.BAD, values_outside_range)
-        Flag.update_safely(adjusted.qc, Flag.BAD, values_outside_range)
+        Flag.update_safely(chla_adjusted.qc, Flag.BAD, values_outside_range)
         QCx.update_safely(self.profile.qc_tests, 6, not any(values_outside_range))
         all_passed = all_passed and not any(values_outside_range)
-
-        # dark count test
-        self.log('Checking for previous DARK_CHLA')
-        # get previous dark count here
-        last_dark_chla = self.read_last_dark_chla()
-
-        self.log('Testing if factory calibration matches last good dark count')
-        # test 1
-        if dark_chla != last_dark_chla:
-            self.log('LAST_DARK_CHLA does not match factory DARK_CHLA, flagging CHLA as PROBABLY_BAD')
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-            all_passed = False
-        else: # pragma: no cover
-            self.log('LAST_DARK_CHLA and DARK_CHLA match, leaving CHLA_QC flags as GOOD')
 
         # the mixed layer depth calculation can fail
         mixed_layer_depth = None
@@ -62,61 +53,105 @@ class ChlaTest(QCOperation):
         if mixed_layer_depth is not None:
             self.log(f'Mixed layer depth calculated ({mixed_layer_depth} dbar)')
         
-        # constants for mixed layer test
-        delta_depth = 200
-        delta_dark = 50
-
-        # maximum pressure reached on this profile
-        max_pres = np.nanmax(chla.pres)
-
-        # I find the QC manual unclear on what to do here, should check with perhaps Catherine Schmechtig on how to process w/ no MLD
-        if flag_mld: # pragma: no cover
-        # test 2
-            self.log('No mixed layer found, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
-        elif max_pres < mixed_layer_depth + delta_depth + delta_dark:
-            self.log('Max pressure is insufficiently deep, setting DARK_PRIME_CHLA to LAST_DARK_CHLA, CHLA_QC to PROBABLY_GOOD, and CHLA_ADJUSTED_QC to PROBABLY_GOOD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_GOOD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_GOOD)
+        # check if float_dark_chla is available yet
+        if self.chla_info is not None and self.chla_info.FLOAT_DARK_CHLA.notna().any():
+            float_dark_chla = self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].iloc[-1]
+            if self.chla_info.loc[self.chla_info.FLOAT_DARK_CHLA.notna(), 'FLOAT_DARK_CHLA'].unique().shape[0] > 1:
+                raise ValueError('Multiple FLOAT_DARK_CHLA found - only one value should be present')
+            prelim_dark_chla = self.chla_info.PRELIM_DARK_CHLA
+            idark_chla = None
         else:
-            dark_prime_chla = np.nanmedian(fluo.value[fluo.pres > (max_pres - delta_dark)])
-    
-        # test 3
-        if np.abs(dark_prime_chla - dark_chla) > 0.2*dark_chla:
-            self.log('DARK_PRIME_CHLA is more than 20%% different than last good calibration, reverting to LAST_DARK_CHLA and setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to PROBABLY_BAD')
-            dark_prime_chla = last_dark_chla
-            Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-            Flag.update_safely(adjusted.qc, to=Flag.PROBABLY_BAD)
-            all_passed = False
+            float_dark_chla = None
+            float_dark_chla_qc = None
+            
+            # minimum depth test
+            deeper_than_950 = any(chla.pres > 950)
+
+            # determine idark_chla
+            if deeper_than_950 and self.profile.direction == 'A':
+                idark_chla = np.nanmin(self.running_median(fluo.value[fluo.pres > 5], 5))
+                idark_chla = None if np.isnan(idark_chla) else idark_chla
+            else:
+                idark_chla = None
+
+            # check if any prelim_dark_chla available
+            if self.chla_info is not None and self.chla_info.PRELIM_DARK_CHLA.notna().any():
+                prelim_dark_chla = self.chla_info.PRELIM_DARK_CHLA
+            else:
+                prelim_dark_chla = None
+
+            # differing cases based availability of idark_chla and prelim_dark_chla
+            if idark_chla is None and prelim_dark_chla is None:
+                dark_prime_chla = dark_chla
+                Flag.update_safely(chla_adjusted.qc, Flag.PROBABLY_GOOD)
+            elif idark_chla is not None and prelim_dark_chla is None:
+                dark_prime_chla = idark_chla
+                prelim_dark_chla = pd.Series([idark_chla])
+                Flag.update_safely(chla_adjusted.qc, Flag.PROBABLY_GOOD)
+            elif idark_chla is None and prelim_dark_chla is not None:
+                dark_prime_chla = prelim_dark_chla.median()
+                Flag.update_safely(chla_adjusted.qc, Flag.PROBABLY_GOOD)
+            elif idark_chla is not None and prelim_dark_chla is not None:
+                prelim_dark_chla = pd.concat([prelim_dark_chla, pd.Series(idark_chla)])
+                if prelim_dark_chla.notna().sum() >= 5:
+                    dark_prime_chla = prelim_dark_chla.median()
+                    float_dark_chla = dark_prime_chla
+                else:
+                    dark_prime_chla = prelim_dark_chla.median()
+                    Flag.update_safely(chla_adjusted.qc, Flag.PROBABLY_GOOD)
+
+        if float_dark_chla is not None:
+            near_factory_value = np.abs(float_dark_chla - dark_chla) < 0.25*dark_chla
+            all_passed = all_passed and near_factory_value
+            if near_factory_value:
+                float_dark_chla_qc = 1
+                self.log(f'float_dark_chla value ({float_dark_chla}) within reasonable range of factory dark value ({dark_chla}), setting QC=1')
+            else:
+                float_dark_chla_qc = 3
+                self.log(f'float_dark_chla value ({float_dark_chla}) outside of reasonable range of factory dark value ({dark_chla}), setting QC=3')
+                Flag.update_safely(chla_adjusted.qc, Flag.PROBABLY_BAD)
+
+        physio_ratio = self.get_rt_slope()
+        self.sci_calib_flag = 'physio'
+        if np.isnan(physio_ratio):
+            self.log('Invalid position and/or slope, checking for previous value')
+            self.log_chla = False
+            physio_ratio = None
+            if self.chla_info is not None:
+                if self.chla_info.loc[:self.profile.cycle_number, 'PHYSIOLOGICAL_RATIO'].notna().any():
+                    sub = self.chla_info.loc[:self.profile.cycle_number]
+                    sub = sub.loc[sub.PHYSIOLOGICAL_RATIO.notna()]
+                    physio_ratio = sub.loc[sub.index.max(), 'PHYSIOLOGICAL_RATIO']
+                    self.log(f'Using last valid physiological scale factor from cycle {sub.index.max()}: {physio_ratio}')
+                    self.sci_calib_flag = 'previous'
+            else:
+                self.log('No previous valid value found, falling back to 2 from Roesler et al. 2017')
+                self.sci_calib_flag = 'roesler'
         else:
-            # test 4
-            if dark_prime_chla != last_dark_chla:
-                self.log('New DARK_CHLA value found, setting CHLA_QC to PROBABLY_BAD, CHLA_ADJUSTED_QC to GOOD, and updating LAST_DARK_CHLA')
-                last_dark_chla = dark_prime_chla
-                Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
-                Flag.update_safely(adjusted.qc, to=Flag.GOOD)
-                all_passed = False
+            self.log(f'Physiological scale found near position ({self.profile.longitude:.2f}, {self.profile.latitude:.2f}): {physio_ratio}')
+            
+        dark_count_adjusted = dark_prime_chla if float_dark_chla is None else float_dark_chla
+        dark_prime_chla = dark_prime_chla if float_dark_chla is None else None
+        adj_scale = physio_ratio if physio_ratio is not None else 2
 
-        self.save_last_dark_chla(int(last_dark_chla))
-
-        adjusted = Trace(
-            pres=adjusted.pres, 
-            value=self.convert(dark_prime_chla, scale_chla)/2, # Roesler et al. 2017 factor of 2 global bias
-            qc=adjusted.qc,
-            mtime=adjusted.mtime
+        chla_adjusted = Trace(
+            pres=chla_adjusted.pres, 
+            value=self.convert(dark_count_adjusted, scale_chla)/adj_scale,
+            qc=chla_adjusted.qc,
+            mtime=chla_adjusted.mtime
         )
 
         # CHLA spike test
         self.log('Performing negative spike test on CHLA')
-        median_chla = self.running_median(5)
+        median_chla = self.running_median(chla.value, 5)
         res = chla.value - median_chla
-        spike_values = res < 2*np.percentile(res, 10)
+        if hasattr(res, 'mask'):
+            res = res.data
+            res[res == 99999.] = np.nan
+        spike_values = res < 2*np.nanpercentile(res, 10)
 
         Flag.update_safely(chla.qc, Flag.BAD, spike_values)
-        Flag.update_safely(adjusted.qc, Flag.BAD, spike_values)
+        Flag.update_safely(chla_adjusted.qc, Flag.BAD, spike_values)
         all_passed = all_passed and not any(spike_values)
         QCx.update_safely(self.profile.qc_tests, 9, not any(spike_values))
 
@@ -126,37 +161,66 @@ class ChlaTest(QCOperation):
         if stuck_value: # pragma: no cover
             self.log('stuck values found, setting all profile flags to 4 for both CHLA and CHLA_ADJUSTED')
             Flag.update_safely(chla.qc, Flag.BAD)
-            Flag.update_safely(adjusted.qc, Flag.BAD)
+            Flag.update_safely(chla_adjusted.qc, Flag.BAD)
+
         QCx.update_safely(self.profile.qc_tests, 13, not stuck_value)
         
         # CHLA NPQ correction
         self.log('Performing Non-Photochemical Quenching (NPQ) test')
+        chla_npq = None
+        zmax_fluo = None
         if not flag_mld:
-            positive_spikes = res > 2*np.percentile(res, 90)
+            positive_spikes = res > 2*np.nanpercentile(res, 90)
             depthNPQ_ix = np.where(median_chla[~positive_spikes] == np.nanmax(median_chla[~positive_spikes]))[0][0]
             depthNPQ = chla.pres[depthNPQ_ix]
             if depthNPQ < 0.9*mixed_layer_depth:
                 self.log(f'Adjusting surface values (P < {depthNPQ}dbar) to CHLA({depthNPQ}) = {chla.value[depthNPQ_ix]}mg/m3')
-                chla.adjusted[:depthNPQ_ix] = chla.adjusted[depthNPQ_ix]
+                chla_adjusted.value[:depthNPQ_ix] = chla.value[depthNPQ_ix]
                 self.log('Setting values above this depth in CHLA_QC to PROBABLY_BAD, and in CHLA_ADJUSTED_QC to changed')
                 Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD, where=chla.pres < depthNPQ)
-                Flag.update_safely(adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
+                Flag.update_safely(chla_adjusted.qc, to=Flag.CHANGED, where=chla.pres < depthNPQ)
+
                 all_passed = False
+                chla_npq = chla.value[depthNPQ_ix]
+                zmax_fluo = depthNPQ
         
         # update QCP/QCF
         QCx.update_safely(self.profile.qc_tests, 63, all_passed)
 
+        self.scientific_calib_coefficient = {
+            'CHLA_NPQ':chla_npq,
+            'ZMaxFluo':zmax_fluo,
+            'PRELIM_DARK_CHLA':prelim_dark_chla.loc[prelim_dark_chla.notna()].astype(int).tolist() if prelim_dark_chla is not None else prelim_dark_chla,
+            'iDARK_CHLA':int(idark_chla) if idark_chla is not None else idark_chla,
+            'FLOAT_DARK_CHLA':int(float_dark_chla) if float_dark_chla is not None else float_dark_chla,
+            'FLOAT_DARK_CHLA_QC':int(float_dark_chla_qc) if float_dark_chla_qc is not None else float_dark_chla_qc,
+            'FUNCTIONAL_DARK_CHLA':int(dark_count_adjusted),
+            'SCALE_CHLA':scale_chla,
+            'PHYSIO_RATIO':physio_ratio,
+        }
+
+        self.write_chla_log()
+
+        # all chla should be 3
+        Flag.update_safely(chla.qc, to=Flag.PROBABLY_BAD)
+
         # update the CHLA trace
         self.update_trace('FLU1', chla)
-        self.update_trace('FLUA', adjusted)
+        self.update_trace('FLUA', chla_adjusted)
 
         return chla
 
     def mixed_layer_depth(self):
         self.log('Calculating mixed layer depth')
-        pres = self.profile['PRES']
-        temp = self.profile['TEMP']
-        psal = self.profile['PSAL']
+        try:
+            pres = self.profile['PRES']
+            temp = self.profile['TEMP']
+            psal = self.profile['PSAL']
+        except (ValueError, KeyError) as e:
+            self.log('PRES, TEMP, PSAL not found in profile, checking aux data')
+            pres = self.profile.aux['PRES']
+            temp = self.profile.aux['TEMP']
+            psal = self.profile.aux['PSAL']
         if np.any(pres.value != temp.pres) or np.any(pres.value != psal.pres):
             self.error('PRES, TEMP, and PSAL are not aligned along the same pressure axis')
 
@@ -182,9 +246,8 @@ class ChlaTest(QCOperation):
 
         return (fluo.value - dark) * scale
 
-    def running_median(self, n):
+    def running_median(self, x, n):
         self.log(f'Calculating running median over window size {n}')
-        x = self.profile['FLU1'].value
         ix = np.arange(n) + np.arange(len(x)-n+1)[:,None]
         b = [row[row > 0] for row in x[ix]]
         k = int(n/2)
@@ -192,34 +255,75 @@ class ChlaTest(QCOperation):
         med = np.array(k*[np.nan] + med + k*[np.nan])
         return med
 
-    def read_last_dark_chla(self):
+    def read_physio_meta(self):
 
-        with open(resource_path('last_dark_chla.csv'), 'r') as fid:
-            fid.readline()
-            wmo = []
-            cyc = []
-            ldc = []
-            for line in fid:
-                line_list = [int(s.strip()) for s in line.split(',')]
-                wmo.append(line_list[0])
-                cyc.append(line_list[1])
-                ldc.append(line_list[2])
+        fn = resource_path('fluo_to_chl_physiological_ratio_LUT.csv')
+        with open(fn) as fid:
+            meta = {line.split(':')[0]:line.split(':')[1].strip().strip('"') for line in [fid.readline() for i in range(26)]}
+        
+        return meta
+    
+    def get_rt_slope(self):
 
-            wmo = np.array(wmo)
-            cyc = np.array(cyc)
-            ldc = np.array(ldc)
+        lon = self.profile.longitude
+        lat = self.profile.latitude
 
-            if self.profile.wmo not in wmo:
-                self.log(f'No LAST_DARK_CHLA found for WMO {self.profile.wmo}. Writing manufacturer value to cycle 0 and continuing.')
-                self.save_last_dark_chla(int(coeff[f'{self.profile.wmo}']['DARK_CHLA']), cycle=0)
-                return coeff[f'{self.profile.wmo}']['DARK_CHLA']
-            else:
-                ix = np.where((wmo == self.profile.wmo) & (cyc == np.nanmax(cyc[(wmo == self.profile.wmo) & (cyc <= self.profile.cycle_number)])))[0][0]
-                return ldc[ix]
+        if np.isnan(lon) or np.isnan(lat):
+            self.log('No valid position found, returning nan')
+            return np.nan
+        else:
+            slope = pd.read_csv(resource_path('fluo_to_chl_physiological_ratio_LUT.csv'), skiprows=27)
+            index = ((slope.longitude - lon)**2 + (slope.latitude - lat)**2).idxmin()
+            return slope.loc[index].fluorescence_chlorophyll_ratio
+    
+    def write_chla_log(self):
 
-    def save_last_dark_chla(self, v, cycle=None):
+        sci_calib_coeff = ''
+        for key, item in self.scientific_calib_coefficient.items():
+            if item is not None and key not in ['iDARK_CHLA', 'FUNCTIONAL_DARK_CHLA']:
+                if key in ['CHLA_NPQ', 'SCALE_CHLA', 'PHYSIO_RATIO']:
+                    sci_calib_coeff += f'{key}={item:.4f}, '
+                elif key == 'ZMaxFluo':
+                    sci_calib_coeff += f'{key}={item:.1f}, '
+                else:
+                    sci_calib_coeff += f'{key}={item}, '
 
-        cycle = self.profile.cycle_number if cycle is None else cycle
+        sci_calib_coeff = sci_calib_coeff[:-2]
+        prelim_dark_coeff = f"PRELIM_DARK_CHLA={self.scientific_calib_coefficient['PRELIM_DARK_CHLA']}"
 
-        with open(resource_path('last_dark_chla.csv'), 'a') as fid:
-            fid.write(f'{self.profile.wmo:d},{cycle:d},{v:d}\n')
+        self.log('Writing coefficients to CHLA_COEF and FLUO_COEF SURF_CODEs')
+        self.write_sci_calib('CHLA_COEF', sci_calib_coeff)
+        self.write_sci_calib('FLUO_COEF', prelim_dark_coeff)
+
+        for key, item in self.scientific_calib_coefficient.items():
+            if item is None:
+                self.scientific_calib_coefficient[key] = ''
+
+        fn = resource_path('CHLA_netCDF_info.csv')
+        with open(fn, 'a') as fid:
+            fid.write(f'{self.profile.wmo},{self.profile.cycle_number},{self.profile.direction},')
+            fid.write(f'{self.scientific_calib_coefficient["iDARK_CHLA"]},{self.scientific_calib_coefficient["FLOAT_DARK_CHLA"]},')
+            fid.write(f'{self.scientific_calib_coefficient["FLOAT_DARK_CHLA_QC"]},{self.scientific_calib_coefficient["FUNCTIONAL_DARK_CHLA"]},')
+            fid.write(f'{self.scientific_calib_coefficient["PHYSIO_RATIO"]},"{sci_calib_coeff}","{prelim_dark_coeff}"\n')
+
+    def get_chla_info(self):
+
+        fn = resource_path('CHLA_netCDF_info.csv')
+        df = pd.read_csv(fn)
+        df = df.loc[df.DIRECTION == 'A']
+
+        if df.WMO.isin([self.profile.wmo]).any():
+            df = df.set_index(['WMO', 'CYCLE'])
+            return df.loc[self.profile.wmo]
+        else:
+            self.log(f'No previous entries for float {self.profile.wmo} in {fn}.')
+            return None
+    
+    def write_sci_calib(self, field, value):
+
+        if self.profile._profile_type == 'vms':
+            self.profile.write_surf_code(field, value)
+        elif self.profile._profile_type == 'nc':
+            warn('NetCDF SCIENTIFIC_CALIB writing not built yet, doing nothing.')
+        else:
+            raise ValueError(f'Unrecognized profile type {self._profile_type}.')

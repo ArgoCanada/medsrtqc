@@ -11,6 +11,7 @@ from typing import Iterable
 import urllib.request
 import io
 import os
+from pathlib import Path
 import shutil
 import reprlib
 import numpy as np
@@ -39,6 +40,7 @@ class NetCDFProfile(Profile):
         super().__init__()
         self._datasets = list(dataset)
         self._variables = None
+        self._profile_type = 'nc'
         for dataset_id in range(len(self._datasets)):
             self._variables = self._locate_variables(dataset_id, self._variables)
 
@@ -49,7 +51,12 @@ class NetCDFProfile(Profile):
         self.wmo = self.read_platform_number()
         self.cycle_number = [d['CYCLE_NUMBER'][:][0] for d in self._datasets]
         self.parking_pres = self.get_park_depth()
+        self.wmo = [int(wmo) for wmo in self.wmo]
         self.wmo = self.wmo[0] if len(self.wmo) == 1 else self.wmo
+        self.coords = self.read_coords()
+        self.longitude = np.nanmean([r[0] for r in self.coords])
+        self.latitude = np.nanmean([r[1] for r in self.coords])
+        self.coords = self.coords[0] if len(self.coords) == 1 else self.coords
         self.cycle_number = self.cycle_number[0] if len(self.cycle_number) == 1 else self.cycle_number
         self.parking_pres = self.parking_pres[0] if len(self.parking_pres) == 1 else self.parking_pres
 
@@ -98,6 +105,8 @@ class NetCDFProfile(Profile):
         param_array = chartostring(dataset['PARAMETER'][:])
         n_prof = len(dataset.dimensions['N_PROF'])
 
+        adj_list = ['CHLA', 'BBP700', 'DOXY']
+
         if all_params is None:
             all_params = {}
 
@@ -106,6 +115,8 @@ class NetCDFProfile(Profile):
                 item_trim = str(item).strip()
                 if item_trim and item_trim not in all_params:
                     all_params[item_trim] = (dataset_id, i_prof)
+                    if item_trim in adj_list and f'{item_trim}_ADJUSTED' not in all_params:
+                        all_params[f'{item_trim}_ADJUSTED'] = (dataset_id, i_prof)
 
         return all_params
 
@@ -167,11 +178,11 @@ class NetCDFProfile(Profile):
                 del var_values[var]
 
         # don't include trailing fill values when all variables have a trailing fill
-        if len(var_values['value']):
-            last_finite = self._calc_finite_length(var_values)
-            if last_finite:
-                for var in list(var_values.keys()):
-                    var_values[var] = var_values[var][:max(last_finite)]
+        # if len(var_values['value']):
+        #     last_finite = self._calc_finite_length(var_values)
+        #     if last_finite:
+        #         for var in list(var_values.keys()):
+        #             var_values[var] = var_values[var][:max(last_finite)]
 
         return var_values
 
@@ -196,6 +207,9 @@ class NetCDFProfile(Profile):
             'pres': 'PRES',
             'mtime': 'MTIME'
         }
+
+    def add_aux_data(self, traces):
+        self.aux = traces
     
     def get_park_depth(self):
         parking_depth = len(self.wmo)*[1000]
@@ -221,6 +235,17 @@ class NetCDFProfile(Profile):
 
         return wmo
 
+    def read_coords(self):
+        coords = len(self._datasets)*[None]
+        for i,d in enumerate(self._datasets):
+            lat = d['LATITUDE'][:]
+            lat = lat.data if hasattr(lat, 'mask') else lat
+            lon = d['LONGITUDE'][:]
+            lon = lon.data if hasattr(lon, 'mask') else lon
+            coords[i] = (lon, lat)
+
+        return coords
+
 def load(src, mode='r'):
     """
     Load a ``netCDF4.Dataset`` from a filename, url, bytes, or existing
@@ -231,15 +256,17 @@ def load(src, mode='r'):
     :param mode: Use ``'r+'`` to allow updates.
     """
 
-    if not isinstance(src, (Dataset, bytes, str)):
+    if not isinstance(src, (Dataset, bytes, str, Path)):
         raise TypeError('`src` must be a filename, url, bytes, or netCDF4.Dataset object')
-
+    
     if isinstance(src, Dataset):
         return src
     elif isinstance(src, str) and os.path.exists(src):
         return Dataset(src, mode=mode)
     elif isinstance(src, bytes):
         return Dataset('in-mem-file', mode=mode, memory=src)
+    elif isinstance(src, Path) and src.exists():
+        return Dataset(src, mode=mode)
     elif src.startswith('http://') or src.startswith('https://') or src.startswith('ftp://'):
         buf = io.BytesIO()
         with urllib.request.urlopen(src) as f:

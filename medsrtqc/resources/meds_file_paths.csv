@@ -1,0 +1,5 @@
+file,operational_path,test_path
+doxy_calibration_coef.csv,Argo_QC/config,Argo BGC RTQC Test/config
+fluo_to_chla_physiological_ratio.csv,Argo_QC/config,Argo BGC RTQC Test/config
+CHLA_netCDF_info.csv,Argo_QC/config,Argo BGC RTQC Test/config
+park_depth.csv,Argo_QC/config,Argo BGC RTQC Test/config

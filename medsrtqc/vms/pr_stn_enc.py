@@ -54,7 +54,7 @@ class PrStnFxdEncoding(enc.StructEncoding):
 
 class PrStnProfEncoding(enc.StructEncoding):
     """The encoding strategy used for the PR_STN/PROF structure"""
-
+    """ Anh change the profile type length for windows from 4 to 30 characters"""
     def __init__(self, ver='vms') -> None:
 
         self._ver = ver
@@ -62,14 +62,16 @@ class PrStnProfEncoding(enc.StructEncoding):
 
         if ver == 'vms':
             val_encoding = enc.Real4()
+            prof_type_length = 4
         elif ver == 'win':
             val_encoding = enc_win.Float()
+            prof_type_length = 30
         else: # pragma: no cover
             raise ValueError(f'Invalid version: {ver}, must be one of "vms" or "win"')
 
         super().__init__(
             ('NO_SEG', enc.Integer2()),
-            ('PROF_TYPE', enc.Character(4)),
+            ('PROF_TYPE', enc.Character(prof_type_length)),
             ('DUP_FLAG', enc.Character(1)),
             ('DIGIT_CODE', enc.Character(1)),
             ('STANDARD', enc.Character(1)),

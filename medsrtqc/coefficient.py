@@ -72,7 +72,6 @@ def read_coef_file():
             'f6': -4.7726e-22}
     """
     with open(resource_path('doxy_calibration_coef.csv')) as fid:
-    # with open(resource_path('C:\\Users\\trana\\pyDev projects\\config\\doxy_bgc_calibration_coef.csv')) as fid:
         fid.readline()
         coeff = dict()
         for line in fid:
@@ -91,3 +90,25 @@ def read_coef_file():
     return coeff
 
 coeff = read_coef_file()
+
+def read_doxy_gain():
+    '''
+    Read oxygen gains from 'doxy_gains.csv' to apply real-time adjustment
+    to dissolved oxygen data.
+    '''
+
+    with open(resource_path('median_doxy_gains_woa23.csv')) as fid:
+        fid.readline()
+        gains = dict()
+        for line in fid:
+            wmo = line.split(',')[0]
+            line = ','.join(line.split(',')[1:])
+            gain = float(line.split(',')[0])
+            line = ','.join(line.split(',')[1:])
+            date = line.split(',')[0]
+
+            gains[wmo] = dict(gain=gain, date=date)
+
+        return gains
+    
+gains = read_doxy_gain()

@@ -20,18 +20,7 @@ include:
     A core and BGC Argo NetCDF file for use testing BGC variables.
 """
 
-import sys
 import os
-
-def config_path(path):
-
-    cwd = os.getcwd()
-    parent, child = os.path.split(cwd)
-    base = parent if child == 'lib' else cwd
-    abs_path = os.path.join(base, 'config', path)
-    if not os.path.exists(abs_path):
-        raise FileNotFoundError(f"'{path}' is not a resource within the {os.path.dirname(abs_path)} directory.")
-    return abs_path
 
 def resource_path(path):
     """
@@ -46,10 +35,41 @@ def resource_path(path):
     """
 
     try:
-        abs_path = config_path(path)
-    except FileNotFoundError as exception:
+        abs_path = meds_path(path)
+    except (KeyError, FileNotFoundError) as exception:
         abs_path = os.path.join(os.path.dirname(__file__), path)
-    
+
+        if not os.path.exists(abs_path):
+            raise Exception([exception, FileNotFoundError(f"'{path}' is not a resource within the medsrtqc.resources or config module.")])
+
+    return abs_path
+
+def meds_path(path):
+    """
+    Get the absolute path to a resource file on the MEDS server
+    or raise ``FileNotFoundError`` of the file does not exist.
+
+    :param path: The relative path within the home Batman Apps 
+        directory.
+
+    >>> from medsrtqc.resources import meds_path
+    >>> meds_path('doxy_calibration_coef.csv')
+    """
+
+    meds_file_paths = {
+        'doxy_calibration_coef.csv':{'e':'Argo_QC/config','d':'Argo BGC RTQC Test/config'},
+        'fluo_to_chl_physiological_ratio_LUT.csv':{'e':'Argo_QC/config','d':'Argo BGC RTQC Test/config'},
+        'CHLA_netCDF_info.csv':{'e':'Argo_QC/config','d':'Argo BGC RTQC Test/config'},
+        'park_depth.csv':{'e':'Argo_QC/config','d':'Argo BGC RTQC Test/config'},
+        'median_doxy_gains_woa23.csv':{'e':'Argo_QC/config','d':'Argo BGC RTQC Test/config'},
+    }
+
+    cwd = os.path.dirname(__file__)
+    drive = f'{cwd.split(":")[0]}:'
+    root = '\\'
+
+    base = os.path.join(drive, root)
+    abs_path = os.path.join(os.path.join(base, meds_file_paths[path][drive.strip(':').lower()]), path)
     if not os.path.exists(abs_path):
         raise FileNotFoundError(f"'{path}' is not a resource within the medsrtqc.resources or config module.")
     return abs_path
