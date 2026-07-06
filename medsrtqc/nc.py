@@ -53,6 +53,10 @@ class NetCDFProfile(Profile):
         self.parking_pres = self.get_park_depth()
         self.wmo = [int(wmo) for wmo in self.wmo]
         self.wmo = self.wmo[0] if len(self.wmo) == 1 else self.wmo
+        self.coords = self.read_coords()
+        self.longitude = np.nanmean([r[0] for r in self.coords])
+        self.latitude = np.nanmean([r[1] for r in self.coords])
+        self.coords = self.coords[0] if len(self.coords) == 1 else self.coords
         self.cycle_number = self.cycle_number[0] if len(self.cycle_number) == 1 else self.cycle_number
         self.parking_pres = self.parking_pres[0] if len(self.parking_pres) == 1 else self.parking_pres
 
@@ -174,11 +178,11 @@ class NetCDFProfile(Profile):
                 del var_values[var]
 
         # don't include trailing fill values when all variables have a trailing fill
-        if len(var_values['value']):
-            last_finite = self._calc_finite_length(var_values)
-            if last_finite:
-                for var in list(var_values.keys()):
-                    var_values[var] = var_values[var][:max(last_finite)]
+        # if len(var_values['value']):
+        #     last_finite = self._calc_finite_length(var_values)
+        #     if last_finite:
+        #         for var in list(var_values.keys()):
+        #             var_values[var] = var_values[var][:max(last_finite)]
 
         return var_values
 
@@ -203,6 +207,9 @@ class NetCDFProfile(Profile):
             'pres': 'PRES',
             'mtime': 'MTIME'
         }
+
+    def add_aux_data(self, traces):
+        self.aux = traces
     
     def get_park_depth(self):
         parking_depth = len(self.wmo)*[1000]
@@ -228,6 +235,17 @@ class NetCDFProfile(Profile):
 
         return wmo
 
+    def read_coords(self):
+        coords = len(self._datasets)*[None]
+        for i,d in enumerate(self._datasets):
+            lat = d['LATITUDE'][:]
+            lat = lat.data if hasattr(lat, 'mask') else lat
+            lon = d['LONGITUDE'][:]
+            lon = lon.data if hasattr(lon, 'mask') else lon
+            coords[i] = (lon, lat)
+
+        return coords
+
 def load(src, mode='r'):
     """
     Load a ``netCDF4.Dataset`` from a filename, url, bytes, or existing
@@ -240,7 +258,7 @@ def load(src, mode='r'):
 
     if not isinstance(src, (Dataset, bytes, str, Path)):
         raise TypeError('`src` must be a filename, url, bytes, or netCDF4.Dataset object')
-
+    
     if isinstance(src, Dataset):
         return src
     elif isinstance(src, str) and os.path.exists(src):
