@@ -13,7 +13,7 @@ try:
 
     now = pd.Timestamp('now', tz='utc')
 
-    with open(f'bgc_logs/{now.strftime("%Y%m%d_%H%M")}_log.log', 'w') as log_file:
+    with open(f'../bgc_logs/{now.strftime("%Y%m%d_%H%M")}_log.log', 'w') as log_file:
         with contextlib.redirect_stderr(log_file):
 
             # read from command line
@@ -35,7 +35,7 @@ try:
                 # which tests to do based on variables in profile
                 tests = check.run(p)
                 # add FLUA if appropriate, and QCP/QCF variables if they don't exist
-                tests = p.prepare(tests)
+                tests = p.prepare(tests, reset=True)
                 all_tests.append(tests)
                 for t in tests:
                     t.run(p)
